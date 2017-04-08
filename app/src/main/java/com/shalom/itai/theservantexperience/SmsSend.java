@@ -1,11 +1,16 @@
 package com.shalom.itai.theservantexperience;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -142,7 +147,7 @@ public class SmsSend extends AppCompatActivity {
                 String num = vals[1];
                 // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(SmsSend.this);
-                builder1.setMessage("Are you sure you wish to add "+name+" to your specials?");
+                builder1.setMessage("You really love "+name+" ?");
                 builder1.setCancelable(true);
 
                 builder1.setPositiveButton(
@@ -152,7 +157,8 @@ public class SmsSend extends AppCompatActivity {
                                 String[] vals = selectContact.split(":");
                                 String name = vals[0];
                                 String num = vals[1];
-                                sendSMS(num,"i love you",name);
+                                sendSMS(num,"Why does he love you more than he loves me?",name);
+                            //    sendSMS(num,"i love you",name);
                              /*
                                 if (allAddedPhoneNumbers.contains(num)) {
                                     Toast.makeText(getBaseContext(), "The number: " + num + " already exists", Toast.LENGTH_SHORT).show();
@@ -183,13 +189,70 @@ public class SmsSend extends AppCompatActivity {
     public void sendSMS(String phoneNo, String msg, String name) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "I decided to send "+msg+" to "+name+", I hope it's ok",
+      //      smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "I decided to send \""+msg+"\" to "+name+", I hope it's ok",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
                     Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
+    }
+    public void sendWhatsAppMsg(String phoneNo, String msg, String name){
+        boolean isWhatsappInstalled = whatsappInstalledOrNot("com.whatsapp");
+        if (isWhatsappInstalled) {
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "hi");
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra("smsto:", PhoneNumberUtils.stripSeparators("972543223702")+"@s.whatsapp.net");
+            // Do not forget to add this to open whatsApp App specifically
+            sendIntent.setPackage("com.whatsapp");
+            startActivity(sendIntent);
+
+            /*
+            Intent sendIntent = new Intent("android.intent.action.MAIN");
+            sendIntent.setAction(Intent.ACTION_SENDTO);
+            sendIntent.setComponent(new ComponentName("com.whatsapp","com.whatsapp.Conversation"));
+            sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+            sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("972543223702")+"@s.whatsapp.net");//phone number without "+" prefix
+
+            startActivity(sendIntent);
+            */
+/*
+            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+            sendIntent.setData(Uri.parse("smsto:"+phoneNo));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+        sendIntent.setType("text/plain");
+        sendIntent.setPackage("com.whatsapp");
+            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(sendIntent);
+  */
+        Toast.makeText(getApplicationContext(), "I decided to send "+msg+" to "+name+", I hope it's ok",
+                Toast.LENGTH_LONG).show();
+    } else {
+        Toast.makeText(this, "WhatsApp not Installed",
+                Toast.LENGTH_SHORT).show();
+        Uri uri = Uri.parse("market://details?id=com.whatsapp");
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(goToMarket);
+
+    }
+
+
+    }
+
+    private boolean whatsappInstalledOrNot(String uri) {
+        PackageManager pm = getPackageManager();
+        boolean app_installed = false;
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
     }
 }

@@ -1,49 +1,62 @@
 package com.shalom.itai.theservantexperience;
+
+       /* import com.google.android.gms.auth.api.Auth;
+        import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+        import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+        import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+       */ import com.google.android.gms.common.ConnectionResult;
+        import com.google.android.gms.common.api.GoogleApiClient;
+        import com.google.android.gms.common.api.OptionalPendingResult;
+        import com.google.android.gms.common.api.ResultCallback;
         import com.google.android.gms.vision.Frame;
         import com.google.android.gms.vision.face.Face;
         import com.google.android.gms.vision.face.FaceDetector;
-        import  com.google.android.gms.vision.face.FaceDetector.Builder;
+
         import android.Manifest;
+        import android.accounts.Account;
+        import android.accounts.AccountManager;
         import android.content.Context;
         import android.content.Intent;
         import android.content.pm.PackageManager;
         import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.graphics.SurfaceTexture;
+
         import android.hardware.Camera;
 
         import android.media.MediaPlayer;
         import android.media.MediaRecorder;
-        import android.net.ConnectivityManager;
-        import android.net.NetworkInfo;
-        import android.net.Uri;
+
         import android.os.Bundle;
-        import android.os.Environment;
+
         import android.os.Handler;
-        import android.provider.MediaStore;
-        import android.speech.RecognizerIntent;
+
         import android.support.annotation.NonNull;
         import android.support.v4.app.ActivityCompat;
         import android.support.v7.app.AppCompatActivity;
-        import android.util.AttributeSet;
+
         import android.util.Log;
+        import android.util.Patterns;
         import android.util.SparseArray;
-        import android.view.SurfaceView;
+
         import android.view.View;
-        import android.view.ViewGroup;
+
+        import android.view.animation.Animation;
+        import android.view.animation.AnimationUtils;
         import android.widget.Button;
-        import android.widget.LinearLayout;
+
+        import android.widget.TextView;
         import android.widget.Toast;
 
-        import java.io.ByteArrayInputStream;
-        import java.io.File;
-        import java.io.FileNotFoundException;
-        import java.io.FileOutputStream;
-        import java.io.IOException;
-        import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
-    private static final int CAMERA_REQUEST= 1888;
+        import java.io.IOException;
+
+        import java.util.regex.Pattern;
+
+
+        import static android.Manifest.permission.GET_ACCOUNTS;
+
+
+public class MainActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+    private static final int CAMERA_REQUEST = 1888;
     public static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
     //  private static final int REQUEST_CAMERA_PERMISSION = 300;
@@ -60,11 +73,101 @@ public class MainActivity extends AppCompatActivity {
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
-    private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,Manifest.permission.READ_CONTACTS,Manifest.permission.SEND_SMS};
+    private boolean permissionToAccounts = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS};
+    private GoogleApiClient mGoogleApiClient;
+    private String userName = "";
 
+/*
+    private void buildGoogleApiClient(String accountName) {
+        GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail();
+
+        if (accountName != null) {
+            gsoBuilder.setAccountName(accountName);
+        }
+
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.stopAutoManage(this);
+        }
+
+        GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.CREDENTIALS_API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gsoBuilder.build());
+
+        mGoogleApiClient = builder.build();
+    }
+
+    private void googleSilentSignIn() {
+        // Try silent sign-in with Google Sign In API
+        buildGoogleApiClient(null);
+        OptionalPendingResult<GoogleSignInResult> opr =
+                Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            GoogleSignInResult gsr = opr.get();
+            handleGoogleSignIn(gsr);
+        } else {
+            //   showProgress();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    //      hideProgress();
+                    userName = handleGoogleSignIn(googleSignInResult);
+                }
+            });
+        }
+    }
+
+
+
+
+    private String handleGoogleSignIn(GoogleSignInResult gsr) {
+
+
+        boolean isSignedIn = (gsr != null) && gsr.isSuccess();
+        if (isSignedIn) {
+            // Display signed-in UI
+            GoogleSignInAccount gsa = gsr.getSignInAccount();
+            String status = String.format("Signed in as %s (%s)", gsa.getDisplayName(),
+                    gsa.getEmail());
+            return gsa.getDisplayName();
+        }
+        return "";
+    }*/
+
+        public static String getPrimaryEmail(Context context) {
+        try {
+            AccountManager accountManager = AccountManager.get(context);
+            if (accountManager == null)
+                return "";
+            Account[] accounts = accountManager.getAccounts();
+            Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+            for (Account account : accounts) {
+                // make sure account.name is an email address before adding to the list
+                if (emailPattern.matcher(account.name).matches()) {
+                    return account.name.split("@")[0];
+                }
+            }
+            return "";
+        } catch (SecurityException e) {
+            // exception will occur if app doesn't have GET_ACCOUNTS permission
+            return "";
+        }
+    }
 
     public void callSpeech() {
         Intent intent = new Intent(this, speechReconition.class);
+      /*
+        EditText editText = (EditText) findViewById(R.id.editText);
+        String message = editText.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+        */
+        startActivity(intent);
+    }
+
+    public void callUpdate() {
+        Intent intent = new Intent(this, updateActivity.class);
       /*
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
@@ -92,10 +195,32 @@ public class MainActivity extends AppCompatActivity {
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 permissionToCameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                 permissionToConttactsAccepted= grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                permissionToAccounts= grantResults[3] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted) finish();
+        final Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        TextView  welcome_text = (TextView) findViewById(R.id.textView2);
 
+        welcome_text.setText("Hello "+ getPrimaryEmail(this)+"\n I am Jon, your new friend");
+        welcome_text.startAnimation(animationFadeIn);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Animation animationFadeOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fadeout);
+                TextView  welcome_text = (TextView) findViewById(R.id.textView2);
+                welcome_text.startAnimation(animationFadeOut);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView  welcome_text = (TextView) findViewById(R.id.textView2);
+                        welcome_text.setText("");
+                    }
+                }, 2000);
+            }
+        }, 5000);
     }
 
     private void onRecord(boolean start) {
@@ -155,6 +280,11 @@ public class MainActivity extends AppCompatActivity {
         mRecorder = null;
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
     class RecordButton extends android.widget.Button {
         boolean mStartRecording = true;
 
@@ -199,6 +329,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onBackPressed() {
+
+        this.finish();
+        super.onBackPressed();
+    }
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -224,6 +360,14 @@ public class MainActivity extends AppCompatActivity {
                 callSms();
             }
         });
+
+        Button buttonUpdate = (Button) findViewById(R.id.button4);
+        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                callUpdate();
+            }
+        });
 /*
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
@@ -240,7 +384,9 @@ public class MainActivity extends AppCompatActivity {
                         0));
         setContentView(ll);
   */
-    }
+
+
+     }
 
     public void onClick(View view) {
         Intent cameraIntent=new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
