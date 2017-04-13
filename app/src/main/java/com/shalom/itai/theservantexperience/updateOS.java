@@ -27,6 +27,7 @@ public class updateOS extends AppCompatActivity {
     private MediaController mediaControls;
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final String IS_INSTALLED = "isInstalled";
+    public static final String IS_LOCKED = "isLocked";
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -106,9 +107,12 @@ public class updateOS extends AppCompatActivity {
         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
         if(isInstalled)
         {
+
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
             finish();
+
+            return;
         }
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -174,10 +178,7 @@ public class updateOS extends AppCompatActivity {
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
       //          mp.release();
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean(IS_INSTALLED, true);
-                editor.commit();
+
 
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 startActivity(intent);
@@ -187,6 +188,9 @@ public class updateOS extends AppCompatActivity {
         });
 
     }
+
+
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

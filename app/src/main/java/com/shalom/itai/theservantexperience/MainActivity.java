@@ -4,58 +4,71 @@ package com.shalom.itai.theservantexperience;
         import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
         import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-       */ import com.google.android.gms.common.ConnectionResult;
-        import com.google.android.gms.common.api.GoogleApiClient;
-        import com.google.android.gms.common.api.OptionalPendingResult;
-        import com.google.android.gms.common.api.ResultCallback;
-        import com.google.android.gms.vision.Frame;
-        import com.google.android.gms.vision.face.Face;
-        import com.google.android.gms.vision.face.FaceDetector;
+       */
 
-        import android.Manifest;
-        import android.accounts.Account;
-        import android.accounts.AccountManager;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.pm.PackageManager;
-        import android.graphics.Bitmap;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
 
-        import android.hardware.Camera;
+import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 
-        import android.media.MediaPlayer;
-        import android.media.MediaRecorder;
+import android.hardware.Camera;
 
-        import android.os.Bundle;
+import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 
-        import android.os.Handler;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 
-        import android.support.annotation.NonNull;
-        import android.support.v4.app.ActivityCompat;
-        import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
 
-        import android.util.Log;
-        import android.util.Patterns;
-        import android.util.SparseArray;
+import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 
-        import android.view.View;
+import android.util.Log;
+import android.util.Patterns;
+import android.util.SparseArray;
 
-        import android.view.animation.Animation;
-        import android.view.animation.AnimationUtils;
-        import android.widget.Button;
+import android.view.View;
 
-        import android.widget.TextView;
-        import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 
-
-        import java.io.IOException;
-
-        import java.util.regex.Pattern;
-
-
-        import static android.Manifest.permission.GET_ACCOUNTS;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+import java.io.IOException;
+
+import java.util.regex.Pattern;
+
+
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
+import static com.shalom.itai.theservantexperience.updateOS.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.updateOS.PREFS_NAME;
+
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     private static final int CAMERA_REQUEST = 1888;
     public static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
@@ -74,7 +87,11 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
     private boolean permissionToAccounts = false;
-    private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS};
+    private boolean permissionToCalendarRead = false;
+    private boolean permissionToCalendarWrite = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
+            Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
+            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED};
     private GoogleApiClient mGoogleApiClient;
     private String userName = "";
 
@@ -136,7 +153,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         return "";
     }*/
 
-        public static String getPrimaryEmail(Context context) {
+    public static String getPrimaryEmail(Context context) {
         try {
             AccountManager accountManager = AccountManager.get(context);
             if (accountManager == null)
@@ -186,6 +203,45 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         startActivity(intent);
     }
 
+    private void addCalendarMeeting() {
+        ContentResolver cr = this.getContentResolver();
+        ContentValues values = new ContentValues();
+        Calendar cal = Calendar.getInstance();
+        values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
+        values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
+        values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
+
+        TimeZone timeZone = TimeZone.getDefault();
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
+
+        // default calendar
+        values.put(CalendarContract.Events.CALENDAR_ID, 1);
+
+        values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+        //for one hour
+        values.put(CalendarContract.Events.DURATION, "+P1H");
+
+        values.put(CalendarContract.Events.HAS_ALARM, 1);
+
+        // insert event to calendar
+
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
+        startActivity(LaunchIntent);
+    }
+
+    private void addCalendarMeeting2()
+    {
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra("beginTime", cal.getTimeInMillis());
+        intent.putExtra("allDay", true);
+        intent.putExtra("rrule", "FREQ=YEARLY");
+        intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+        intent.putExtra("title", "A Test Event from android app");
+        startActivity(intent);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -196,12 +252,16 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 permissionToCameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                 permissionToConttactsAccepted= grantResults[2] == PackageManager.PERMISSION_GRANTED;
                 permissionToAccounts= grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                permissionToCalendarRead =  grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                permissionToCalendarWrite =  grantResults[6] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted) finish();
+        if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
         final Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
         TextView  welcome_text = (TextView) findViewById(R.id.textView2);
-
+        Intent service = new Intent(this, BuggerService.class);
+        this.startService(service);
+        BuggerService.getInstance().bug();
         welcome_text.setText("Hello "+ getPrimaryEmail(this)+"\n I am Jon, your new friend");
         welcome_text.startAnimation(animationFadeIn);
         final Handler handler = new Handler();
@@ -217,6 +277,15 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                     public void run() {
                         TextView  welcome_text = (TextView) findViewById(R.id.textView2);
                         welcome_text.setText("");
+                        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                        boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
+                        if(!isInstalled) {
+
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putBoolean(IS_INSTALLED, true);
+                            editor.commit();
+                            addCalendarMeeting();
+                        }
                     }
                 }, 2000);
             }
@@ -337,8 +406,11 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
 
     @Override
     public void onCreate(Bundle icicle) {
+
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
+
+
         // Record to the external cache directory for visibility
         mFileName = getExternalCacheDir().getAbsolutePath();
         mFileName += "/audiorecordtest.3gp";
@@ -384,9 +456,13 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                         0));
         setContentView(ll);
   */
+//    BuggerService.isMainActivityUp=false;
+ //   finish();
+        Intent service = new Intent(this, BuggerService.class);
+        this.startService(service);
 
 
-     }
+    }
 
     public void onClick(View view) {
         Intent cameraIntent=new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -465,6 +541,8 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
             camera = null;
         }
         super.onPause();
+
+        BuggerService.isMainActivityUp = false;
     }
 
 
@@ -487,7 +565,11 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
 */
 
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BuggerService.isMainActivityUp = true;
+    }
 
     @Override
     public void onStop() {
@@ -501,5 +583,9 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
             mPlayer.release();
             mPlayer = null;
         }
+        BuggerService.isMainActivityUp = false;
     }
+
+
+
 }
