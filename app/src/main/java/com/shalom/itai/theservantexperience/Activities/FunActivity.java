@@ -1,6 +1,6 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,30 +10,39 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+
 import java.util.Random;
 
-import static com.shalom.itai.theservantexperience.BuggerService.GlobalPoints;
-import static com.shalom.itai.theservantexperience.BuggerService.allInsults;
-import static com.shalom.itai.theservantexperience.BuggerService.allJokes;
-import static com.shalom.itai.theservantexperience.updateOS.IS_INSTALLED;
-import static com.shalom.itai.theservantexperience.updateOS.PREFS_NAME;
+import static android.view.View.INVISIBLE;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.allInsults;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.allJokes;
 
 public class FunActivity extends AppCompatActivity {
     TextView text;
     Random rand;
+    Button likeBut;
+    Button unlikeBut;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fun);
+
         rand = new Random();
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;
         int jokeNum = rand.nextInt(allJokes.size());
         text.setText(allJokes.get(jokeNum));
-        Button likeBut = (Button) findViewById(R.id.like);
+
+
+
+        likeBut = (Button) findViewById(R.id.like);
         likeBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                unlikeBut.setVisibility(INVISIBLE);
+                likeBut.setVisibility(INVISIBLE);
                 text.setText("Thanks!!");
                 final Animation animationFadeIn = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fadein);
                 text.startAnimation(animationFadeIn);
@@ -57,10 +66,12 @@ public class FunActivity extends AppCompatActivity {
             }
         });
 
-        Button unlikeBut = (Button) findViewById(R.id.unlike);
+        unlikeBut = (Button) findViewById(R.id.unlike);
         unlikeBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                unlikeBut.setVisibility(INVISIBLE);
+                likeBut.setVisibility(INVISIBLE);
                 text.setText(allInsults.get(rand.nextInt(allInsults.size())));
                 GlobalPoints--;
 
@@ -74,6 +85,20 @@ public class FunActivity extends AppCompatActivity {
                     }
                 }, 1000);
 
+            }
+        });
+
+
+        Button quitBut = (Button) findViewById(R.id.quit);
+        quitBut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                BuggerService b = BuggerService.getInstance();
+                if(b!=null)
+                {
+                    Intent in = (new Intent(getApplicationContext(), BuggerService.class));
+                    b.stopService(in);
+                }
+                finish();
             }
         });
     }
@@ -94,3 +119,6 @@ public class FunActivity extends AppCompatActivity {
         BuggerService.isMainActivityUp = false;
     }
 }
+
+
+//

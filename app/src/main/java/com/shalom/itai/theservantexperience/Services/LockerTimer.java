@@ -1,13 +1,14 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Services;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 
-import java.util.List;
-import java.util.TimerTask;
+import com.shalom.itai.theservantexperience.Activities.LoginActivity;
 
-import static com.shalom.itai.theservantexperience.BuggerService.isLoginUp;
+import java.util.List;
+
+import static com.shalom.itai.theservantexperience.Services.BuggerService.isLoginUp;
 
 /**
  * Created by Itai on 13/04/2017.

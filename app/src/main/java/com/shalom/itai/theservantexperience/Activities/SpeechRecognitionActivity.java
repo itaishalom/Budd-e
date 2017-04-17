@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.R;
+
 import java.util.ArrayList;
 
-public class speechReconition extends AppCompatActivity {
+public class SpeechRecognitionActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1234;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

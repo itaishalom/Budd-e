@@ -1,24 +1,23 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Services;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 
-import java.util.List;
-import 	java.util.TimerTask;
+import com.shalom.itai.theservantexperience.Activities.FunActivity;
 
-import static com.shalom.itai.theservantexperience.BuggerService.stopBugger;
+import java.util.List;
+
+import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
 
 /**
  * Created by Itai on 09/04/2017.
  */
 
-public class TimerTaskForUser extends TimerTask {
+public class TimerTaskForUser extends ContextTimerTask {
 
-    private Context mContext;
-    TimerTaskForUser ( Context context )
-    {
-        this.mContext = context;
+    TimerTaskForUser (Context context) {
+        super(context);
     }
     @Override
     public void run() {

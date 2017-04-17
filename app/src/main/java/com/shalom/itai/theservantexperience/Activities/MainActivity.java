@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
        /* import com.google.android.gms.auth.api.Auth;
         import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -8,11 +8,16 @@ package com.shalom.itai.theservantexperience;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.shalom.itai.theservantexperience.FaceOverlayView;
+import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.ShakeListener;
+import com.shalom.itai.theservantexperience.SmsSend;
+import com.shalom.itai.theservantexperience.Utils.Functions;
+
 
 import android.Manifest;
 import android.accounts.Account;
@@ -27,17 +32,19 @@ import android.graphics.Bitmap;
 
 import android.hardware.Camera;
 
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
 
+import android.os.Vibrator;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -64,8 +71,7 @@ import java.util.regex.Pattern;
 
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
-import static com.shalom.itai.theservantexperience.updateOS.IS_INSTALLED;
-import static com.shalom.itai.theservantexperience.updateOS.PREFS_NAME;
+import static android.Manifest.permission.VIBRATE;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -91,9 +97,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private boolean permissionToCalendarWrite = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
-            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED};
+            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,VIBRATE};
     private GoogleApiClient mGoogleApiClient;
     private String userName = "";
+
+
+
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeListener mShakeListener;
+
+
 
 /*
     private void buildGoogleApiClient(String accountName) {
@@ -174,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void callSpeech() {
-        Intent intent = new Intent(this, speechReconition.class);
+        Intent intent = new Intent(this, SpeechRecognitionActivity.class);
       /*
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
@@ -183,15 +197,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(intent);
     }
 
-    public void callUpdate() {
-        Intent intent = new Intent(this, updateActivity.class);
-      /*
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        */
-        startActivity(intent);
-    }
+
 
     public void callSms() {
         Intent intent = new Intent(this, SmsSend.class);
@@ -210,22 +216,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
         values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
         values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
-
         TimeZone timeZone = TimeZone.getDefault();
         values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
-
         // default calendar
         values.put(CalendarContract.Events.CALENDAR_ID, 1);
-
         values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
         //for one hour
         values.put(CalendarContract.Events.DURATION, "+P1H");
-
         values.put(CalendarContract.Events.HAS_ALARM, 1);
-
         // insert event to calendar
-
-        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+     //   Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
         startActivity(LaunchIntent);
     }
@@ -257,39 +257,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 break;
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
-        final Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        TextView  welcome_text = (TextView) findViewById(R.id.textView2);
         Intent service = new Intent(this, BuggerService.class);
         this.startService(service);
-        BuggerService.getInstance().bug();
-        welcome_text.setText("Hello "+ getPrimaryEmail(this)+"\n I am Jon, your new friend");
-        welcome_text.startAnimation(animationFadeIn);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final Animation animationFadeOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fadeout);
-                TextView  welcome_text = (TextView) findViewById(R.id.textView2);
-                welcome_text.startAnimation(animationFadeOut);
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView  welcome_text = (TextView) findViewById(R.id.textView2);
-                        welcome_text.setText("");
-                        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                        boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
-                        if(!isInstalled) {
-
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putBoolean(IS_INSTALLED, true);
-                            editor.commit();
-                            addCalendarMeeting();
-                        }
-                    }
-                }, 2000);
-            }
-        }, 5000);
+        if(BuggerService.getInstance()!=null)
+            BuggerService.getInstance().bug();
+        Functions.fadingText(this,R.id.textView2);
     }
 
     private void onRecord(boolean start) {
@@ -437,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                callUpdate();
+          //      callUpdate();
             }
         });
 /*
@@ -458,9 +430,32 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
   */
 //    BuggerService.isMainActivityUp=false;
  //   finish();
+
+        // ShakeListener initialization
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeListener = new ShakeListener();
+        mShakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                handleShakeEvent(count);
+            }
+        });
+
+
         Intent service = new Intent(this, BuggerService.class);
         this.startService(service);
 
+
+    }
+
+    public void handleShakeEvent(int count)
+    {
+        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        v.vibrate(500);
 
     }
 
@@ -541,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             camera = null;
         }
         super.onPause();
-
+        mSensorManager.unregisterListener(mShakeListener);
         BuggerService.isMainActivityUp = false;
     }
 
@@ -569,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onResume() {
         super.onResume();
         BuggerService.isMainActivityUp = true;
+        mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override

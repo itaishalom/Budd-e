@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -15,6 +15,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
+import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.R;
+
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -25,9 +30,7 @@ public class updateOS extends AppCompatActivity {
     private int position = 0;
     private ProgressDialog progressDialog;
     private MediaController mediaControls;
-    public static final String PREFS_NAME = "MyPrefsFile";
-    public static final String IS_INSTALLED = "isInstalled";
-    public static final String IS_LOCKED = "isLocked";
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.

@@ -1,13 +1,9 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -21,26 +17,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.Manifest.permission.READ_CONTACTS;
-import static com.shalom.itai.theservantexperience.BuggerService.isLoginUp;
-import static com.shalom.itai.theservantexperience.updateOS.IS_INSTALLED;
-import static com.shalom.itai.theservantexperience.updateOS.IS_LOCKED;
-import static com.shalom.itai.theservantexperience.updateOS.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.isLoginUp;
+import static com.shalom.itai.theservantexperience.Activities.updateOS.IS_LOCKED;
+import static com.shalom.itai.theservantexperience.Activities.updateOS.PREFS_NAME;
 
 /**
  * A login screen that offers login via email/password.

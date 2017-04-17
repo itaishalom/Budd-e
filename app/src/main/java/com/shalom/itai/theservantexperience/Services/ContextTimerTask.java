@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Services;
 
 import android.content.Context;
 

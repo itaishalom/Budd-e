@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+
 /**
  * Created by Itai on 13/04/2017.
  */

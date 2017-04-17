@@ -16,6 +16,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
+
 public class PhotoHandler implements PictureCallback {
 
     private final Context context;
