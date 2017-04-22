@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.Services.BuggerService.isLoginUp;
-import static com.shalom.itai.theservantexperience.Activities.updateOS.IS_LOCKED;
-import static com.shalom.itai.theservantexperience.Activities.updateOS.PREFS_NAME;
+
+import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 
 /**
  * A login screen that offers login via email/password.

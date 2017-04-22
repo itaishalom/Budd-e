@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 
+import com.shalom.itai.theservantexperience.Activities.DancingActivity;
 import com.shalom.itai.theservantexperience.Activities.FunActivity;
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
 
 import java.util.List;
 
@@ -25,8 +27,13 @@ public class TimerTaskForUser extends ContextTimerTask {
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
         String activityOnTop=ar.topActivity.getClassName();
+/*
+        if(BuggerService.pathToLastImage !="")
+        {
+            FunActivity.getInstance().continueAnalyze();
+        }*/
 
-        if(!activityOnTop.contains("theservant") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity"))
+        if(!activityOnTop.contains("theservant") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity") && !activityOnTop.toLowerCase().contains("camera"))
 
         // if(!BuggerService.isFunActivityUp && !BuggerService.isMainActivityUp)
         {

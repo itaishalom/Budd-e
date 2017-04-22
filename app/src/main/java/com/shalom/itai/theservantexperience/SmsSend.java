@@ -189,8 +189,8 @@ public class SmsSend extends AppCompatActivity {
     public void sendSMS(String phoneNo, String msg, String name) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
-      //      smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "I decided to send \""+msg+"\" to "+name+", I hope it's ok",
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "I send \""+msg+"\" to "+name+"!!",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(),ex.getMessage().toString(),

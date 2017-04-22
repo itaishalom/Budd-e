@@ -16,12 +16,15 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.ShakeListener;
 import com.shalom.itai.theservantexperience.SmsSend;
+import com.shalom.itai.theservantexperience.TakeImageThread;
 import com.shalom.itai.theservantexperience.Utils.Functions;
+import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 
 
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -30,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 
 import android.hardware.Sensor;
@@ -42,6 +46,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.os.Handler;
 
 import android.os.Vibrator;
@@ -64,14 +69,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 
 import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -97,96 +109,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private boolean permissionToCalendarWrite = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
-            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,VIBRATE};
+            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,VIBRATE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE};
     private GoogleApiClient mGoogleApiClient;
     private String userName = "";
 
-
-
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
-    private ShakeListener mShakeListener;
-
-
-
-/*
-    private void buildGoogleApiClient(String accountName) {
-        GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail();
-
-        if (accountName != null) {
-            gsoBuilder.setAccountName(accountName);
-        }
-
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.stopAutoManage(this);
-        }
-
-        GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.CREDENTIALS_API)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gsoBuilder.build());
-
-        mGoogleApiClient = builder.build();
-    }
-
-    private void googleSilentSignIn() {
-        // Try silent sign-in with Google Sign In API
-        buildGoogleApiClient(null);
-        OptionalPendingResult<GoogleSignInResult> opr =
-                Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            GoogleSignInResult gsr = opr.get();
-            handleGoogleSignIn(gsr);
-        } else {
-            //   showProgress();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    //      hideProgress();
-                    userName = handleGoogleSignIn(googleSignInResult);
-                }
-            });
-        }
-    }
-
-
-
-
-    private String handleGoogleSignIn(GoogleSignInResult gsr) {
-
-
-        boolean isSignedIn = (gsr != null) && gsr.isSuccess();
-        if (isSignedIn) {
-            // Display signed-in UI
-            GoogleSignInAccount gsa = gsr.getSignInAccount();
-            String status = String.format("Signed in as %s (%s)", gsa.getDisplayName(),
-                    gsa.getEmail());
-            return gsa.getDisplayName();
-        }
-        return "";
-    }*/
-
-    public static String getPrimaryEmail(Context context) {
-        try {
-            AccountManager accountManager = AccountManager.get(context);
-            if (accountManager == null)
-                return "";
-            Account[] accounts = accountManager.getAccounts();
-            Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-            for (Account account : accounts) {
-                // make sure account.name is an email address before adding to the list
-                if (emailPattern.matcher(account.name).matches()) {
-                    return account.name.split("@")[0];
-                }
-            }
-            return "";
-        } catch (SecurityException e) {
-            // exception will occur if app doesn't have GET_ACCOUNTS permission
-            return "";
-        }
-    }
-
+    public static MainActivity thisActivity;
+    private Timer timerUI;
     public void callSpeech() {
         Intent intent = new Intent(this, SpeechRecognitionActivity.class);
       /*
@@ -209,40 +137,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(intent);
     }
 
-    private void addCalendarMeeting() {
-        ContentResolver cr = this.getContentResolver();
-        ContentValues values = new ContentValues();
-        Calendar cal = Calendar.getInstance();
-        values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
-        values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
-        values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
-        TimeZone timeZone = TimeZone.getDefault();
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
-        // default calendar
-        values.put(CalendarContract.Events.CALENDAR_ID, 1);
-        values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
-        //for one hour
-        values.put(CalendarContract.Events.DURATION, "+P1H");
-        values.put(CalendarContract.Events.HAS_ALARM, 1);
-        // insert event to calendar
-     //   Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
-        startActivity(LaunchIntent);
-    }
-
-    private void addCalendarMeeting2()
-    {
-        Calendar cal = Calendar.getInstance();
-        Intent intent = new Intent(Intent.ACTION_EDIT);
-        intent.setType("vnd.android.cursor.item/event");
-        intent.putExtra("beginTime", cal.getTimeInMillis());
-        intent.putExtra("allDay", true);
-        intent.putExtra("rrule", "FREQ=YEARLY");
-        intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-        intent.putExtra("title", "A Test Event from android app");
-        startActivity(intent);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -262,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if(BuggerService.getInstance()!=null)
             BuggerService.getInstance().bug();
         Functions.fadingText(this,R.id.textView2);
+  //      addCalendarMeeting();
     }
 
     private void onRecord(boolean start) {
@@ -432,44 +327,143 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
  //   finish();
 
         // ShakeListener initialization
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mShakeListener = new ShakeListener();
-        mShakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
-
-            @Override
-            public void onShake(int count) {
-                handleShakeEvent(count);
-            }
-        });
 
 
+      //  analayze();
         Intent service = new Intent(this, BuggerService.class);
         this.startService(service);
-
-
-    }
-
-    public void handleShakeEvent(int count)
-    {
-        Vibrator v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        // Vibrate for 500 milliseconds
-        v.vibrate(500);
+        thisActivity = this;
 
     }
+
+public static MainActivity getInstance()
+{
+    return thisActivity;
+}
 
     public void onClick(View view) {
-        Intent cameraIntent=new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        analayze();
+        //   Intent cameraIntent=new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+      //  startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
+
+    public Bitmap getImageBitmap(Context context,String name){
+        try{
+            File file = new File(name);
+            if(file.exists()) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeFile(name, options);
+                return bitmap;
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void analayze() {
+
+
+        //   (new Thread(new TakeImageThread(getApplicationContext()))).start();
+        SilentCamera c = new SilentCamera(this);
+        c.getCameraInstance();
+        //c.prepareCamera();
+        //  String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"2.jpg";
+        c.takePicture();
+        // String path = c.getLastImagePath();
+        //   c.releaseCamera();
+        return;
+    }
+    public void continueAnalyze(){
+        final String path ="";
+        timerUI= new Timer();
+        timerUI.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // 'getActivity()' is required as this is being ran from a Fragment.
+                MainActivity.getInstance().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // This code will always run on the UI thread, therefore is safe to modify UI elements.
+
+                        Bitmap photo = getImageBitmap(getApplicationContext(),path);
+                       // BuggerService.pathToLastImage = "";
+                        //Bitmap photo=(Bitmap) data.getExtras().get("data");
+                        FaceOverlayView mFaceOverlayView;  mFaceOverlayView = (FaceOverlayView) findViewById(R.id.face_overlay);
+                        mFaceOverlayView.setBitmap(photo);
+
+                        SparseArray<Face> mFaces =null;
+                        FaceDetector detector = new FaceDetector.Builder( getApplicationContext() )
+                                .setTrackingEnabled(true)
+                                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                                .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                                .build();
+
+                        if (!detector.isOperational()) {
+                            //Handle contingency
+                        } else {
+                            Frame frame = new Frame.Builder().setBitmap(photo).build();
+                            mFaces = detector.detect(frame);
+                            detector.release();
+                        }
+                        if(mFaces.size()==0){
+                            Toast.makeText(MainActivity.this, "I don't see your face!",
+                                    Toast.LENGTH_LONG).show();
+                            GlobalPoints -= 2;
+                        }else {
+                            for (int i = 0; i < mFaces.size(); i++) {
+                                Face face = mFaces.valueAt(i);
+
+                                float smilingProbability = face.getIsSmilingProbability();
+
+
+                                if(smilingProbability<0.8) {
+                                    Toast.makeText(MainActivity.this, "you don't smile",
+                                            Toast.LENGTH_LONG).show();
+                                    GlobalPoints--;
+                                }else
+                                {
+                                    Toast.makeText(MainActivity.this, "you  smile!",
+                                            Toast.LENGTH_LONG).show();
+                                    GlobalPoints++;
+                                }
+
+                            }
+                        }
+                        stopTimer();
+                    }
+                });
+            }
+
+        }, 0, 3000); // End of your timer code.
+    }
+
+    private void stopTimer()
+    {
+        timerUI.cancel();
+        timerUI.purge();
+        Toast.makeText(MainActivity.this, "end!",
+                Toast.LENGTH_LONG).show();
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK){
-
-            Bitmap photo=(Bitmap) data.getExtras().get("data");
+            SilentCamera c = new SilentCamera(this);
+            c.getCameraInstance();
+            //c.prepareCamera();
+          //  String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"2.jpg";
+            c.takePicture();
+      //      String path = c.getLastImagePath();
+            c.releaseCamera();
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"1~01";
+            Bitmap photo = getImageBitmap(this,path);
+            //Bitmap photo=(Bitmap) data.getExtras().get("data");
             FaceOverlayView mFaceOverlayView;  mFaceOverlayView = (FaceOverlayView) findViewById(R.id.face_overlay);
             mFaceOverlayView.setBitmap(photo);
 
@@ -490,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             if(mFaces.size()==0){
                 Toast.makeText(MainActivity.this, "I don't see your face!",
                         Toast.LENGTH_LONG).show();
+                GlobalPoints -= 2;
             }else {
                 for (int i = 0; i < mFaces.size(); i++) {
                     Face face = mFaces.valueAt(i);
@@ -500,10 +495,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     if(smilingProbability<0.8) {
                         Toast.makeText(MainActivity.this, "you don't smile",
                                 Toast.LENGTH_LONG).show();
+                        GlobalPoints--;
                     }else
                     {
                         Toast.makeText(MainActivity.this, "you  smile!",
                                 Toast.LENGTH_LONG).show();
+                        GlobalPoints++;
                     }
 
                 }
@@ -513,21 +510,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    private int findFrontFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                Log.d(LOG_TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
 
     @Override
     protected void onPause() {
@@ -536,35 +518,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             camera = null;
         }
         super.onPause();
-        mSensorManager.unregisterListener(mShakeListener);
         BuggerService.isMainActivityUp = false;
     }
 
 
-/*
-    private Camera.PictureCallback getJpegCallback() {
-        Camera.PictureCallback jpeg = new Camera.PictureCallback() {
-            @Override
-            public void onPictureTaken(byte[] data, Camera camera) {
-                FileOutputStream fos;
-                try {
-                    fos = new FileOutputStream("test.jpeg");
-                    fos.write(data);
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-*/
 
 
     @Override
     protected void onResume() {
         super.onResume();
         BuggerService.isMainActivityUp = true;
-        mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+     //   mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override

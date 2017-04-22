@@ -56,11 +56,22 @@ public class FaceOverlayView extends View {
             mFaces = detector.detect(frame);
             detector.release();
         }
-        logFaceData();
+      //  logFaceData();
         invalidate();
     }
 
-    @Override
+
+
+
+/*
+    public void setBitmap( Bitmap bitmap ) {
+
+        mBitmap = bitmap;
+        invalidate();
+    }
+*/
+
+        @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 

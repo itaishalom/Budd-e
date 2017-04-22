@@ -7,8 +7,10 @@
 
     <uses-sdk android:minSdkVersion="15" />
     >
-
+    .
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -21,13 +23,14 @@
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -84,7 +87,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ShakeActivity"></activity>
+        <activity android:name=".ShakeActivity" />
+        <activity android:name=".Activities.DancingActivity"></activity>
     </application>
 
 </manifest>

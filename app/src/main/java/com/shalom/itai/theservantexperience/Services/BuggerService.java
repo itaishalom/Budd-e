@@ -16,11 +16,7 @@ import com.shalom.itai.theservantexperience.Utils.Functions;
 import java.util.ArrayList;
 import java.util.Timer;
 
-import static com.shalom.itai.theservantexperience.Activities.updateOS.IS_INSTALLED;
-import static com.shalom.itai.theservantexperience.Activities.updateOS.IS_LOCKED;
-import static com.shalom.itai.theservantexperience.Activities.updateOS.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.BUG_WAIT_TIME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.LOCK_WAIT_TIME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -30,7 +26,6 @@ public class BuggerService extends Service {
     public static boolean isMainActivityUp = false;
     public static boolean isFunActivityUp = false;
     public static boolean isLoginUp = false;
-
     public static ArrayList<String> allInsults;
     public static ArrayList<String> allJokes;
     public static ArrayList<String> allFacts;
@@ -38,7 +33,7 @@ public class BuggerService extends Service {
     private static Timer timerLock = new Timer();
     public static boolean stopBugger = false;
     private int mId=0;
-    public static int GlobalPoints = 0;
+    public static int GlobalPoints = 0;     //TODO READ FROM CONF!
     private static BuggerService mInstance;
     @Nullable
     @Override
@@ -76,10 +71,11 @@ public static BuggerService getInstance(){
         {
             this.bug();
         }
+/*
             SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(IS_INSTALLED, true);
+           editor.putBoolean(IS_INSTALLED, true);
             editor.commit();
-
+*/
 
         return Service.START_STICKY;
     }
