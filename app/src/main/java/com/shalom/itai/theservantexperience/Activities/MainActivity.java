@@ -14,68 +14,46 @@ import com.google.android.gms.vision.face.FaceDetector;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
-import com.shalom.itai.theservantexperience.ShakeListener;
-import com.shalom.itai.theservantexperience.SmsSend;
-import com.shalom.itai.theservantexperience.TakeImageThread;
+
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Environment;
-import android.os.Handler;
 
-import android.os.Vibrator;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
-import android.util.Patterns;
 import android.util.SparseArray;
 
 import android.view.View;
 
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Pattern;
 
 
 import static android.Manifest.permission.GET_ACCOUNTS;
@@ -128,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     public void callSms() {
-        Intent intent = new Intent(this, SmsSend.class);
+        Intent intent = new Intent(this, SmsSendActivity.class);
       /*
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
@@ -300,13 +278,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-        Button buttonUpdate = (Button) findViewById(R.id.button4);
-        buttonUpdate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-          //      callUpdate();
-            }
-        });
 /*
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
@@ -366,7 +338,7 @@ public static MainActivity getInstance()
     public void analayze() {
 
 
-        //   (new Thread(new TakeImageThread(getApplicationContext()))).start();
+
         SilentCamera c = new SilentCamera(this);
         c.getCameraInstance();
         //c.prepareCamera();

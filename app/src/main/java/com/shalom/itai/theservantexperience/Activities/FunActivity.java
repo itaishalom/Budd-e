@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -126,6 +127,10 @@ public class FunActivity extends AppCompatActivity {
                 unlikeBut.setVisibility(INVISIBLE);
                 likeBut.setVisibility(INVISIBLE);
                 text.setText(allInsults.get(rand.nextInt(allInsults.size())));
+                ImageView imageViewLaugh = (ImageView) findViewById(R.id.imageLaugh);
+                imageViewLaugh.setVisibility(INVISIBLE);
+                ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
+                imageViewAngry.setVisibility(VISIBLE);
                 GlobalPoints--;
 
                 final Handler handler = new Handler();
@@ -200,7 +205,7 @@ public class FunActivity extends AppCompatActivity {
                                 float smilingProbability = face.getIsSmilingProbability();
 
 
-                                if(smilingProbability<0.8) {
+                                if(smilingProbability<0.7) {
                                     mFaceOverlayView.setBitmap(photo);
                                     Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
                                             Toast.LENGTH_LONG).show();

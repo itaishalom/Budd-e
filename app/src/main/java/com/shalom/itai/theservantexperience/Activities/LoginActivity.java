@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String CREDENTIALS = "1234";
+    private static final String CREDENTIALS = "sorry";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
 
-
+        getWindow().setBackgroundDrawableResource(R.drawable.locked);
 
 
         mPasswordView = (EditText) findViewById(R.id.password);

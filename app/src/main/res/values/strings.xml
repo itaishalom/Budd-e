@@ -7,12 +7,12 @@
 
     <string name="title_activity_update_os">Android Update</string>
     <string name="service_name">Jon</string>
-    <string name="title_activity_login">I locked you</string>
+    <string name="title_activity_login">I hate you!</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">User</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Guess the password</string>
+    <string name="prompt_password">Dear jon, your humor is very funney, I am.... (sorry)</string>
+    <string name="action_sign_in">Say sorry?</string>
     <string name="action_sign_in_short">I hate you! I am Locked</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>

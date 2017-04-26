@@ -1,7 +1,6 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,9 +21,11 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.R;
+
 import java.util.ArrayList;
 
-public class SmsSend extends AppCompatActivity {
+public class SmsSendActivity extends AppCompatActivity {
     String namecsv="";
     String phonecsv="";
 
@@ -111,7 +112,7 @@ public class SmsSend extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-                SmsSend.this.adapter.getFilter().filter(cs);
+                SmsSendActivity.this.adapter.getFilter().filter(cs);
                 //   lv1.setAdapter(MainActivity.this.adapter.getFilter().filter(cs));
             }
 
@@ -146,7 +147,7 @@ public class SmsSend extends AppCompatActivity {
                 String name = vals[0];
                 String num = vals[1];
                 // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(SmsSend.this);
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(SmsSendActivity.this);
                 builder1.setMessage("You really love "+name+" ?");
                 builder1.setCancelable(true);
 
@@ -157,7 +158,7 @@ public class SmsSend extends AppCompatActivity {
                                 String[] vals = selectContact.split(":");
                                 String name = vals[0];
                                 String num = vals[1];
-                                sendSMS(num,"Why does he love you more than he loves me?",name);
+                                sendSMS(num,"Jon: Why does he love you more than he loves me?",name);
                             //    sendSMS(num,"i love you",name);
                              /*
                                 if (allAddedPhoneNumbers.contains(num)) {
