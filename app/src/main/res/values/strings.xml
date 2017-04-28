@@ -21,6 +21,11 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="action_settings">settings</string>
+    <string name="action_favorite">favorite</string>
+    <string name="alert_dialog_two_buttons_title">Relationship status</string>
+    <string name="alert_dialog_cancel">cancel</string>
+    <string name="alert_dialog_ok">ok</string>
 </resources>
 
 

@@ -36,6 +36,8 @@ import static com.shalom.itai.theservantexperience.Services.BuggerService.allIns
 import static com.shalom.itai.theservantexperience.Services.BuggerService.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
 
+
+//TODO more interaction
 public class FunActivity extends AppCompatActivity {
     TextView text;
     Random rand;

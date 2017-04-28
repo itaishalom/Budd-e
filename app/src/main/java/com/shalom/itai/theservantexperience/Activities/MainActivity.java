@@ -20,6 +20,9 @@ import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,16 +39,25 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -93,6 +105,84 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public static MainActivity thisActivity;
     private Timer timerUI;
+
+
+    @Override
+    public void onCreate(Bundle icicle) {
+
+        super.onCreate(icicle);
+        setContentView(R.layout.activity_main);
+        ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+        Intent service = new Intent(this, BuggerService.class);
+        this.startService(service);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+        thisActivity = this;
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final ConstraintLayout relationsLayout =(ConstraintLayout) findViewById(R.id.relation_layout);
+        final ConstraintLayout moodLayout =(ConstraintLayout) findViewById(R.id.mood_layout);
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+            case R.id.action_mood:
+                if(moodLayout.getVisibility() == View.VISIBLE)
+                    moodLayout.setVisibility(View.INVISIBLE);
+                else {
+                    moodLayout.setVisibility(View.VISIBLE);
+                    relationsLayout.setVisibility(View.INVISIBLE);
+                }
+                //       showDialog();
+                return true;
+            case R.id.action_favorite:
+//                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
+                if(relationsLayout.getVisibility() == View.VISIBLE)
+                    relationsLayout.setVisibility(View.INVISIBLE);
+                else {
+                    relationsLayout.setVisibility(View.VISIBLE);
+                    moodLayout.setVisibility(View.INVISIBLE);
+                }
+         //       showDialog();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+    public void showDialog() {
+        DialogFragment newFragment = MyAlertDialogFragment
+                .newInstance(R.string.alert_dialog_two_buttons_title);
+        newFragment.show(getSupportFragmentManager(),"dialog");
+    }
+
+
+
+    public void doPositiveClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Positive click!");
+    }
+
+    public void doNegativeClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
     public void callSpeech() {
         Intent intent = new Intent(this, SpeechRecognitionActivity.class);
       /*
@@ -249,64 +339,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onBackPressed();
     }
 
-    @Override
-    public void onCreate(Bundle icicle) {
-
-        super.onCreate(icicle);
-        setContentView(R.layout.activity_main);
-
-
-        // Record to the external cache directory for visibility
-        mFileName = getExternalCacheDir().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
-
-        ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-   //      FaceOverlayView mFaceOverlayView = (FaceOverlayView) findViewById(R.id.face_overlay);
-   //     mFaceOverlayView.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.me));
-        Button button = (Button) findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                callSpeech();
-            }
-        });
-        Button buttonSms = (Button) findViewById(R.id.button3);
-        buttonSms.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                callSms();
-            }
-        });
-
-
-/*
-        LinearLayout ll = new LinearLayout(this);
-        mRecordButton = new RecordButton(this);
-        ll.addView(mRecordButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
-        mPlayButton = new PlayButton(this);
-        ll.addView(mPlayButton,
-                new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        0));
-        setContentView(ll);
-  */
-//    BuggerService.isMainActivityUp=false;
- //   finish();
-
-        // ShakeListener initialization
-
-
-      //  analayze();
-        Intent service = new Intent(this, BuggerService.class);
-        this.startService(service);
-        thisActivity = this;
-
-    }
 
 public static MainActivity getInstance()
 {
