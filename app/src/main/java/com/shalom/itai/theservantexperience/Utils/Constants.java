@@ -5,7 +5,7 @@ package com.shalom.itai.theservantexperience.Utils;
  */
 
 public class Constants {
-    public static final int BUG_WAIT_TIME = 5000;
+    public static final int BUG_WAIT_TIME = 20000;
     public static final int LOCK_WAIT_TIME = 500;
     public static final int SHOW_IMSULT_TIME = 7000;
     public static final String PREFS_NAME = "MySettings";

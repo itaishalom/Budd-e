@@ -3,6 +3,7 @@ package com.shalom.itai.theservantexperience.Utils;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.CalendarContract;
 import android.util.Patterns;
 import android.view.View;
@@ -108,6 +110,22 @@ public class Functions {
         }
     }
 
+    private static boolean isPassOrPinSet(Context context)
+    {
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE); //api 16+
+        return keyguardManager.inKeyguardRestrictedInputMode();
+    }
+
+
+    public static boolean checkScreenAndLock(Context context)
+    {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        if(!pm.isInteractive() || isPassOrPinSet(context))
+            return false;
+        return true;
+    }
+
+
     public static void fadingText(final Activity activity, final int viewID){
         final Animation animationFadeIn = AnimationUtils.loadAnimation(activity, R.anim.fadein);
         TextView welcome_text = (TextView) activity.findViewById(viewID);
@@ -139,6 +157,7 @@ public class Functions {
                             editor.putBoolean(IS_INSTALLED, true);
                             editor.commit();
                             addCalendarMeeting(activity.getApplicationContext());
+                            activity.finish();
                         }
                     }
                 }, 2000);

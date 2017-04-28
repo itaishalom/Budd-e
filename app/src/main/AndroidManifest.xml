@@ -59,13 +59,14 @@
             android:name=".Activities.SpeechRecognitionActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".Activities.MainActivity" />
-        <activity android:name=".Activities.SmsSend" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.SmsSendActivity" android:launchMode= "singleInstance"/>
+        <activity android:name=".Activities.MainActivity" android:launchMode= "singleInstance">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
+            android:launchMode= "singleInstance"
             android:name=".Activities.updateOS"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_update_os"
@@ -76,7 +77,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.FunActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.FunActivity" android:screenOrientation="portrait"
+            android:launchMode= "singleInstance"/>
         <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login"
@@ -88,7 +90,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
 
         <activity android:name=".Activities.DancingActivity" android:screenOrientation="portrait"></activity>
     </application>

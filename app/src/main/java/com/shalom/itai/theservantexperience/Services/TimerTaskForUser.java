@@ -14,6 +14,7 @@ import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
+import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -42,14 +43,19 @@ public class TimerTaskForUser extends ContextTimerTask {
             FunActivity.getInstance().continueAnalyze();
         }*/
 //
+        if(!checkScreenAndLock(mContext))
+            return;
 
-        if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity") && !activityOnTop.toLowerCase().contains("camera"))
+        if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
+                && !activityOnTop.toLowerCase().contains("camera"))
 
         // if(!BuggerService.isFunActivityUp && !BuggerService.isMainActivityUp)
         {
             if(!stopBugger){
-                Intent intent = new Intent(this.mContext, Activities[indexActive]);
+                int i = indexActive;
                 indexActive++;
+                Intent intent = new Intent(this.mContext, Activities[i]);
+
                 if (indexActive==Activities.length)
                     indexActive = 0;
                 this.mContext.startActivity(intent);}
