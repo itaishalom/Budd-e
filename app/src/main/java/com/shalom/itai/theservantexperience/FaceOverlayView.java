@@ -41,7 +41,7 @@ public class FaceOverlayView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setBitmap( Bitmap bitmap ) {
+    public SparseArray<Face> setBitmap( Bitmap bitmap ) {
         mBitmap = bitmap;
         FaceDetector detector = new FaceDetector.Builder( getContext() )
                 .setTrackingEnabled(true)
@@ -58,6 +58,7 @@ public class FaceOverlayView extends View {
         }
       //  logFaceData();
         invalidate();
+        return mFaces;
     }
 
 

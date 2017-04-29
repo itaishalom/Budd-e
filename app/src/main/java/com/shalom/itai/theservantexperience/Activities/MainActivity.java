@@ -34,6 +34,9 @@ import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.Bundle;
 
 import android.os.Environment;
@@ -45,6 +48,17 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;
+import android.telephony.CellInfoCdma;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
+import android.telephony.CellSignalStrengthCdma;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.CellSignalStrengthLte;
+import android.telephony.CellSignalStrengthWcdma;
+import android.telephony.TelephonyManager;
+import android.telephony.cdma.CdmaCellLocation;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -58,6 +72,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -68,16 +83,21 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_WIFI_STATE;
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.telephony.TelephonyManager.PHONE_TYPE_CDMA;
+import static android.telephony.TelephonyManager.PHONE_TYPE_GSM;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    private static final int CAMERA_REQUEST = 1888;
+
     public static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
     //  private static final int REQUEST_CAMERA_PERMISSION = 300;
@@ -99,13 +119,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private boolean permissionToCalendarWrite = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
-            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,VIBRATE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE};
+            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,
+            VIBRATE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_COARSE_LOCATION,READ_PHONE_STATE,ACCESS_WIFI_STATE};
     private GoogleApiClient mGoogleApiClient;
     private String userName = "";
 
     public static MainActivity thisActivity;
     private Timer timerUI;
-
+    TextView signalStrength;
+    TextView batteryStrength;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -117,6 +139,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         this.startService(service);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
+        batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
+
 
         thisActivity = this;
 
@@ -144,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 else {
                     moodLayout.setVisibility(View.VISIBLE);
                     relationsLayout.setVisibility(View.INVISIBLE);
+                    signalStrength.setText(String.valueOf(getReceptionLevel()));
+                    batteryStrength.setText(String.valueOf( getBatteryLevel()));
+
                 }
                 //       showDialog();
                 return true;
@@ -165,6 +194,47 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
     }
+
+
+    private int getBatteryLevel(){
+        BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
+        return bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+    }
+
+    private int getReceptionLevel(){
+
+        WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        int numberOfLevels=5;
+        if (mWifiManager.isWifiEnabled()) {
+            int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
+            int level = WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
+            return level;
+        }
+        int num =-1000;
+        TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        Object obj = telephonyManager.getAllCellInfo().get(0);
+        if (obj instanceof CellInfoLte) {
+
+            CellInfoLte cellinfogsm = (CellInfoLte) telephonyManager.getAllCellInfo().get(0);
+            CellSignalStrengthLte cellSignalStrengthLTE = cellinfogsm.getCellSignalStrength();
+            num = cellSignalStrengthLTE.getDbm();
+        }
+        else if (obj instanceof CellInfoWcdma)
+        {
+            CellInfoWcdma cellinfogsm = (CellInfoWcdma) telephonyManager.getAllCellInfo().get(0);
+            CellSignalStrengthWcdma cellSignalStrengthWCDMA = cellinfogsm.getCellSignalStrength();
+            num = cellSignalStrengthWCDMA.getDbm();
+        }
+       else if (obj instanceof CellInfoCdma)
+        {
+            CellInfoCdma cellinfogsm = (CellInfoCdma) telephonyManager.getAllCellInfo().get(0);
+            CellSignalStrengthCdma cellSignalStrengthCDMA = cellinfogsm.getCellSignalStrength();
+            num = cellSignalStrengthCDMA.getDbm();
+        }
+        return num;
+    }
+
+
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
                 .newInstance(R.string.alert_dialog_two_buttons_title);
@@ -453,66 +523,7 @@ public static MainActivity getInstance()
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == CAMERA_REQUEST && resultCode == RESULT_OK){
-            SilentCamera c = new SilentCamera(this);
-            c.getCameraInstance();
-            //c.prepareCamera();
-          //  String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"2.jpg";
-            c.takePicture();
-      //      String path = c.getLastImagePath();
-            c.releaseCamera();
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"1~01";
-            Bitmap photo = getImageBitmap(this,path);
-            //Bitmap photo=(Bitmap) data.getExtras().get("data");
-            FaceOverlayView mFaceOverlayView;  mFaceOverlayView = (FaceOverlayView) findViewById(R.id.face_overlay);
-            mFaceOverlayView.setBitmap(photo);
-
-            SparseArray<Face> mFaces =null;
-            FaceDetector detector = new FaceDetector.Builder( getApplicationContext() )
-                    .setTrackingEnabled(true)
-                    .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                    .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                    .build();
-
-            if (!detector.isOperational()) {
-                //Handle contingency
-            } else {
-                Frame frame = new Frame.Builder().setBitmap(photo).build();
-                mFaces = detector.detect(frame);
-                detector.release();
-            }
-            if(mFaces.size()==0){
-                Toast.makeText(MainActivity.this, "I don't see your face!",
-                        Toast.LENGTH_LONG).show();
-                GlobalPoints -= 2;
-            }else {
-                for (int i = 0; i < mFaces.size(); i++) {
-                    Face face = mFaces.valueAt(i);
-
-                    float smilingProbability = face.getIsSmilingProbability();
-
-
-                    if(smilingProbability<0.8) {
-                        Toast.makeText(MainActivity.this, "you don't smile",
-                                Toast.LENGTH_LONG).show();
-                        GlobalPoints--;
-                    }else
-                    {
-                        Toast.makeText(MainActivity.this, "you  smile!",
-                                Toast.LENGTH_LONG).show();
-                        GlobalPoints++;
-                    }
-
-                }
-            }
-
-        }
-
-    }
 
 
     @Override
