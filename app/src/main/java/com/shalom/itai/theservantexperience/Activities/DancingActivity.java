@@ -1,44 +1,24 @@
 package com.shalom.itai.theservantexperience.Activities;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Services.BuggerService;
-import com.shalom.itai.theservantexperience.ShakeListener;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.shalom.itai.theservantexperience.Utils.ShakeListener;
 
 import static android.view.View.INVISIBLE;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allInsults;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
 
 public class DancingActivity extends AppCompatActivity {
 

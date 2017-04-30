@@ -12,6 +12,7 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
+import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
@@ -29,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Camera;
 
 import android.media.MediaPlayer;
@@ -123,11 +125,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             VIBRATE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_COARSE_LOCATION,READ_PHONE_STATE,ACCESS_WIFI_STATE};
     private GoogleApiClient mGoogleApiClient;
     private String userName = "";
-
+    private boolean isSleeping = false;
     public static MainActivity thisActivity;
     private Timer timerUI;
     TextView signalStrength;
     TextView batteryStrength;
+    ConstraintLayout mainLayout;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -139,11 +142,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         this.startService(service);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
 
          signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
 
+        final GifImageView gifImageView = (GifImageView) findViewById(R.id.GifImageView);
+        //checkgif
+      //  gifImageView.setGifImageResource(R.drawable.jon_blink);
+        gifImageView.setGifImageResource(R.drawable.jon_blinks);
+        gifImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(isSleeping)
+                {//
+                    gifImageView.setGifImageResource(R.drawable.jon_blinks);
+                    Toast.makeText(MainActivity.this, "Morning!",
+                            Toast.LENGTH_SHORT).show();
+                    mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+                }
+                else {
+                    gifImageView.setGifImageResource(R.drawable.jon_sleeping);
+                    Toast.makeText(MainActivity.this, "Good night!",
+                            Toast.LENGTH_SHORT).show();
+                    mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
+                }
+                isSleeping = !isSleeping;
 
+            }
+        });
         thisActivity = this;
 
     }

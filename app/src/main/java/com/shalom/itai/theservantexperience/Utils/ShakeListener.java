@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Utils;
 
 /**
  * Created by Itai on 15/04/2017.

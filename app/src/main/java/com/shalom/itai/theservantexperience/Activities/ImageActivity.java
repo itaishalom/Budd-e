@@ -72,12 +72,8 @@ public class ImageActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show();
                         GlobalPoints++;
                     }
-
                 }
             }
-
         }
-
     }
-
 }
