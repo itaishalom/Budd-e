@@ -31,7 +31,7 @@ import java.util.TimerTask;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
+
 import static com.shalom.itai.theservantexperience.Services.BuggerService.allInsults;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
@@ -53,17 +53,11 @@ public class FunActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fun);
 
 
-
-
         rand = new Random();
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;
         int jokeNum = rand.nextInt(allJokes.size());
         text.setText("Q:"+allJokes.get(jokeNum));
-
-
-
-
 
         Button quitBut = (Button) findViewById(R.id.quit);
         quitBut.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +105,7 @@ public class FunActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                GlobalPoints++;
+                                BuggerService.setGlobalPoints(1);
                                 text.setText("");
                                 finish();
                             }
@@ -133,7 +127,7 @@ public class FunActivity extends AppCompatActivity {
                 imageViewLaugh.setVisibility(INVISIBLE);
                 ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
                 imageViewAngry.setVisibility(VISIBLE);
-                GlobalPoints--;
+                BuggerService.setGlobalPoints(-1);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -150,13 +144,10 @@ public class FunActivity extends AppCompatActivity {
 
     }
 
-
     public static FunActivity getInstance()
     {
         return thisActivity;
     }
-
-
 
     public void analayze() {
         SilentCamera c = new SilentCamera(this);
@@ -211,12 +202,12 @@ public class FunActivity extends AppCompatActivity {
                                     mFaceOverlayView.setBitmap(photo);
                                     Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
                                             Toast.LENGTH_LONG).show();
-                                    GlobalPoints--;
+                                    BuggerService.setGlobalPoints(-1);
                                 }else
                                 {
                                     Toast.makeText(FunActivity.this, "you  smile!",
                                             Toast.LENGTH_LONG).show();
-                                    GlobalPoints++;
+                                    BuggerService.setGlobalPoints(1);
                                 }
 
                             }
@@ -257,9 +248,6 @@ public class FunActivity extends AppCompatActivity {
                 //extract our message from intent
                 String pathToImage = intent.getStringExtra("path");
                 putResponseButtons(pathToImage);
-                //log our message value
-              //  Log.i("InchooTutorial", msg_for_me);
-
             }
         };
         //registering our receiver
