@@ -15,10 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.ShakeListener;
 
 import static android.view.View.INVISIBLE;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
+
 
 public class DancingActivity extends AppCompatActivity {
 
@@ -110,7 +111,7 @@ public class DancingActivity extends AppCompatActivity {
     {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);
-        GlobalPoints++;
+        BuggerService.setGlobalPoints(1);
         Toast.makeText(this, "I like it!!", Toast.LENGTH_SHORT).show();
     }
 
@@ -124,7 +125,7 @@ public class DancingActivity extends AppCompatActivity {
             mediaPlayer.start();
             Toast.makeText(this, "Demit you!!", Toast.LENGTH_SHORT).show();
             viber.vibrate(5500);
-            GlobalPoints = GlobalPoints - 5;
+            BuggerService.setGlobalPoints(-5);
             mSensorManager.unregisterListener(mShakeListener);
         }
         finish();

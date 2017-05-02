@@ -15,8 +15,8 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
 
-import static com.shalom.itai.theservantexperience.Services.BuggerService.GlobalPoints;
 
 public class ImageActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
@@ -54,7 +54,7 @@ public class ImageActivity extends AppCompatActivity {
             if(mFaces.size()==0){
                 Toast.makeText(this, "I don't see your face!",
                         Toast.LENGTH_LONG).show();
-                GlobalPoints -= 2;
+                BuggerService.setGlobalPoints(-2);
             }else {
                 for (int i = 0; i < mFaces.size(); i++) {
                     Face face = mFaces.valueAt(i);
@@ -65,12 +65,12 @@ public class ImageActivity extends AppCompatActivity {
                     if(smilingProbability<0.8) {
                         Toast.makeText(this, "you don't smile",
                                 Toast.LENGTH_LONG).show();
-                        GlobalPoints--;
+                        BuggerService.setGlobalPoints(-1);
                     }else
                     {
                         Toast.makeText(this, "you  smile!",
                                 Toast.LENGTH_LONG).show();
-                        GlobalPoints++;
+                        BuggerService.setGlobalPoints(1);
                     }
                 }
             }

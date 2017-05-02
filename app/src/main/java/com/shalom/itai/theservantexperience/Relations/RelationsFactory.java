@@ -5,19 +5,19 @@ package com.shalom.itai.theservantexperience.Relations;
  */
 
 public class RelationsFactory {
-    public RelationsStatus getRelationStatus(int points)
+    public static RelationsStatus getRelationStatus(int points)
     {
         if(points<0){
-            return new Haters();
+            return Haters.getInstance();
         }
         if(0<= points && points<10) {
-            return new Strangers();
+            return Strangers.getInstance();
         }
         if(10<= points && points<20) {
-            return new Friends();
+            return Friends.getInstance();
         }
         if(20<=points) {
-            return new Friends();
+            return BestFriends.getInstance();
         }
         return null;
     }

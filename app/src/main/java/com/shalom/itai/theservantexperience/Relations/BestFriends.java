@@ -9,4 +9,12 @@ public class BestFriends extends RelationsStatus {
     {
         this.relationStatus = "Best Friends";
     }
+
+    public static RelationsStatus getInstance(){
+        if(instance==null)
+        {
+            instance= new BestFriends();
+        }
+        return instance;
+    }
 }

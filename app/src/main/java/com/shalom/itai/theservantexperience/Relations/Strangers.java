@@ -5,12 +5,12 @@ package com.shalom.itai.theservantexperience.Relations;
  */
 
 public class Strangers extends RelationsStatus {
-    private static Strangers instance;
-    public Strangers(){
+   //private static Strangers instance;
+    private Strangers(){
         this.relationStatus = "Strangers";
     }
 
-    public static Strangers getInstance(){
+    public static RelationsStatus getInstance(){
         if(instance==null)
         {
             instance= new Strangers();

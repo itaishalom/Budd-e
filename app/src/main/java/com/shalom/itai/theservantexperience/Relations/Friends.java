@@ -5,7 +5,15 @@ package com.shalom.itai.theservantexperience.Relations;
  */
 
 public class Friends extends RelationsStatus {
-    public Friends(){
+    private static Friends instance;
+    private Friends(){
         this.relationStatus ="Friends";
+    }
+    public static RelationsStatus getInstance(){
+        if(instance==null)
+        {
+            instance= new Friends();
+        }
+        return instance;
     }
 }

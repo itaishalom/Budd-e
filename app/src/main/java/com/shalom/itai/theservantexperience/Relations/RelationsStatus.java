@@ -6,6 +6,6 @@ package com.shalom.itai.theservantexperience.Relations;
 
 public abstract class RelationsStatus {
     protected String relationStatus;
-   // protected static RelationsStatus instance;
+    protected static RelationsStatus instance;
    // public static RelationsStatus getInstance();
 }
