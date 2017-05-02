@@ -6,13 +6,8 @@ package com.shalom.itai.theservantexperience.Activities;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
        */
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
+import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatListViewAdapter;
-import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
@@ -22,26 +17,15 @@ import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
-
-import android.os.Environment;
 
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -50,23 +34,16 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;
-import android.telephony.CellInfo;
 import android.telephony.CellInfoCdma;
-import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
 import android.telephony.CellSignalStrengthCdma;
-import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
-import android.telephony.cdma.CdmaCellLocation;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
-import android.util.SparseArray;
 
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -77,7 +54,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,17 +116,13 @@ public class MainActivity extends AppCompatActivity {
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.getInstance(), SpeechRecognitionActivity.class);
-      /*
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        */
+                Intent intent = new Intent(MainActivity.getInstance(), ChatActivity.class);
                 startActivity(intent);
                 //doSleepLogic();
             }
         });
         thisActivity = this;
+
 
     }
 
@@ -162,15 +134,19 @@ public class MainActivity extends AppCompatActivity {
 
         }
         else {
-            gifImageView.setGifImageResource(R.drawable.jon_sleeping);
-            Toast.makeText(MainActivity.this, "Good night!",
-                    Toast.LENGTH_SHORT).show();
-            mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
-            isSleeping = !isSleeping;
+            changeToSleepingJon();
         }
 
     }
 
+    private void changeToSleepingJon()
+    {
+        gifImageView.setGifImageResource(R.drawable.jon_sleeping);
+        Toast.makeText(MainActivity.this, "Good night!",
+                Toast.LENGTH_SHORT).show();
+        mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
+        isSleeping = !isSleeping;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -340,17 +316,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        chatImage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                doSleepLogic();
+            }
+        });
+        boolean sleepStatus = intent.getBooleanExtra("sleep",false);
+        if(sleepStatus)
+            changeToSleepingJon();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         BuggerService.isMainActivityUp = true;
+
         //   mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Toast.makeText(MainActivity.this, "I am still here!",
-                Toast.LENGTH_LONG).show();
+   /*     Toast.makeText(MainActivity.this, "I am still here!",
+                Toast.LENGTH_LONG).show();*/
     }
 
 

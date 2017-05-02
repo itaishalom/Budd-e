@@ -54,4 +54,5 @@ public class ChatListViewAdapter extends ArrayAdapter<String> {
 
         return mView;
     }
+
 }

@@ -6,7 +6,8 @@
     android:versionName="1.0">
 
     <uses-sdk android:minSdkVersion="15" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -44,6 +45,8 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-library android:name="org.apache.logging.log4j" />
 
     <application
         android:allowBackup="true"
@@ -105,7 +108,8 @@
             android:name=".Activities.DancingActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".Activities.ImageActivity" />
-        <activity android:name=".Activities.RecordActivity"></activity>
+        <activity android:name=".Activities.RecordActivity" />
+        <activity android:name=".ChatBot.ChatActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
