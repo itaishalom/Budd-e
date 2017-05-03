@@ -100,30 +100,38 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-        Intent service = new Intent(this, BuggerService.class);
-        this.startService(service);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
+        startService(new Intent(this, BuggerService.class));
+        initializeGui();
+        setBubbleFunction(false);
+        thisActivity = this;
+    }
 
+    private void setBubbleFunction(boolean wakeUp){
+        if(!wakeUp) {
+            chatImage.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.getInstance(), ChatActivity.class));
+                }
+            });
+        }else
+        {
+            chatImage.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    doSleepLogic();
+                }
+            });
+        }
+    }
+
+    private void initializeGui(){
+        setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
+        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = ( ListView ) findViewById( R.id.chat_list);
         gifImageView = (GifImageView) findViewById(R.id.GifImageView);
         chatImage = (ImageView) findViewById(R.id.chat_image);
-        //checkgif
-        //  gifImageView.setGifImageResource(R.drawable.jon_blink);
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
-        chatImage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.getInstance(), ChatActivity.class);
-                startActivity(intent);
-                //doSleepLogic();
-            }
-        });
-        thisActivity = this;
-
-
     }
 
     private void doSleepLogic()
@@ -136,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         else {
             changeToSleepingJon();
         }
-
     }
 
     private void changeToSleepingJon()
@@ -318,11 +325,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        chatImage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                doSleepLogic();
-            }
-        });
+        setBubbleFunction(true);
         boolean sleepStatus = intent.getBooleanExtra("sleep",false);
         if(sleepStatus)
             changeToSleepingJon();
@@ -403,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 //   String o = (String) parent.getItemAtPosition(position);
                Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
                 chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+                setBubbleFunction(false);
             }
         });
     }
