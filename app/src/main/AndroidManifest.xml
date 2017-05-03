@@ -59,6 +59,7 @@
             android:name=".Services.BuggerService"
             android:icon="@drawable/icon"
             android:label="@string/service_name" />
+        <receiver android:name="MyScheduledReceiver"></receiver>
 
         <activity
             android:name=".Activities.SpeechRecognitionActivity"
@@ -109,7 +110,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".Activities.ImageActivity" />
         <activity android:name=".Activities.RecordActivity" />
-        <activity android:name=".ChatBot.ChatActivity" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ChatBot.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MessageBox" android:theme="@style/Theme.Transparent"  android:launchMode="singleInstance" ></activity>
     </application>
 
 </manifest>

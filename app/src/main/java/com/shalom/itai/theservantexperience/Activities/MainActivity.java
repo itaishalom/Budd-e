@@ -9,6 +9,7 @@ package com.shalom.itai.theservantexperience.Activities;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.GifImageView;
+import com.shalom.itai.theservantexperience.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
@@ -17,6 +18,8 @@ import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -102,9 +105,26 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         startService(new Intent(this, BuggerService.class));
         initializeGui();
-        setBubbleFunction(false);
+
+      setBubbleFunction(false);
         thisActivity = this;
     }
+
+    public void popUpMessage(){
+        int x = 4;
+
+        Intent intent = new Intent(this, MyScheduledReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this.getApplicationContext(), 234324243, intent, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.set(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + (x * 1000),
+                pendingIntent);
+        Toast.makeText(this,
+                "Alarm set in " + x + " seconds",
+                Toast.LENGTH_LONG).show();
+    }
+
 
     private void setBubbleFunction(boolean wakeUp){
         if(!wakeUp) {
