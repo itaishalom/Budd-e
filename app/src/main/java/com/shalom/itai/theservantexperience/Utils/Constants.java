@@ -11,5 +11,6 @@ public class Constants {
     public static final String PREFS_NAME = "MySettings";
     public static final String IS_INSTALLED = "isInstalled";
     public static final String IS_LOCKED = "isLocked";
-
+    public static final String CHAT_START_MESSAGE = "startConversation";
+    public static final String CHAT_QUICK_REPLY = "answerToConversation";
 }

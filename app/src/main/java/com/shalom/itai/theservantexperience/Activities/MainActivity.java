@@ -7,9 +7,9 @@ package com.shalom.itai.theservantexperience.Activities;
        */
 
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
-import com.shalom.itai.theservantexperience.ChatListViewAdapter;
+import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.GifImageView;
-import com.shalom.itai.theservantexperience.MyScheduledReceiver;
+import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
@@ -69,6 +69,7 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private RSSFeedParser feeder;
     private boolean safeToTakePicture = false;
 
-    // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         initializeGui();
 
       setBubbleFunction(false);
+        popUpMessage();
         thisActivity = this;
     }
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         if(!wakeUp) {
             chatImage.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.getInstance(), ChatActivity.class));
+
                 }
             });
         }else
@@ -406,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
     {
         RSSFeedParser feeder = new RSSFeedParser();
 
-        Thread thread = feeder.fetchXML("http://www.ynet.co.il/Integration/StoryRss1854.xml");
+        Thread thread = feeder.fetchXML("http://www.ynet.co.il/Integration/StoryRss3254.xml");
         thread.start();
         try {
             thread.join();
@@ -427,6 +428,9 @@ public class MainActivity extends AppCompatActivity {
                Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
                 chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
                 setBubbleFunction(false);
+                startActivity(new Intent(MainActivity.getInstance(),
+                        ChatActivity.class).putExtra(CHAT_START_MESSAGE,
+                        chatListView.getItemAtPosition(position).toString()+" What you think?"));
             }
         });
     }

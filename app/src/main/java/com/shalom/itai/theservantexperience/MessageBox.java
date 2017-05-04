@@ -1,10 +1,18 @@
 package com.shalom.itai.theservantexperience;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
+
+import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_REPLY;
+import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 
 public class MessageBox extends Activity {
 
@@ -20,7 +28,13 @@ public class MessageBox extends Activity {
 
                 @Override
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
+                    TextView textView = (TextView) findViewById(R.id.jons_text) ;
+                    TextView textResponse = (TextView) findViewById(R.id.user_response) ;
+                    Intent chatIntent = new Intent(MainActivity.getInstance(), ChatActivity.class);
+
+                    chatIntent.putExtra(CHAT_START_MESSAGE,textView.getText());
+                    chatIntent.putExtra(CHAT_QUICK_REPLY,textResponse.getText());
+                    startActivity(chatIntent);
                     finish();
                 }
             });

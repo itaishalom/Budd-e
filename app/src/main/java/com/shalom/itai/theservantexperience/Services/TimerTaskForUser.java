@@ -13,6 +13,8 @@ import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity
 
 import java.util.List;
 
+import static com.shalom.itai.theservantexperience.Services.BuggerService.Activities;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.indexActive;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
 import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 
@@ -21,12 +23,9 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAn
  */
 
 public class TimerTaskForUser extends ContextTimerTask {
-    Class[] Activities;
-    int indexActive = 0;
+
     TimerTaskForUser (Context context) {
         super(context);
-        Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
-
     }
 
 
@@ -37,25 +36,15 @@ public class TimerTaskForUser extends ContextTimerTask {
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
         String activityOnTop=ar.topActivity.getClassName();
-/*
-        if(BuggerService.pathToLastImage !="")
-        {
-            FunActivity.getInstance().continueAnalyze();
-        }*/
-//
+
         if(!checkScreenAndLock(mContext))
             return;
 
         if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
-                && !activityOnTop.toLowerCase().contains("camera"))
-
-        // if(!BuggerService.isFunActivityUp && !BuggerService.isMainActivityUp)
-        {
+                && !activityOnTop.toLowerCase().contains("camera")) {
             if(!stopBugger){
-                int i = indexActive;
+                Intent intent = new Intent(this.mContext, Activities[indexActive]);
                 indexActive++;
-                Intent intent = new Intent(this.mContext, Activities[i]);
-
                 if (indexActive==Activities.length)
                     indexActive = 0;
                 this.mContext.startActivity(intent);}

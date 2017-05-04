@@ -59,7 +59,7 @@
             android:name=".Services.BuggerService"
             android:icon="@drawable/icon"
             android:label="@string/service_name" />
-        <receiver android:name="MyScheduledReceiver"></receiver>
+        <receiver android:name=".ChatBot.MyScheduledReceiver"></receiver>
 
         <activity
             android:name=".Activities.SpeechRecognitionActivity"

@@ -1,4 +1,4 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.ChatBot;
 
 /**
  * Created by Itai on 01/05/2017.
@@ -17,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.shalom.itai.theservantexperience.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

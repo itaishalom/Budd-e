@@ -1,8 +1,10 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.ChatBot;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.shalom.itai.theservantexperience.MessageBox;
 
 /**
  * Created by Itai on 03/05/2017.

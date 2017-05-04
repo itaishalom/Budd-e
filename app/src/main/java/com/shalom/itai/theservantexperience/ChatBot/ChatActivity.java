@@ -25,6 +25,9 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import ai.api.model.Result;
 
+import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_REPLY;
+import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
+
 
 public class ChatActivity extends AppCompatActivity implements AIListener {
     private static final String TAG = "ChatActivity";
@@ -51,11 +54,21 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
         listView.setAdapter(chatArrayAdapter);
 
         chatText = (EditText) findViewById(R.id.msg);
+        Intent startIntent = getIntent();
+        String startCov = startIntent.getStringExtra(CHAT_START_MESSAGE);
+        if(startCov !=null && !startCov.isEmpty()){
+            sendChatMessage(false,false,startCov);
+        }
+        String chatReply = startIntent.getStringExtra(CHAT_QUICK_REPLY);
+        if(chatReply !=null && !chatReply.isEmpty()){
+            sendChatMessage(true,true,chatReply);
+        }
+
         chatText.setText("who are you?");
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    return sendChatMessage(true,true);
+                    return sendChatMessage(true,true,"");
                 }
                 return false;
             }
@@ -63,7 +76,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatMessage(true,true);// isLeft= true
+                sendChatMessage(true,true,"");// isLeft= true
             }
         });
 
@@ -90,11 +103,18 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
         return instance;
     }
 
-    private boolean sendChatMessage(boolean isLeft,boolean waitForRespond) {
-        final String Query = chatText.getText().toString();
+    private boolean sendChatMessage(boolean isLeft,boolean waitForRespond, String text) {
+        String tempText = "";
+        if(!text.isEmpty())
+        {
+            tempText = text;
+        }else {
+            tempText =chatText.getText().toString();
+            chatText.setText("");
+        }
+        final String Query = tempText;
 
         chatArrayAdapter.add(new ChatMessage(isLeft,Query ));
-        chatText.setText("");
         if(!waitForRespond)
             return true;
         final AIRequest aiRequest = new AIRequest();
@@ -131,8 +151,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
                                 startActivity(intent);
                                 finish();
                             }
-                                    chatText.setText(res);
-                            sendChatMessage(false,false);
+                            sendChatMessage(false,false,res);
                            // Toast.makeText(getApplicationContext(),res,Toast.LENGTH_LONG).show();
                             /*Toast.makeText(getApplicationContext(),"Query:" + result.getResolvedQuery() +
                                     "\nAction: " + result.getAction() +

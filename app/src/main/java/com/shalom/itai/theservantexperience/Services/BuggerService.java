@@ -11,7 +11,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.shalom.itai.theservantexperience.Activities.DancingActivity;
+import com.shalom.itai.theservantexperience.Activities.FunActivity;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.Activities.SmsSendActivity;
+import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
@@ -38,6 +42,8 @@ public class BuggerService extends Service {
     private static Timer timerBugger = new Timer();
     private static Timer timerLock = new Timer();
     public static boolean stopBugger = false;
+    public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static int indexActive = 0;
     private int mId=0;
     private static int GlobalPoints = 0;     //TODO READ FROM CONF!
     private static BuggerService mInstance;
