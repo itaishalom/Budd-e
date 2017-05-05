@@ -105,7 +105,7 @@ public class FunActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                BuggerService.setGlobalPoints(1);
+                                BuggerService.setSYSTEM_GlobalPoints(1);
                                 text.setText("");
                                 finish();
                             }
@@ -127,7 +127,7 @@ public class FunActivity extends AppCompatActivity {
                 imageViewLaugh.setVisibility(INVISIBLE);
                 ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
                 imageViewAngry.setVisibility(VISIBLE);
-                BuggerService.setGlobalPoints(-1);
+                BuggerService.setSYSTEM_GlobalPoints(-1);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -202,12 +202,12 @@ public class FunActivity extends AppCompatActivity {
                                     mFaceOverlayView.setBitmap(photo);
                                     Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
                                             Toast.LENGTH_LONG).show();
-                                    BuggerService.setGlobalPoints(-1);
+                                    BuggerService.setSYSTEM_GlobalPoints(-1);
                                 }else
                                 {
                                     Toast.makeText(FunActivity.this, "you  smile!",
                                             Toast.LENGTH_LONG).show();
-                                    BuggerService.setGlobalPoints(1);
+                                    BuggerService.setSYSTEM_GlobalPoints(1);
                                 }
 
                             }

@@ -10,9 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
@@ -54,7 +52,7 @@ public class ImageActivity extends AppCompatActivity {
             if(mFaces.size()==0){
                 Toast.makeText(this, "I don't see your face!",
                         Toast.LENGTH_LONG).show();
-                BuggerService.setGlobalPoints(-2);
+                BuggerService.setSYSTEM_GlobalPoints(-2);
             }else {
                 for (int i = 0; i < mFaces.size(); i++) {
                     Face face = mFaces.valueAt(i);
@@ -65,12 +63,12 @@ public class ImageActivity extends AppCompatActivity {
                     if(smilingProbability<0.8) {
                         Toast.makeText(this, "you don't smile",
                                 Toast.LENGTH_LONG).show();
-                        BuggerService.setGlobalPoints(-1);
+                        BuggerService.setSYSTEM_GlobalPoints(-1);
                     }else
                     {
                         Toast.makeText(this, "you  smile!",
                                 Toast.LENGTH_LONG).show();
-                        BuggerService.setGlobalPoints(1);
+                        BuggerService.setSYSTEM_GlobalPoints(1);
                     }
                 }
             }

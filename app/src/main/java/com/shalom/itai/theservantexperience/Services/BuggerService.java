@@ -22,17 +22,18 @@ import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 
-import javax.microedition.khronos.opengles.GL;
-
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import static com.shalom.itai.theservantexperience.Utils.Functions.*;
 
 /**
  * Created by Itai on 09/04/2017.
  */
 
 public class BuggerService extends Service {
+    private static boolean isServiceUP =false;
     public static boolean isMainActivityUp = false;
     public static boolean isFunActivityUp = false;
     public static boolean isLoginUp = false;
@@ -45,9 +46,12 @@ public class BuggerService extends Service {
     public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
-    private static int GlobalPoints = 0;     //TODO READ FROM CONF!
+    private static int SYSTEM_GlobalPoints = 10;     //TODO READ FROM CONF!
     private static BuggerService mInstance;
     private static RelationsStatus currentStatus;
+    private int SYSTEM_oldDay;
+    private int SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
+    private int SYSTEM_NUM_OF_CHATS_POINTS;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -59,13 +63,24 @@ public class BuggerService extends Service {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        SYSTEM_CURRENT_NUM_OF_CHATS_POINTS=0;
         startService();
     }
     private void startService()
     {
+        currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+        Calendar c = Calendar.getInstance();
+        SYSTEM_oldDay = c.get(Calendar.DAY_OF_YEAR);
+        SYSTEM_NUM_OF_CHATS_POINTS = thorowRandom(3,1);
         Functions.createJokes();
     //    new CheckRunningActivity(getBaseContext()).start();
 
+    }
+
+
+    public  RelationsStatus getRelationsStatus()
+    {
+        return currentStatus;
     }
 
 public static BuggerService getInstance(){
@@ -89,10 +104,14 @@ public static BuggerService getInstance(){
            editor.putBoolean(IS_INSTALLED, true);
             editor.commit();
 */
-
+        isServiceUP= true;
         return Service.START_STICKY;
     }
 
+    public static boolean getIsServiceUP()
+    {
+        return isServiceUP;
+    }
     public  void lock()
     {
         timerLock = new Timer();
@@ -117,9 +136,28 @@ public static BuggerService getInstance(){
 
     }
 
-    public static void setGlobalPoints(int pts){
-        GlobalPoints = GlobalPoints + pts;
-        currentStatus = RelationsFactory.getRelationStatus(pts);
+    public  boolean allowToChangeFromChat(){
+        Calendar c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_YEAR);
+        if(day != SYSTEM_oldDay){
+            SYSTEM_oldDay = day;
+            SYSTEM_CURRENT_NUM_OF_CHATS_POINTS=1;
+            return true;
+        }else if(SYSTEM_CURRENT_NUM_OF_CHATS_POINTS<= SYSTEM_NUM_OF_CHATS_POINTS){
+            SYSTEM_CURRENT_NUM_OF_CHATS_POINTS++;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static void setSYSTEM_GlobalPoints(int pts){
+        SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
+        currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+    }
+
+    public static int getSYSTEM_GlobalPoints(){
+       return SYSTEM_GlobalPoints;
     }
 
     private void addNotification()

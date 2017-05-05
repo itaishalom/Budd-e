@@ -157,7 +157,7 @@
             android:layout_marginLeft="53dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="53dp"
-            android:text="Strangers"
+            android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.27"
             app:layout_constraintLeft_toRightOf="@+id/friendship_level"
@@ -199,7 +199,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
-            android:id="@+id/progressBar3"
+            android:id="@+id/progressBarRelations"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="89dp"
             android:layout_height="16dp"
@@ -211,7 +211,7 @@
             android:bottomLeftRadius="5px"
             android:bottomRightRadius="5px"
             android:max="100"
-            android:progress="80"
+            android:progress="0"
             android:progressDrawable="@drawable/custom_progressbar"
             android:topLeftRadius="5px"
             android:topRightRadius="5px"

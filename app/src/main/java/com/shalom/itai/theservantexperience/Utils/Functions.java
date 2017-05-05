@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 
@@ -179,5 +180,10 @@ public class Functions {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static int thorowRandom(int upper, int lower) {
+        Random rand = new Random();
+        return rand.nextInt(upper) + lower;
     }
 }

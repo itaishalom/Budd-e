@@ -2,9 +2,11 @@ package com.shalom.itai.theservantexperience.ChatBot;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -14,6 +16,10 @@ import android.widget.ListView;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+
+import java.util.Calendar;
+import java.util.List;
 
 import ai.api.AIDataService;
 import ai.api.AIListener;
@@ -23,6 +29,7 @@ import ai.api.model.AIError;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
+import ai.api.model.ResponseMessage;
 import ai.api.model.Result;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_REPLY;
@@ -64,7 +71,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
             sendChatMessage(true,true,chatReply);
         }
 
-        chatText.setText("who are you?");
+        chatText.setText("I hate you");
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -91,7 +98,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
                 listView.setSelection(chatArrayAdapter.getCount() - 1);
             }
         });
-        final AIConfiguration config = new AIConfiguration("d83c66cd6fa046ae8539d9e566004fe0",
+        final AIConfiguration config = new AIConfiguration("7f164d5c270e4014aa878dd674c6bccf",
                 AIConfiguration.SupportedLanguages.English,
                 AIConfiguration.RecognitionEngine.System);
 
@@ -112,19 +119,20 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
             tempText =chatText.getText().toString();
             chatText.setText("");
         }
-        final String Query = tempText;
+        final String query = tempText;
 
-        chatArrayAdapter.add(new ChatMessage(isLeft,Query ));
+        chatArrayAdapter.add(new ChatMessage(isLeft,query ));
         if(!waitForRespond)
             return true;
         final AIRequest aiRequest = new AIRequest();
-        aiRequest.setQuery(Query);
+        aiRequest.setQuery(query);
         new AsyncTask<AIRequest, Void, AIResponse>() {
             @Override
             protected AIResponse doInBackground(AIRequest... requests) {
                 final AIRequest request = requests[0];
                 try {
                     final AIResponse response = aiDataService.request(aiRequest);
+
                     final Result result = response.getResult();
 
                     // Get parameters
@@ -142,16 +150,46 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 
                         @Override
                         public void run(){
-
+                            if (result.getMetadata().getIntentName() == null)
+                            {
+                                Uri uri = Uri.parse("http://www.google.com/#q="+query.replace(" ","+"));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                                sendChatMessage(false,false,"I hope it helped you");
+                                return;
+                            }
+                            if(BuggerService.getInstance().allowToChangeFromChat()) {
+                                if (result.getAction().equals("lowerPoints")) {
+                                    BuggerService.setSYSTEM_GlobalPoints(-1);
+                                } else if (result.getAction().equals("incPoints")) {
+                                    BuggerService.setSYSTEM_GlobalPoints(1);
+                                }
+                            }
                             Fulfillment answer =result.getFulfillment();
-                            String res = answer.getSpeech();
-                            if(Query.contains("night") && res.toLowerCase().contains("bye")){
+
+                            List<ResponseMessage> resultList = answer.getMessages();
+                            String finalAnswer = "";
+                            if(resultList.size()==1)
+                            {
+                                finalAnswer = ((ResponseMessage.ResponseSpeech)resultList.get(0)).getSpeech().get(0).toString();
+                            }
+                            else{
+                                String status  = BuggerService.getInstance().getRelationsStatus().getRelationStatus();
+                                Log.d(TAG, "run: " + status);
+                                finalAnswer =
+                                        ((ResponseMessage.ResponseSpeech)resultList.get(BuggerService.getInstance().getRelationsStatus().getResponseNumber())).getSpeech().get(0).toString();
+                            }
+                            if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
+                                sendChatMessage(false,false,finalAnswer);
                                 Intent intent = new Intent(ChatActivity.getInstance(), MainActivity.class);
                                 intent.putExtra("sleep",true);
                                 startActivity(intent);
                                 finish();
+                                return;
                             }
-                            sendChatMessage(false,false,res);
+                            sendChatMessage(false,false,finalAnswer);
+
+
                            // Toast.makeText(getApplicationContext(),res,Toast.LENGTH_LONG).show();
                             /*Toast.makeText(getApplicationContext(),"Query:" + result.getResolvedQuery() +
                                     "\nAction: " + result.getAction() +

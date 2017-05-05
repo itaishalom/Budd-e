@@ -7,6 +7,8 @@ package com.shalom.itai.theservantexperience.Relations;
 public class Friends extends RelationsStatus {
     private static Friends instance;
     private Friends(){
+        maxValProgress = 30;
+        RESPONSE_NUMBER = 2;
         this.relationStatus ="Friends";
     }
     public static RelationsStatus getInstance(){
