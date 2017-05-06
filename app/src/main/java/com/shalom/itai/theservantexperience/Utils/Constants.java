@@ -13,4 +13,6 @@ public class Constants {
     public static final String IS_LOCKED = "isLocked";
     public static final String CHAT_START_MESSAGE = "startConversation";
     public static final String CHAT_QUICK_REPLY = "answerToConversation";
+    public static final String MESSAGE_BOX_START_ACTIVITY = "StartActivityFromPopUp";
+    public static final int LISTEN_SOUND_INTERVAL = 10000;
 }

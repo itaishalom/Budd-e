@@ -71,10 +71,9 @@ public class BuggerService extends Service {
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         Calendar c = Calendar.getInstance();
         SYSTEM_oldDay = c.get(Calendar.DAY_OF_YEAR);
-        SYSTEM_NUM_OF_CHATS_POINTS = thorowRandom(3,1);
+        SYSTEM_NUM_OF_CHATS_POINTS = throwRandom(3,1);
         Functions.createJokes();
     //    new CheckRunningActivity(getBaseContext()).start();
-
     }
 
 

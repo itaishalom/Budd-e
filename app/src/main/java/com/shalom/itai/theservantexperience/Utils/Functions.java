@@ -182,7 +182,7 @@ public class Functions {
         return null;
     }
 
-    public static int thorowRandom(int upper, int lower) {
+    public static int throwRandom(int upper, int lower) {
         Random rand = new Random();
         return rand.nextInt(upper) + lower;
     }
