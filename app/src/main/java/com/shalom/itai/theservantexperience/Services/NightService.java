@@ -29,7 +29,9 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 public class NightService extends Service {
     private boolean isServiceUP;
     private int mId=1;
+    private static NightService mInstance;
     private static Timer SoundListenTimer = new Timer();
+    private int flag;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,19 +62,28 @@ public class NightService extends Service {
     public boolean stopService(Intent name) {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
+        isServiceUP = false;
+        if(name.getBooleanExtra("IS_MY_STOP",false))
+            this.stopSelf();
         return super.stopService(name);
     }
+    public void onCreate() {
+        super.onCreate();
+        mInstance = this;
 
-
+    }
 
 
 
     private void startNoiseListener() {
         SoundListenTimer = new Timer();
-        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(this), 0, throwRandom(4,1)*LISTEN_SOUND_INTERVAL);
+        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(this), 0, throwRandom(1,1)*LISTEN_SOUND_INTERVAL);
     }
 
 
+    public static NightService getInstance(){
+        return mInstance;
+    }
 
     private void addNotification()
     {
@@ -108,4 +119,12 @@ public class NightService extends Service {
         mNotificationManager.notify(mId, mBuilder.build());
     }
 
+
+
+
+    public void stopNoiseListener() {
+        SoundListenTimer.cancel();
+        SoundListenTimer.purge();
+        BuggerService.getInstance().wakeUpJon();
+    }
 }

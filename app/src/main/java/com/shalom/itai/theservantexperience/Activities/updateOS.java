@@ -18,7 +18,7 @@ import android.widget.VideoView;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
-
+import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 
 /**
@@ -117,8 +117,13 @@ public class updateOS extends AppCompatActivity {
         if(isInstalled)
         {
 
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+            /*
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("runMainActivity",true);
             startActivity(intent);
+*/
+            startService(new Intent(this, BuggerService.class).putExtra("runMainActivity",true));
+
             finish();
 
             return;
@@ -188,9 +193,12 @@ public class updateOS extends AppCompatActivity {
             public void onCompletion(MediaPlayer mp) {
       //          mp.release();
 
-
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+/*
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("runMainActivity",true);
                 startActivity(intent);
+  */
+                startService(new Intent(getApplicationContext(), BuggerService.class).putExtra("runMainActivity",true));
                 finish();
             }
 

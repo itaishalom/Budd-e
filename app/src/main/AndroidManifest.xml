@@ -59,7 +59,18 @@
             android:name=".Services.BuggerService"
             android:icon="@drawable/icon"
             android:label="@string/service_name" />
-        <receiver android:name=".ChatBot.MyScheduledReceiver"></receiver>
+
+        <service
+            android:name=".Services.MorningService"
+            android:icon="@drawable/icon"
+            android:label="@string/service_name" />
+
+        <service
+            android:name=".Services.NightService"
+            android:icon="@drawable/icon"
+            android:label="@string/service_name" />
+
+        <receiver android:name=".ChatBot.MyScheduledReceiver" />
 
         <activity
             android:name=".Activities.SpeechRecognitionActivity"
@@ -113,7 +124,11 @@
         <activity
             android:name=".ChatBot.ChatActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MessageBox" android:theme="@style/Theme.Transparent"  android:launchMode="singleInstance" ></activity>
+        <activity
+            android:name=".MessageBox"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Transparent" />
+        <activity android:name=".Activities.GameActivity"></activity>
     </application>
 
 </manifest>

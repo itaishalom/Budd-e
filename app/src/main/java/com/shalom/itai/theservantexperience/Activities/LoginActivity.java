@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.Services.MorningService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -322,12 +323,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 isLoginUp = true;
-                BuggerService.getInstance().unLock();
+                MorningService.getInstance().unLock();
                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(IS_LOCKED, false);
                 editor.commit();
-                BuggerService.getInstance().bug();
+                MorningService.getInstance().bug();
 
 
                 finish();

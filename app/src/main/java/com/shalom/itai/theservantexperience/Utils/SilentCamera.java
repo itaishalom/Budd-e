@@ -114,12 +114,12 @@ public class SilentCamera {
         camera.startPreview();
 
         Camera.Parameters params = camera.getParameters();
-        params.setJpegQuality(100);
+        params.setJpegQuality(40);
         params.setRotation(270);
     //    params.setRotation(90);
         camera.setParameters(params);
     }
-
+/*
     private Camera.PictureCallback mPicture = new Camera.PictureCallback(){
         @Override
         public void onPictureTaken(byte[] data, Camera camera){
@@ -140,6 +140,16 @@ public class SilentCamera {
             } catch (IOException e){
                 Log.d("TEST","Error accessing file: "+e.getMessage());
             }
+        }
+    };
+*/
+
+
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback(){
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera){
+            Intent i = new Intent("android.intent.action.ImageReady").putExtra("path", data);
+            context.sendBroadcast(i);
         }
     };
 

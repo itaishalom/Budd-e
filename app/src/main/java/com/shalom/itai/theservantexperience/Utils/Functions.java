@@ -3,7 +3,9 @@ package com.shalom.itai.theservantexperience.Utils;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.KeyguardManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,12 +19,15 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.CalendarContract;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
@@ -34,9 +39,9 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allFacts;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allInsults;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allJokes;
+import static com.shalom.itai.theservantexperience.Services.MorningService.allFacts;
+import static com.shalom.itai.theservantexperience.Services.MorningService.allInsults;
+import static com.shalom.itai.theservantexperience.Services.MorningService.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 
 /**
@@ -185,5 +190,19 @@ public class Functions {
     public static int throwRandom(int upper, int lower) {
         Random rand = new Random();
         return rand.nextInt(upper) + lower;
+    }
+
+    public static void popUpMessage(Context context, String text){
+        int x = 4;
+        Intent intent = new Intent(context, MyScheduledReceiver.class);
+        intent.putExtra(MESSAGE_BOX_START_ACTIVITY,"MainActivity");
+        intent.putExtra("START_TEXT",text);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(), 234324243, intent, 0);
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarm.set(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + (x * 1000),
+                pendingIntent);
+
     }
 }

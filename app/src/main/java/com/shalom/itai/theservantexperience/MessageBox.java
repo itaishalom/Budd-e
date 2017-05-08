@@ -17,7 +17,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_ME
 import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 
 public class MessageBox extends Activity {
-
+    private static MessageBox  instance;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,12 @@ public class MessageBox extends Activity {
         setContentView(R.layout.activity_message_box);
         final Intent startIntent = getIntent();
         Button btn = (Button) findViewById(R.id.ok);
+
+        if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("MainActivity")) {
+            ((TextView) findViewById(R.id.jons_text_message_box)).setText(getIntent().getStringExtra("START_TEXT"));
+            findViewById(R.id.user_response).setVisibility(View.INVISIBLE);
+        }
+
         btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -40,15 +46,18 @@ public class MessageBox extends Activity {
                     TextView tx = (TextView) findViewById(R.id.jon_text) ;
                     tx.setText("");
                 }
-                else if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("MainActivity")) {
+                else{
                     chatIntent = new Intent(MainActivity.getInstance(), MainActivity.class);
-                    findViewById(R.id.user_response).setVisibility(View.INVISIBLE);
-                    ((TextView) findViewById(R.id.jons_text_message_box)).setText("Hi! You woke me up !");
+
                     chatIntent.putExtra("wakeUpOptions",true);
                 }
                 startActivity(chatIntent);
                 finish();
             }
         });
+    instance = this;
+    }
+    public static MessageBox getInstance(){
+        return instance;
     }
 }

@@ -21,6 +21,7 @@ public class NoiseListener {
 
     public void start() {
         try {
+
             recorder.prepare();
             recorder.start();
             recorder.getMaxAmplitude();

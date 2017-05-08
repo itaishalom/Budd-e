@@ -6,6 +6,7 @@ package com.shalom.itai.theservantexperience.Activities;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
        */
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.vision.text.Text;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
@@ -15,6 +16,7 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
+import com.shalom.itai.theservantexperience.Services.MorningService;
 import com.shalom.itai.theservantexperience.Services.NightService;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUESTS = 100;
     private RSSFeedParser feeder;
     private boolean safeToTakePicture = false;
-    NoiseListener sm;
+   // NoiseListener sm;
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
@@ -108,15 +110,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-        startService(new Intent(this, BuggerService.class));
+      //  startService(new Intent(this, BuggerService.class));
         initializeGui();
 
         setBubbleFunction(false);
         //   popUpMessage();
         thisActivity = this;
         readyToInvalidate= true;
-         sm = new NoiseListener();
-        sm.start();
+     //    sm = new NoiseListener();
+    //    sm.start();
     }
 
     public void popUpMessage(){
@@ -141,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
             chatImage.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    double amp= sm.stop();
+              //      double amp= sm.stop();
 
-                    Log.d(TAG, "setBubbleFunction: "+amp);
+             //       Log.d(TAG, "setBubbleFunction: "+amp);
                     startActivity(new Intent(MainActivity.getInstance(),
                             ChatActivity.class).putExtra(CHAT_START_MESSAGE,
                             "Jon is here"));
@@ -184,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeToSleepingJon()
     {
-        startService(new Intent(this, NightService.class));
+        BuggerService.getInstance().sendJonToSleep();
         gifImageView.setGifImageResource(R.drawable.jon_sleeping);
         Toast.makeText(MainActivity.this, "Good night!",
                 Toast.LENGTH_SHORT).show();
@@ -208,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
+                startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
                 return true;
             case R.id.action_mood:
                 if(moodLayout.getVisibility() == View.VISIBLE)
@@ -304,15 +306,21 @@ public class MainActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(),"dialog");
     }
 
+private void changeLayoutAwake()
+{
+    BuggerService.getInstance().wakeUpJon();
+    gifImageView.setGifImageResource(R.drawable.jon_blinks);
+    Toast.makeText(MainActivity.this, "Morning!",
+            Toast.LENGTH_SHORT).show();
+    mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+    isSleeping = !isSleeping;
+}
 
 
     public void doPositiveClick() {
-        gifImageView.setGifImageResource(R.drawable.jon_blinks);
-        Toast.makeText(MainActivity.this, "Morning!",
-                Toast.LENGTH_SHORT).show();
-        mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+        changeLayoutAwake();
         Log.i("FragmentAlertDialog", "Positive click!");
-        isSleeping = !isSleeping;
+
         talkAboutWakeUp();
     }
 
@@ -349,10 +357,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
-        Intent service = new Intent(this, BuggerService.class);
-        this.startService(service);
-        if(BuggerService.getInstance()!=null)
-            BuggerService.getInstance().bug();
         Functions.fadingText(this,R.id.jon_text);
         //      addCalendarMeeting();
     }
@@ -387,7 +391,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if(intent.getBooleanExtra("wakeUpOptions",false)){
-
+            changeLayoutAwake();
+            forceWakeUp();
         }
     }
 
@@ -431,7 +436,6 @@ public class MainActivity extends AppCompatActivity {
                     case 1:
                         Toast.makeText(MainActivity.getInstance(),"Ok", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        doSleepLogic();
                         chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
                         break;
                     case 2:

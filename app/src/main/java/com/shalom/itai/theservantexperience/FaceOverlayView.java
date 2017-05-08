@@ -28,7 +28,12 @@ public class FaceOverlayView extends View {
 
     private Bitmap mBitmap;
     private SparseArray<Face> mFaces;
-
+public double smilingProb;
+    FaceDetector detector;
+    public double getSmilingProb()
+    {
+        return smilingProb;
+    }
     public FaceOverlayView(Context context) {
         this(context, null);
     }
@@ -43,9 +48,32 @@ public class FaceOverlayView extends View {
 
     public SparseArray<Face> setBitmap( Bitmap bitmap ) {
         mBitmap = bitmap;
+        if(detector ==null) {
+            detector = new FaceDetector.Builder(getContext())
+                    .setTrackingEnabled(true)
+                    .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                    .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                    .build();
+        }
+        if (!detector.isOperational()) {
+            //Handle contingency
+        } else {
+            Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+            mFaces = detector.detect(frame);
+         //   detector.release();
+        }
+       if(mFaces.size()>0)
+            smilingProb = mFaces.valueAt(0).getIsSmilingProbability();
+        else
+           smilingProb = -1;
+      //  logFaceData();
+        invalidate();
+        return mFaces;
+    }
+
+    public SparseArray<Face> setBitmapLight( Bitmap bitmap ) {
+        mBitmap = bitmap;
         FaceDetector detector = new FaceDetector.Builder( getContext() )
-                .setTrackingEnabled(true)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
@@ -56,13 +84,11 @@ public class FaceOverlayView extends View {
             mFaces = detector.detect(frame);
             detector.release();
         }
-      //  logFaceData();
+        smilingProb = mFaces.valueAt(0).getIsSmilingProbability();
+        //  logFaceData();
         invalidate();
         return mFaces;
     }
-
-
-
 
 /*
     public void setBitmap( Bitmap bitmap ) {

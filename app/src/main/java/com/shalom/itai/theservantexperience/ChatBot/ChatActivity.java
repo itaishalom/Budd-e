@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.Services.MorningService;
 
 import java.util.Calendar;
 import java.util.List;
@@ -71,7 +72,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
             sendChatMessage(true,true,chatReply);
         }
 
-        chatText.setText("I hate you");
+        chatText.setText("good night");
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -120,7 +121,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
             chatText.setText("");
         }
         final String query = tempText;
-
+        if(query.isEmpty())
+            return false;
         chatArrayAdapter.add(new ChatMessage(isLeft,query ));
         if(!waitForRespond)
             return true;
@@ -158,7 +160,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
                                 sendChatMessage(false,false,"I hope it helped you");
                                 return;
                             }
-                            if(BuggerService.getInstance().allowToChangeFromChat()) {
+                            if(MorningService.getInstance().allowToChangeFromChat()) {
                                 if (result.getAction().equals("lowerPoints")) {
                                     BuggerService.setSYSTEM_GlobalPoints(-1);
                                 } else if (result.getAction().equals("incPoints")) {

@@ -13,9 +13,9 @@ import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity
 
 import java.util.List;
 
-import static com.shalom.itai.theservantexperience.Services.BuggerService.Activities;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.indexActive;
 import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
+import static com.shalom.itai.theservantexperience.Services.MorningService.Activities;
 import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 
 /**

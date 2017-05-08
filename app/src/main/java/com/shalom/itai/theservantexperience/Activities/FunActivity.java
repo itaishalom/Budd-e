@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.android.gms.vision.face.FaceDetector;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.Services.MorningService;
 import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 
 import java.util.Random;
@@ -32,8 +34,8 @@ import com.shalom.itai.theservantexperience.Utils.Functions;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allInsults;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.allJokes;
+import static com.shalom.itai.theservantexperience.Services.MorningService.allInsults;
+import static com.shalom.itai.theservantexperience.Services.MorningService.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
 
 
@@ -83,7 +85,7 @@ public class FunActivity extends AppCompatActivity {
 
     }
 
-    private void putResponseButtons(final String pathToImage)
+    private void putResponseButtons(final byte[] pathToImage)
     {
         likeBut = (Button) findViewById(R.id.like);
         likeBut.setVisibility(VISIBLE);
@@ -133,8 +135,8 @@ public class FunActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BuggerService.getInstance().unbug();
-                        BuggerService.getInstance().lock();
+                        MorningService.getInstance().unbug();
+                        MorningService.getInstance().lock();
                         finish();
                     }
                 }, SHOW_IMSULT_TIME);
@@ -156,7 +158,9 @@ public class FunActivity extends AppCompatActivity {
         return;
     }
 
-    public void continueAnalyze(final String path){
+
+
+    public void continueAnalyze(final byte[] path){
 
         timerUI= new Timer();
         timerUI.schedule(new TimerTask() {
@@ -167,37 +171,15 @@ public class FunActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // This code will always run on the UI thread, therefore is safe to modify UI elements.
-                        Bitmap photo = Functions.getImageBitmap(path);
-                        FaceOverlayView mFaceOverlayView;
-                        mFaceOverlayView = (FaceOverlayView) findViewById(R.id.face_overlay);
-                   //    mFaceOverlayView.setBitmap(photo);
+                        Bitmap photo = BitmapFactory.decodeByteArray(path, 0, path.length);
+                        FaceOverlayView mFaceOverlayView  = (FaceOverlayView) findViewById(R.id.face_overlay);
 
-                        SparseArray<Face> mFaces =null;
-                        FaceDetector detector = new FaceDetector.Builder( getApplicationContext() )
-                                .setTrackingEnabled(true)
-                                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                                .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                                .build();
 
-                        if (!detector.isOperational()) {
-                            //Handle contingency
-                        } else {
-                            Frame frame = new Frame.Builder().setBitmap(photo).build();
-                            mFaces = detector.detect(frame);
-                            detector.release();
-                        }
-                        if(mFaces.size()==0){
-                            return;
                             /*Toast.makeText(FunActivity.this, "I don't see your face!",
                                     Toast.LENGTH_LONG).show();
                             GlobalPoints -= 2;*/
-                        }else {//mFaces.size()
-                            for (int i = 0; i <1 ; i++) {
-                                Face face = mFaces.valueAt(i);
 
-                                float smilingProbability = face.getIsSmilingProbability();
-
-
+                                double smilingProbability = mFaceOverlayView.getSmilingProb();
                                 if(smilingProbability<0.7) {
                                     mFaceOverlayView.setBitmap(photo);
                                     Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
@@ -209,9 +191,6 @@ public class FunActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG).show();
                                     BuggerService.setSYSTEM_GlobalPoints(1);
                                 }
-
-                            }
-                        }
                         stopTimer();
                     }
                 });
@@ -246,7 +225,7 @@ public class FunActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //extract our message from intent
-                String pathToImage = intent.getStringExtra("path");
+                byte[] pathToImage = intent.getByteArrayExtra("path");
                 putResponseButtons(pathToImage);
             }
         };
