@@ -57,7 +57,8 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
                     shouldContinue= false;
                     mNoiseListener.dispose();
                     Functions.popUpMessage(mContext, "Hi! You woke me up!");
-                    NightService.getInstance().stopNoiseListener();
+                    BuggerService.getInstance().wakeUpJon();
+                    return;
                 }
             }
         }, 5000);

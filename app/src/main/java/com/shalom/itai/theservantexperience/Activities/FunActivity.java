@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
-import com.shalom.itai.theservantexperience.Services.MorningService;
 import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 
 import java.util.Random;
@@ -31,8 +30,8 @@ import com.shalom.itai.theservantexperience.Utils.Functions;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-import static com.shalom.itai.theservantexperience.Services.MorningService.allInsults;
-import static com.shalom.itai.theservantexperience.Services.MorningService.allJokes;
+import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
+import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
 
 
@@ -132,8 +131,8 @@ public class FunActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        MorningService.getInstance().unbug();
-                        MorningService.getInstance().lock();
+                        BuggerService.getInstance().unbug();
+                        BuggerService.getInstance().lock();
                         finish();
                     }
                 }, SHOW_IMSULT_TIME);

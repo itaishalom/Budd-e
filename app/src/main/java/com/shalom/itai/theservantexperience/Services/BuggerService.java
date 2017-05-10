@@ -8,14 +8,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.Activities.DancingActivity;
 import com.shalom.itai.theservantexperience.Activities.FunActivity;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.Activities.SmsSendActivity;
 import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity;
+import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
@@ -45,6 +48,9 @@ public class BuggerService extends Service {
     private static BuggerService mInstance;
     private static RelationsStatus currentStatus;
     private int mStartId =-1;
+    public Actions currentAction;
+    public DayActions dayActions;
+    public NightActions nightActions;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -56,6 +62,7 @@ public class BuggerService extends Service {
     public void onCreate() {
         super.onCreate();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+
         mInstance = this;
         startService();
     }
@@ -78,8 +85,7 @@ public class BuggerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
        /* SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         boolean isLocked = settings.getBoolean(IS_LOCKED, false);*/
-
-        startService(new Intent(this, MorningService.class));
+        currentAction = DayActions.start(getApplicationContext(),0);
         isServiceUP= true;
         if (intent.getBooleanExtra("runMainActivity",false))
         {
@@ -114,8 +120,9 @@ public class BuggerService extends Service {
         notificationManager.cancelAll();
 
       */
+      currentAction.StopTimers();
 
-    if(NightService.getInstance()!=null) {
+    /*if(NightService.getInstance()!=null) {
         Intent down = (new Intent(getApplicationContext(), NightService.class));
         down.putExtra("IS_MY_STOP", true);
 
@@ -126,6 +133,7 @@ public class BuggerService extends Service {
             down2.putExtra("IS_MY_STOP", true);
             MorningService.getInstance().stopService(down2);
         }
+        */
         stopSelf(mStartId);
 
       return super.stopService(name);
@@ -136,19 +144,51 @@ public class BuggerService extends Service {
 
     }
 
-    public void wakeUpJon() {
-        Intent down = (new Intent(getApplicationContext(), NightService.class));
-        down.putExtra("IS_MY_STOP",true);
+    public void unLock()
+    {
+        ((DayActions)currentAction).unLock();
+    }
 
-        NightService.getInstance().stopService(down);
-        startService(new Intent(this, MorningService.class));
+    public void lock()
+    {
+        ((DayActions)currentAction).lock();
+    }
+
+    public void bug()
+    {
+        ((DayActions)currentAction).bug();
+    }
+
+    public void unbug()
+    {
+        ((DayActions)currentAction).unbug();
+    }
+
+    public void wakeUpJon() {
+        currentAction.StopTimers();
+        currentAction = DayActions.start(getApplicationContext(),0);
+
     }
 
     public void sendJonToSleep() {
-        Intent down = (new Intent(getApplicationContext(), MorningService.class));
-        down.putExtra("IS_MY_STOP",true);
-        MorningService.getInstance().stopService(down);
-        startService(new Intent(this, NightService.class));
+        currentAction.StopTimers();
+        currentAction = NightActions.start(getApplicationContext(),0);
     }
+
+    public void sendJonToSleep(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage) {
+        this.sendJonToSleep();
+        this.onRefresh(gifImageView, mainLayout, chatImage);
+    }
+
+
+
+    public void stopNoiseListener() {
+        currentAction.StopTimers();
+    }
+
+    public void onRefresh(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage){
+        currentAction.setCustomMainActivity(gifImageView, mainLayout, chatImage);
+    }
+
 }
 

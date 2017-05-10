@@ -39,9 +39,12 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 
-import static com.shalom.itai.theservantexperience.Services.MorningService.allFacts;
-import static com.shalom.itai.theservantexperience.Services.MorningService.allInsults;
-import static com.shalom.itai.theservantexperience.Services.MorningService.allJokes;
+import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
+import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_NUM_OF_CHATS_POINTS;
+import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_oldDay;
+import static com.shalom.itai.theservantexperience.Services.DayActions.allFacts;
+import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
+import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 
 /**
@@ -193,7 +196,7 @@ public class Functions {
     }
 
     public static void popUpMessage(Context context, String text){
-        int x = 4;
+        int x = 1; //Mins
         Intent intent = new Intent(context, MyScheduledReceiver.class);
         intent.putExtra(MESSAGE_BOX_START_ACTIVITY,"MainActivity");
         intent.putExtra("START_TEXT",text);
@@ -204,5 +207,20 @@ public class Functions {
                 System.currentTimeMillis() + (x * 1000),
                 pendingIntent);
 
+    }
+
+    public static boolean allowToChangeFromChat(){
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        int day = c.get(java.util.Calendar.DAY_OF_YEAR);
+        if(day != SYSTEM_oldDay){
+            SYSTEM_oldDay = day;
+            SYSTEM_CURRENT_NUM_OF_CHATS_POINTS=1;
+            return true;
+        }else if(SYSTEM_CURRENT_NUM_OF_CHATS_POINTS<= SYSTEM_NUM_OF_CHATS_POINTS){
+            SYSTEM_CURRENT_NUM_OF_CHATS_POINTS++;
+            return true;
+        }else{
+            return false;
+        }
     }
 }

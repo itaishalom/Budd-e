@@ -10,7 +10,7 @@ import java.io.IOException;
 public class NoiseListener {
 
     private MediaRecorder recorder = null;
-
+    private boolean isListening = false;
     public NoiseListener(){
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -24,17 +24,24 @@ public class NoiseListener {
 
             recorder.prepare();
             recorder.start();
+            isListening = true;
             recorder.getMaxAmplitude();
         } catch (IOException e) {
             e.printStackTrace();
         }
+     catch (IllegalStateException e) {
+        e.printStackTrace();
+    }
     }
 
 
     public double stop() {
-        int amplitude = recorder.getMaxAmplitude();
-        double amplitudeDb = 20 * Math.log10((double)Math.abs(amplitude));
-        recorder.stop();
+        double amplitudeDb =0;
+        if(isListening) {
+           double  amplitude = recorder.getMaxAmplitude();
+             amplitudeDb = 20 * Math.log10((double) Math.abs(amplitude));
+            recorder.stop();
+        }
         return amplitudeDb;
     }
     public void dispose() {

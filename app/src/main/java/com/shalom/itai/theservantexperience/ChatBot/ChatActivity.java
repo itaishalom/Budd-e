@@ -17,10 +17,11 @@ import android.widget.ListView;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
-import com.shalom.itai.theservantexperience.Services.MorningService;
+import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.function.Function;
 
 import ai.api.AIDataService;
 import ai.api.AIListener;
@@ -160,7 +161,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
                                 sendChatMessage(false,false,"I hope it helped you");
                                 return;
                             }
-                            if(MorningService.getInstance().allowToChangeFromChat()) {
+                            if(Functions.allowToChangeFromChat()) {
                                 if (result.getAction().equals("lowerPoints")) {
                                     BuggerService.setSYSTEM_GlobalPoints(-1);
                                 } else if (result.getAction().equals("incPoints")) {
@@ -184,7 +185,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
                             if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
                                 sendChatMessage(false,false,finalAnswer);
                                 Intent intent = new Intent(ChatActivity.getInstance(), MainActivity.class);
-                                intent.putExtra("sleep",true);
+                                //intent.putExtra("sleep",true); //TODO change sleep call to bugger
+                                BuggerService.getInstance().sendJonToSleep();
                                 startActivity(intent);
                                 finish();
                                 return;

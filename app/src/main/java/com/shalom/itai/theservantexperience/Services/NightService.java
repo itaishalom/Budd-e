@@ -1,3 +1,4 @@
+/*
 package com.shalom.itai.theservantexperience.Services;
 
 import android.app.NotificationManager;
@@ -22,9 +23,11 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.LISTEN_SOUND_
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
+*/
 /**
  * Created by Itai on 06/05/2017.
- */
+ *//*
+
 
 public class NightService extends Service {
     private boolean isServiceUP;
@@ -50,13 +53,15 @@ public class NightService extends Service {
     private void startService()
     {
         startNoiseListener();
-        /*
+        */
+/*
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         Calendar c = Calendar.getInstance();
         SYSTEM_oldDay = c.get(Calendar.DAY_OF_YEAR);
         SYSTEM_NUM_OF_CHATS_POINTS = thorowRandom(3,1);
         Functions.createJokes();
-        *///    new CheckRunningActivity(getBaseContext()).start();
+        *//*
+//    new CheckRunningActivity(getBaseContext()).start();
     }
 
     public boolean stopService(Intent name) {
@@ -128,3 +133,4 @@ public class NightService extends Service {
         BuggerService.getInstance().wakeUpJon();
     }
 }
+*/

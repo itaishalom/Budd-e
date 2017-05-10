@@ -1,3 +1,4 @@
+/*
 package com.shalom.itai.theservantexperience.Services;
 
 import android.app.NotificationManager;
@@ -28,9 +29,11 @@ import java.util.Timer;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
 import static com.shalom.itai.theservantexperience.Utils.Functions.*;
 
+*/
 /**
  * Created by Itai on 09/04/2017.
- */
+ *//*
+
 
 public class MorningService extends Service {
     private static boolean isServiceUP =false;
@@ -54,7 +57,9 @@ public class MorningService extends Service {
         return null;
     }
 
-    /** Called when the service is being created. */
+    */
+/** Called when the service is being created. *//*
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -89,11 +94,13 @@ public class MorningService extends Service {
         {
             this.bug();
         }
+*/
 /*
             SharedPreferences.Editor editor = settings.edit();
            editor.putBoolean(IS_INSTALLED, true);
             editor.commit();
-*/
+*//*
+
         isServiceUP= true;
         return Service.START_STICKY;
     }
@@ -123,7 +130,6 @@ public class MorningService extends Service {
         timerBugger.cancel();
         timerBugger.purge();
         stopBugger = true;
-
     }
 
     public  boolean allowToChangeFromChat(){
@@ -191,3 +197,4 @@ public class MorningService extends Service {
 
 }
 
+*/

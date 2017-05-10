@@ -16,8 +16,6 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
-import com.shalom.itai.theservantexperience.Services.MorningService;
-import com.shalom.itai.theservantexperience.Services.NightService;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 import com.shalom.itai.theservantexperience.Utils.NoiseListener;
@@ -113,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
       //  startService(new Intent(this, BuggerService.class));
         initializeGui();
 
-        setBubbleFunction(false);
+      //  setBubbleFunction(false);
         //   popUpMessage();
         thisActivity = this;
         readyToInvalidate= true;
@@ -121,31 +119,11 @@ public class MainActivity extends AppCompatActivity {
     //    sm.start();
     }
 
-    public void popUpMessage(){
-        int x = 4;
-        TextView tx = (TextView) findViewById(R.id.jon_text) ;
-        tx.setText("Hi, It's Jon! I am board!");
-        Intent intent = new Intent(this, MyScheduledReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this.getApplicationContext(), 234324243, intent, 0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.set(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (x * 1000),
-                pendingIntent);
-        Toast.makeText(this,
-                "Alarm set in " + x + " seconds",
-                Toast.LENGTH_LONG).show();
-    }
-
-
+    /*
     private void setBubbleFunction(boolean wakeUp){
         if(!wakeUp) {
-
             chatImage.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-              //      double amp= sm.stop();
-
-             //       Log.d(TAG, "setBubbleFunction: "+amp);
                     startActivity(new Intent(MainActivity.getInstance(),
                             ChatActivity.class).putExtra(CHAT_START_MESSAGE,
                             "Jon is here"));
@@ -160,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
-
+*/
     private void initializeGui(){
         setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
@@ -171,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
     }
-
+/*
     private void doSleepLogic()
     {
         if(isSleeping)
@@ -183,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
             changeToSleepingJon();
         }
     }
-
+*/
+    /*
     private void changeToSleepingJon()
     {
         BuggerService.getInstance().sendJonToSleep();
@@ -193,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
         isSleeping = !isSleeping;
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -210,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
+         //       startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
                 return true;
             case R.id.action_mood:
                 if(moodLayout.getVisibility() == View.VISIBLE)
@@ -385,13 +364,14 @@ private void changeLayoutAwake()
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+/*
         setBubbleFunction(true);
         if(intent.getBooleanExtra("sleep",false)) {
             changeToSleepingJon();
             return;
         }
+    */
         if(intent.getBooleanExtra("wakeUpOptions",false)){
-            changeLayoutAwake();
             forceWakeUp();
         }
     }
@@ -404,7 +384,9 @@ private void changeLayoutAwake()
         if(readyToInvalidate && BuggerService.getIsServiceUP()) {
             invalidateRelationsData();
             invalidateStatusParam();
+            BuggerService.getInstance().onRefresh(gifImageView,mainLayout,chatImage);
         }
+
         //   mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -417,6 +399,7 @@ private void changeLayoutAwake()
 
 
     private void forceWakeUp() {
+        isSleeping = false;
         List<String> legendList= new ArrayList<String>();
         legendList.add("Put hear plugs and go back to bad");
         legendList.add("Stay awake");
@@ -431,7 +414,7 @@ private void changeLayoutAwake()
                     case 0:
                         Toast.makeText(MainActivity.getInstance(),"Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        doSleepLogic();
+                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
                         break;
                     case 1:
                         Toast.makeText(MainActivity.getInstance(),"Ok", Toast.LENGTH_LONG).show();
@@ -441,13 +424,18 @@ private void changeLayoutAwake()
                     case 2:
                         Toast.makeText(MainActivity.getInstance(),"You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        doSleepLogic();
+                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
                         chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
                         break;
                 }
-
+                cleanListOptions();
             }
         });
+    }
+
+    private void cleanListOptions()
+    {
+        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
     }
 
     private void talkAboutWakeUp() {
@@ -470,17 +458,15 @@ private void changeLayoutAwake()
                     case 1:
                         Toast.makeText(MainActivity.getInstance(),"You woke me up for that? I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        doSleepLogic();
-                        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
                         break;
                     case 2:
                         Toast.makeText(MainActivity.getInstance(),"You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        doSleepLogic();
-                        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
                         break;
                 }
-
+            cleanListOptions();
             }
         });
     }
@@ -509,8 +495,7 @@ private void changeLayoutAwake()
                 //   String o = (String) parent.getItemAtPosition(position);
                 String toStartWith = chatListView.getItemAtPosition(position).toString()+". What you think about it??";
                 Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
-                chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
-                setBubbleFunction(false);
+                cleanListOptions();
                 startActivity(new Intent(MainActivity.getInstance(),
                         ChatActivity.class).putExtra(CHAT_START_MESSAGE,toStartWith));
             }
