@@ -38,8 +38,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allInsults;
     public static ArrayList<String> allJokes;
     public static ArrayList<String> allFacts;
-    private static Timer timerBugger = new Timer();
-    private static Timer timerLock = new Timer();
+
     public static boolean stopBugger = false;
     public static  Class[] Activities= new Class[]{FunActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
@@ -47,7 +46,8 @@ public class DayActions extends Actions {
     public static int SYSTEM_oldDay;
     public static int SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
     public static int SYSTEM_NUM_OF_CHATS_POINTS;
-
+    private static Timer timerBugger;
+    private static Timer timerLock;
 
     private static boolean isUp=false;
     private static DayActions instance = null;
@@ -98,20 +98,25 @@ public class DayActions extends Actions {
     }
 
     public void unLock() {
-        timerLock.cancel();
-        timerLock.purge();
+        if(timerLock != null) {
+            timerLock.cancel();
+            timerLock.purge();
+        }
     }
     public  void bug()
     {
+
         stopBugger = false;
         timerBugger = new Timer();
         timerBugger.scheduleAtFixedRate(new TimerTaskForUser(mContext), 0, BUG_WAIT_TIME);
     }
 
     public void unbug() {
-        timerBugger.cancel();
-        timerBugger.purge();
-        stopBugger = true;
+        if(timerBugger != null) {
+            timerBugger.cancel();
+            timerBugger.purge();
+            stopBugger = true;
+        }
     }
 
 

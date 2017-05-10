@@ -85,7 +85,7 @@ public class BuggerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
        /* SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         boolean isLocked = settings.getBoolean(IS_LOCKED, false);*/
-        currentAction = DayActions.start(getApplicationContext(),0);
+
         isServiceUP= true;
         if (intent.getBooleanExtra("runMainActivity",false))
         {
@@ -165,7 +165,8 @@ public class BuggerService extends Service {
     }
 
     public void wakeUpJon() {
-        currentAction.StopTimers();
+        if(currentAction != null)
+            currentAction.StopTimers();
         currentAction = DayActions.start(getApplicationContext(),0);
 
     }

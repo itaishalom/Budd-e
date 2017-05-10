@@ -16,6 +16,7 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
+import com.shalom.itai.theservantexperience.Services.DayActions;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 import com.shalom.itai.theservantexperience.Utils.NoiseListener;
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
       //  setBubbleFunction(false);
         //   popUpMessage();
         thisActivity = this;
-        readyToInvalidate= true;
+
      //    sm = new NoiseListener();
     //    sm.start();
     }
@@ -337,6 +338,8 @@ private void changeLayoutAwake()
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
         Functions.fadingText(this,R.id.jon_text);
+        readyToInvalidate= true;
+        BuggerService.getInstance().wakeUpJon();
         //      addCalendarMeeting();
     }
 

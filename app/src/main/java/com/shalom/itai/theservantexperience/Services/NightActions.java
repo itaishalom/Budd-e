@@ -29,7 +29,7 @@ public class NightActions extends Actions {
     private static Timer SoundListenTimer = new Timer();
     private static boolean isUp=false;
     private static NightActions instance = null;
-
+    private static double noiseLevel = 75.0;
 
     public static Actions start(Context context,int notif_icon) {
         if(instance==null){
@@ -63,11 +63,18 @@ public class NightActions extends Actions {
     }
 
 
+    public static double getNoiseLevel(){
+        return noiseLevel;
+    }
+
+    public static void IncNoiseLevel(){
+         noiseLevel+=5;
+    }
 
     @Override
     protected void StartTimers() {
         SoundListenTimer = new Timer();
-        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(mContext), 0, throwRandom(1,1)*LISTEN_SOUND_INTERVAL);
+        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(mContext), 0, 7000);
     }
 
     @Override

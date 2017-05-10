@@ -25,7 +25,8 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
     private boolean shouldContinue;
     ListenToNoiseTimerTask(Context context) {
         super(context);
-        mNoiseListener = new NoiseListener();
+        mNoiseLevel = 75.0;
+     //   mNoiseListener = new NoiseListener();
         shouldContinue = true;
     }
 
@@ -41,27 +42,45 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
     public void run() {
         if(!shouldContinue)
             return;
-        Looper.prepare();
-
+        mNoiseListener = new NoiseListener();
         mNoiseListener.start();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        double noise = mNoiseListener.stop();
 
+        if(noise>NightActions.getNoiseLevel()) {
+            shouldContinue = false;
+            mNoiseListener.dispose();
+            Functions.popUpMessage(mContext, "Hi! You woke me up!");
+            BuggerService.getInstance().wakeUpJon();
+            return;
+        }
+/*
+        Looper.prepare();
         final Handler handler = new Handler();
 
         handler.postDelayed(new Runnable() {
 
             @Override
             public void run() {
+                Looper.loop();
+
                 double noise = mNoiseListener.stop();
 
-                if(noise>50){
+                if(noise>100){
                     shouldContinue= false;
                     mNoiseListener.dispose();
                     Functions.popUpMessage(mContext, "Hi! You woke me up!");
                     BuggerService.getInstance().wakeUpJon();
                     return;
                 }
+                Looper.loop();
             }
-        }, 5000);
+        }, 3000);
         Looper.loop();
+        */
     }
 }

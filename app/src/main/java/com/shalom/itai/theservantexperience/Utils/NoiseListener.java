@@ -17,29 +17,25 @@ public class NoiseListener {
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         recorder.setOutputFile("/dev/null");
-    }
-
-    public void start() {
         try {
-
             recorder.prepare();
-            recorder.start();
-            isListening = true;
-            recorder.getMaxAmplitude();
         } catch (IOException e) {
             e.printStackTrace();
         }
-     catch (IllegalStateException e) {
-        e.printStackTrace();
     }
-    }
+
+    public void start() {
+            recorder.start();
+            isListening = true;
+            recorder.getMaxAmplitude();
+        }
 
 
     public double stop() {
         double amplitudeDb =0;
         if(isListening) {
-           double  amplitude = recorder.getMaxAmplitude();
-             amplitudeDb = 20 * Math.log10((double) Math.abs(amplitude));
+            double  amplitude = recorder.getMaxAmplitude();
+            amplitudeDb = 20 * Math.log10((double) Math.abs(amplitude));
             recorder.stop();
         }
         return amplitudeDb;
