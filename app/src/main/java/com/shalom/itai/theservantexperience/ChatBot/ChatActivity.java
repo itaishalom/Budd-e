@@ -47,6 +47,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
     private Button buttonSend;
     private AIDataService aiDataService;
     private boolean side = false;
+    private boolean LEFT = false;
+    private boolean RIGHT = true;
 
 
     @Override
@@ -73,7 +75,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
             sendChatMessage(true,true,chatReply);
         }
 
-        chatText.setText("good night");
+        chatText.setText("what is the weather?");
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
