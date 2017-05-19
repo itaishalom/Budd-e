@@ -40,8 +40,10 @@ public class TimerTaskForUser extends ContextTimerTask {
         if(!checkScreenAndLock(mContext))
             return;
 
-        if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH") && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
-                && !activityOnTop.toLowerCase().contains("camera")) {
+        if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
+                && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
+                && !activityOnTop.toLowerCase().contains("camera")
+                && !activityOnTop.toLowerCase().contains("com.google.android.location.settings.LocationSettingsCheckerActivity".toLowerCase())) { //"com.google.android.location.settings.LocationSettingsCheckerActivity"
             if(!stopBugger){
                 Intent intent = new Intent(this.mContext, Activities[indexActive]);
                 indexActive++;

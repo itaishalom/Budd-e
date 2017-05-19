@@ -20,6 +20,7 @@ android {
     packagingOptions {
         pickFirst 'META-INF/LICENSE'
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -33,6 +34,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.1'
     compile 'com.google.android.gms:play-services-auth:10.2.1'
     compile 'com.google.android.gms:play-services-vision:10.2.1'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
     compile 'com.android.support:support-v4:25.3.0'
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -42,6 +44,7 @@ dependencies {
     compile 'commons-io:commons-io:20030203.000550'
     compile 'ai.api:libai:1.4.8'
     compile 'org.apache.logging.log4j:log4j:2.8.2'
+
     testCompile 'junit:junit:4.12'
 }
 //apply plugin: 'com.google.gms.google-services'
