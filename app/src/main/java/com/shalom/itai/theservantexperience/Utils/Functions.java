@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.CalendarContract;
@@ -32,9 +33,11 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -225,6 +228,62 @@ public class Functions {
                 System.currentTimeMillis() + (x * 1000),
                 pendingIntent);
 
+    }
+
+    public static void takeScreenshot(AppCompatActivity activity) {
+
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
+        try {
+            // image naming and path  to include sd card  appending name you choose for file
+
+            String mPath =Directory + "/" + now + ".jpg";
+
+            // create bitmap screen capture
+            View v1 = activity.getWindow().getDecorView().getRootView();
+            v1.setDrawingCacheEnabled(true);
+            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+            v1.setDrawingCacheEnabled(false);
+
+            File imageFile = new File(mPath);
+
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            int quality = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            openScreenshot(imageFile,activity);
+        } catch (Throwable e) {
+            // Several error may come out with file handling or OOM
+            e.printStackTrace();
+        }
+    }
+
+    public static void openScreenshot(File imageFile, AppCompatActivity activity) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri uri = Uri.fromFile(imageFile);
+        intent.setDataAndType(uri, "image/*");
+        activity.startActivity(intent);
+    }
+
+    public static boolean createJonFolder(){
+
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(),"Jon");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if(!mediaStorageDir.exists()){
+            if(!mediaStorageDir.mkdirs()){
+                return false;
+            }
+        }
+        Directory = mediaStorageDir.getAbsolutePath();
+        return true;
     }
 
     public static boolean allowToChangeFromChat(){

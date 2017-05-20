@@ -18,5 +18,5 @@ public class Constants {
     public static final int LISTEN_SOUND_INTERVAL = 1000;
     public static final int SECOND = 1000;
     public static final int MINUTE = 60000;
-
+    public static String Directory ;
 }

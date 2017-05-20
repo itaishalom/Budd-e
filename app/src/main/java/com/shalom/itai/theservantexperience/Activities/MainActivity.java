@@ -76,9 +76,11 @@ import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
+import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogCaller{
     private boolean readyToInvalidate = false;
     public static final String TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
@@ -297,17 +299,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void doPositiveClick() {
-        changeLayoutAwake();
-        talkAboutWakeUp();
-        Log.i("FragmentAlertDialog", "Positive click!");
-    }
-
-    public void doNegativeClick() {
-        Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
-        Log.i("FragmentAlertDialog", "Negative click!");
-    }
-
     public void callSpeech() {
         Intent intent = new Intent(this, SpeechRecognitionActivity.class);
 
@@ -338,9 +329,11 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
         Functions.fadingText(this,R.id.jon_text);
         readyToInvalidate= true;
+        createJonFolder();
+        takeScreenshot(this);
         BuggerService.getInstance().wakeUpJon();
-        //      addCalendarMeeting();
     }
+
 
 
 
@@ -503,5 +496,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    @Override
+    public void doPositive() {
+        changeLayoutAwake();
+        talkAboutWakeUp();
+        Log.i("FragmentAlertDialog", "Positive click!");
+    }
+
+    @Override
+    public void doNegative() {
+        Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
+        Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
 
 }

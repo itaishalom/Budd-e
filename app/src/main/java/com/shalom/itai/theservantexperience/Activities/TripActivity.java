@@ -72,7 +72,7 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
 
 public class TripActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DialogCaller {
 
     private GoogleMap mMap;
 
@@ -310,6 +310,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
+
+
     public class getData extends AsyncTask<String, String, String> {
 
         HttpURLConnection urlConnection;
@@ -424,14 +427,16 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         newFragment.show(getSupportFragmentManager(),"dialog");
     }
 
-    public void doPositiveClick() {
+    @Override
+    public void doPositive() {
         BuggerService.setSYSTEM_GlobalPoints(1);
         Toast.makeText(this, "YeY!!! A Trip!", Toast.LENGTH_LONG).show();
         BuggerService.getInstance().goToTrip();
         Log.i("FragmentAlertDialog", "Positive click!");
     }
 
-    public void doNegativeClick() {
+    @Override
+    public void doNegative() {
         Toast.makeText(this, "You are not fun!!!", Toast.LENGTH_LONG).show();
         BuggerService.setSYSTEM_GlobalPoints(-1);
         finish();

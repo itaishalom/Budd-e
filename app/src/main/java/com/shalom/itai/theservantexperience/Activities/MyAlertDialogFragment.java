@@ -41,19 +41,13 @@ public class MyAlertDialogFragment extends DialogFragment {
                 .setPositiveButton(posButton,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (name.contains("TripActivity")) {
-                                    ((TripActivity) getActivity()).doPositiveClick();
-                                }else if(name.contains("NightActions"))
-                                    ((MainActivity) getActivity()).doPositiveClick();
+                                ((DialogCaller) getActivity()).doPositive();
                             }
                         })
                 .setNegativeButton(negButton,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if (name.contains("TripActivity")) {
-                                    ((TripActivity) getActivity()).doNegativeClick();
-                                }else if(name.contains("NightActions"))
-                                        ((MainActivity) getActivity()).doNegativeClick();
+                                    ((DialogCaller) getActivity()).doNegative();
                                 }
                         }).create();
     }
