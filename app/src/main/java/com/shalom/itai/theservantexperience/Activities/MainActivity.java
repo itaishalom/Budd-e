@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUESTS = 100;
     private RSSFeedParser feeder;
     private boolean safeToTakePicture = false;
-   // NoiseListener sm;
+    // NoiseListener sm;
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
@@ -109,15 +109,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-      //  startService(new Intent(this, BuggerService.class));
+        //  startService(new Intent(this, BuggerService.class));
         initializeGui();
 
-      //  setBubbleFunction(false);
+        //  setBubbleFunction(false);
         //   popUpMessage();
         thisActivity = this;
 
-     //    sm = new NoiseListener();
-    //    sm.start();
+        //    sm = new NoiseListener();
+        //    sm.start();
     }
 
     /*
@@ -150,19 +150,19 @@ public class MainActivity extends AppCompatActivity {
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
     }
-/*
-    private void doSleepLogic()
-    {
-        if(isSleeping)
-        {//
-            showDialog();
+    /*
+        private void doSleepLogic()
+        {
+            if(isSleeping)
+            {//
+                showDialog();
 
+            }
+            else {
+                changeToSleepingJon();
+            }
         }
-        else {
-            changeToSleepingJon();
-        }
-    }
-*/
+    */
     /*
     private void changeToSleepingJon()
     {
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_settings:
-         //       startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
+                //       startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
                 return true;
             case R.id.action_mood:
                 if(moodLayout.getVisibility() == View.VISIBLE)
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         friendshipLevel.setText(status.getRelationStatus());
     }
 
-//getRelationStatus
+    //getRelationStatus
     private int getBatteryLevel(){
         BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
         return bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
@@ -279,33 +279,32 @@ public class MainActivity extends AppCompatActivity {
         return num;
     }
 
-
-    public void showDialog() {
-        DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_two_buttons_title);
-        newFragment.show(getSupportFragmentManager(),"dialog");
+    /*
+        public void showDialog() {
+            DialogFragment newFragment = MyAlertDialogFragment
+                    .newInstance(R.string.alert_dialog_two_buttons_title);
+            newFragment.show(getSupportFragmentManager(),"dialog");
+        }
+    */
+    private void changeLayoutAwake()
+    {
+        BuggerService.getInstance().wakeUpJon();
+        gifImageView.setGifImageResource(R.drawable.jon_blinks);
+        Toast.makeText(MainActivity.this, "Morning!",
+                Toast.LENGTH_SHORT).show();
+        mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+        isSleeping = !isSleeping;
     }
-
-private void changeLayoutAwake()
-{
-    BuggerService.getInstance().wakeUpJon();
-    gifImageView.setGifImageResource(R.drawable.jon_blinks);
-    Toast.makeText(MainActivity.this, "Morning!",
-            Toast.LENGTH_SHORT).show();
-    mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
-    isSleeping = !isSleeping;
-}
 
 
     public void doPositiveClick() {
         changeLayoutAwake();
-        Log.i("FragmentAlertDialog", "Positive click!");
-
         talkAboutWakeUp();
+        Log.i("FragmentAlertDialog", "Positive click!");
     }
 
     public void doNegativeClick() {
-        // Do stuff here.
+        Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
@@ -469,7 +468,7 @@ private void changeLayoutAwake()
                         BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
                         break;
                 }
-            cleanListOptions();
+                cleanListOptions();
             }
         });
     }

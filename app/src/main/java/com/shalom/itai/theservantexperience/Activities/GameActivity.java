@@ -1,4 +1,5 @@
 /*
+
 package com.shalom.itai.theservantexperience.Activities;
 
 import android.content.BroadcastReceiver;
@@ -94,10 +95,12 @@ public class GameActivity extends AppCompatActivity {
         }
         if(mFaces.size()==0){
             return;
-                            */
-/*Toast.makeText(FunActivity.this, "I don't see your face!",
+
+Toast.makeText(FunActivity.this, "I don't see your face!",
                                     Toast.LENGTH_LONG).show();
                             GlobalPoints -= 2;*//*
+*/
+/*
 
         }else {//mFaces.size()
             for (int i = 0; i <1 ; i++) {
@@ -139,4 +142,5 @@ public class GameActivity extends AppCompatActivity {
         analyze();
     }
 }
+
 */

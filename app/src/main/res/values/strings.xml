@@ -23,7 +23,8 @@
     </string>
     <string name="action_settings">settings</string>
     <string name="action_favorite">favorite</string>
-    <string name="alert_dialog_two_buttons_title">Wake up Jon?</string>
+    <string name="alert_dialog_Wake_up_buttons_title">Wake up Jon?</string>
+    <string name="alert_dialog_Trip_buttons_title">Can we go there?</string>
     <string name="alert_dialog_cancel">Shhhh...</string>
     <string name="alert_dialog_ok">Wake up Jon!</string>
     <string name="title_activity_trip">Map</string>

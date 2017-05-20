@@ -77,7 +77,7 @@ public class FunActivity extends AppCompatActivity {
                 analayze();
             }
         }, 4000);
-    thisActivity = this;
+        thisActivity = this;
 
     }
 
@@ -174,19 +174,18 @@ public class FunActivity extends AppCompatActivity {
                             /*Toast.makeText(FunActivity.this, "I don't see your face!",
                                     Toast.LENGTH_LONG).show();
                             GlobalPoints -= 2;*/
-
-                                double smilingProbability = mFaceOverlayView.getSmilingProb();
-                                if(smilingProbability<0.7) {
-                                    mFaceOverlayView.setBitmap(photo);
-                                    Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
-                                            Toast.LENGTH_LONG).show();
-                                    BuggerService.setSYSTEM_GlobalPoints(-1);
-                                }else
-                                {
-                                    Toast.makeText(FunActivity.this, "you  smile!",
-                                            Toast.LENGTH_LONG).show();
-                                    BuggerService.setSYSTEM_GlobalPoints(1);
-                                }
+                        mFaceOverlayView.setBitmap(photo);
+                        double smilingProbability = mFaceOverlayView.getSmilingProb();
+                        if(smilingProbability>-1 && smilingProbability<0.7) {
+                            mFaceOverlayView.invalidateThis();
+                            Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
+                                    Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(-1);
+                        }else {
+                            Toast.makeText(FunActivity.this, "you  smile!",
+                                    Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(1);
+                        }
                         stopTimer();
                     }
                 });
@@ -206,13 +205,13 @@ public class FunActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-      //  BuggerService.isFunActivityUp = false;
+        //  BuggerService.isFunActivityUp = false;
         this.unregisterReceiver(this.mReceiver);
     }
     @Override
     protected void onResume() {
         super.onResume();
-       // BuggerService.isMainActivityUp = true;
+        // BuggerService.isMainActivityUp = true;
         IntentFilter intentFilter = new IntentFilter(
                 "android.intent.action.ImageReady");
 

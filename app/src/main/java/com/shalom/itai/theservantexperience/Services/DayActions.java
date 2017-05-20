@@ -27,6 +27,7 @@ import java.util.Timer;
 import static com.shalom.itai.theservantexperience.Utils.Constants.BUG_WAIT_TIME;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IS_LOCKED;
+import static com.shalom.itai.theservantexperience.Utils.Constants.LOCATION_DISTNCE_CHECK;
 import static com.shalom.itai.theservantexperience.Utils.Constants.LOCK_WAIT_TIME;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
@@ -41,7 +42,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     public static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{TripActivity.class, FunActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{ FunActivity.class, TripActivity.class,SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
@@ -49,6 +50,7 @@ public class DayActions extends Actions {
     public static int SYSTEM_NUM_OF_CHATS_POINTS;
     private static Timer timerBugger;
     private static Timer timerLock;
+    private static Timer timerTrip;
 
     private static boolean isUp=false;
     private static DayActions instance = null;
@@ -92,10 +94,27 @@ public class DayActions extends Actions {
 */
         isUp= true;
     }
-    public  void lock()
-    {
-        timerLock = new Timer();
-        timerLock.scheduleAtFixedRate(new LockerTimer(mContext), 0, LOCK_WAIT_TIME);
+
+    public void goToTrip(double lat, double lng){
+        unbug();
+        unLock();
+        timerTrip = new Timer();
+        timerTrip.scheduleAtFixedRate(new TimerTrip(mContext,lat,lng), 0, LOCATION_DISTNCE_CHECK);
+    }
+
+    public void unTrip(){
+        if(timerTrip != null) {
+            timerTrip.cancel();
+            timerTrip.purge();
+        }
+        this.bug();
+    }
+
+    public void lock() {
+        if(timerLock != null) {
+            timerLock = new Timer();
+            timerLock.scheduleAtFixedRate(new LockerTimer(mContext), 0, LOCK_WAIT_TIME);
+        }
     }
 
     public void unLock() {
@@ -104,9 +123,8 @@ public class DayActions extends Actions {
             timerLock.purge();
         }
     }
-    public  void bug()
-    {
 
+    public  void bug() {
         stopBugger = false;
         timerBugger = new Timer();
         timerBugger.scheduleAtFixedRate(new TimerTaskForUser(mContext), 0, BUG_WAIT_TIME);
@@ -121,13 +139,14 @@ public class DayActions extends Actions {
     }
 
 
+
+
     @Override
     public void StopTimers() {
         this.unbug();
         this.unLock();
         removeNotification();
     }
-
 
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage) {
@@ -143,5 +162,4 @@ public class DayActions extends Actions {
             }
         });
     }
-
 }

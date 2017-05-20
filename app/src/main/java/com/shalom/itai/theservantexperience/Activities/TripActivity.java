@@ -9,9 +9,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -43,6 +45,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -64,13 +67,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
+import static com.shalom.itai.theservantexperience.Utils.Functions.getDistanceFromLatLonInKm;
+import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
+
 
 public class TripActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
 
-    protected static final String TAG = "MainActivity";
+    protected static final String TAG = "TripActivity";
 
     /**
      * Provides the entry point to Google Play services.
@@ -101,8 +107,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         buildGoogleApiClient();
     }
 
-    public static Activity getThisActivity()
-    {
+    public static TripActivity getInstance() {
         return act;
     }
 
@@ -160,6 +165,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     switch (status.getStatusCode()) {
                         case LocationSettingsStatusCodes.SUCCESS:
                             Log.d(TAG, "onResult: good");
+                            placeMe();
                             // All location settings are satisfied. The client can initialize location
                             // requests here.
                             break;
@@ -171,7 +177,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                                 // and check the result in onActivityResult().
                                 Log.d(TAG, "onResult: res req");
                                 status.startResolutionForResult(
-                                        getThisActivity(), 1000);
+                                        getInstance(), 1000);
                             } catch (IntentSender.SendIntentException e) {
                                 Log.d(TAG, "onResult: exp");
                                 // Ignore the error.
@@ -193,7 +199,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+      //  mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -221,10 +227,30 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void askInsideGps(){
-
+    public Location getCurrentLocation(){
+        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
+
+    public void notGettingCloser(){
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(TripActivity.this ,"We are not getting close!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void weAreThere(){
+        BuggerService.getInstance().unTrip();
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(TripActivity.this ,"Yey! We are here!! Show me !!!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        mGoogleApiClient.disconnect();
+    }
 
     /**
      * Manipulates the map once available.
@@ -246,6 +272,8 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+
     private void placeMe() {
         if (mLastLocation != null) {
             LatLng whereAreWe = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -266,7 +294,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         connected = true;
         if(readyMap && mLastLocation != null) {
-            placeMe();
+       //     placeMe();
         }
 
         /*
@@ -318,23 +346,36 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             return result.toString();
         }
 
+        private boolean checkIsLodging(JSONArray types) {
+            for (int j = 0; j < types.length(); j++) {
+                if (types.optString(j).equals("lodging")) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         protected void onPostExecute(String result) {
             try {
                 JSONObject jsonList = new JSONObject(result);
                 JSONArray arrayOfResults = jsonList.optJSONArray("results");
-                for(int i =0;i<arrayOfResults.length();i++) {
-                    JSONObject firstInList = arrayOfResults.optJSONObject(i);
-                    JSONArray types = firstInList.optJSONArray("types");
-                    boolean toStop = false;
-                    for(int j =0;j<types.length();j++){
-                        if (types.optString(j).equals("lodging")){
-                            toStop = true;
-                            break;
-                        }
+                int counter = 0;
+                while (true) {
+                    counter++;
+                    if(counter == arrayOfResults.length()) {
+                        break;
                     }
-                    if(toStop){
+                    int index = throwRandom(arrayOfResults.length(),0);
+                    JSONObject firstInList = arrayOfResults.optJSONObject(index);
+                    if(firstInList ==null){
                         continue;
+                    }
+                    if(checkIsLodging(firstInList.optJSONArray("types"))) {
+                        if (counter < arrayOfResults.length() - 1) {
+                            arrayOfResults.put(index, null);
+                            continue;
+                        }
                     }
                     String name = firstInList.optString("name");
                     JSONObject location = firstInList.optJSONObject("geometry").optJSONObject("location");
@@ -350,13 +391,22 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(whereAreWe)      // Sets the center of the map to Mountain View
-                            .zoom(17)                   // Sets the zoom
+                            .zoom(16)                   // Sets the zoom
                             .bearing(90)                // Sets the orientation of the camera to east
                             .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                             .build();                   // Creates a CameraPosition from the builder
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    double distanceFromDestination = getDistanceFromLatLonInKm(lat,lng, mLastLocation.getLatitude(),mLastLocation.getLongitude());
+                    Toast.makeText(getInstance(), "Let's go to the " + name +"! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
+                    BuggerService.getInstance().setDistanceToDest(lat,lng);
 
-                    Toast.makeText(getThisActivity(), "Let's go to the " + name, Toast.LENGTH_LONG).show();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showDialog();;
+                        }
+                    }, 4000);
                     break;
                 }
             } catch (JSONException e) {
@@ -367,6 +417,27 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
+
+    public void showDialog() {
+        DialogFragment newFragment = MyAlertDialogFragment
+                .newInstance(R.string.alert_dialog_Trip_buttons_title,"Yes","No",getClass().getName());
+        newFragment.show(getSupportFragmentManager(),"dialog");
+    }
+
+    public void doPositiveClick() {
+        BuggerService.setSYSTEM_GlobalPoints(1);
+        Toast.makeText(this, "YeY!!! A Trip!", Toast.LENGTH_LONG).show();
+        BuggerService.getInstance().goToTrip();
+        Log.i("FragmentAlertDialog", "Positive click!");
+    }
+
+    public void doNegativeClick() {
+        Toast.makeText(this, "You are not fun!!!", Toast.LENGTH_LONG).show();
+        BuggerService.setSYSTEM_GlobalPoints(-1);
+        finish();
+        Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
 
     private void searchFood() {
     //    https://maps.googleapis.com/maps/api/place/search/json?types=bar&restaurant&radius=500&&key=AIzaSyCvcfb2pxac2baMGVFvzCAKFPmY735Cw14&location=31.7813273,35.2148459
@@ -381,4 +452,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+
+
 }

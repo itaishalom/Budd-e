@@ -40,7 +40,8 @@ public class BuggerService extends Service {
     public static boolean isMainActivityUp = false;
     public static boolean isFunActivityUp = false;
     public static boolean isLoginUp = false;
-
+    private double latDistanceToDest = 0;
+    private double lngDistanceToDest = 0;
     public static boolean stopBugger = false;
   //  public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
@@ -70,6 +71,11 @@ public class BuggerService extends Service {
 
         //    new CheckRunningActivity(getBaseContext()).start();
     }
+
+public void setDistanceToDest(double lat,double lng){
+    latDistanceToDest = lat;
+    lngDistanceToDest = lng;
+}
 
 
     public  RelationsStatus getRelationsStatus()
@@ -101,7 +107,7 @@ public class BuggerService extends Service {
         return isServiceUP;
     }
 
-
+    //TODO save!
     public static void setSYSTEM_GlobalPoints(int pts){
         SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
@@ -169,6 +175,17 @@ public class BuggerService extends Service {
             currentAction.StopTimers();
         currentAction = DayActions.start(getApplicationContext(),0);
 
+    }
+
+    public void goToTrip() {
+        if (currentAction instanceof DayActions){
+            ((DayActions)currentAction).goToTrip(latDistanceToDest,lngDistanceToDest);
+        }
+    }
+    public void unTrip() {
+        if (currentAction instanceof DayActions){
+            ((DayActions)currentAction).unTrip();
+        }
     }
 
     public void sendJonToSleep() {

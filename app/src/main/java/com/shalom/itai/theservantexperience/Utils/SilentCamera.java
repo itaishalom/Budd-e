@@ -114,7 +114,7 @@ public class SilentCamera {
         camera.startPreview();
 
         Camera.Parameters params = camera.getParameters();
-        params.setJpegQuality(40);
+        params.setJpegQuality(60);
         params.setRotation(270);
     //    params.setRotation(90);
         camera.setParameters(params);
