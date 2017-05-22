@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 
 import android.graphics.Color;
 
+import android.media.Image;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     GifImageView gifImageView;
     ImageView chatImage;
     ListView chatListView;
+    ImageView memoriesImage;
     @Override
     public void onCreate(Bundle icicle) {
 
@@ -151,6 +153,13 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         gifImageView = (GifImageView) findViewById(R.id.GifImageView);
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
+        memoriesImage = (ImageView) findViewById(R.id.memories);
+        memoriesImage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
+                        MemoriesGalleryActivity.class));
+            }
+        });
     }
     /*
         private void doSleepLogic()
@@ -330,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         Functions.fadingText(this,R.id.jon_text);
         readyToInvalidate= true;
         createJonFolder();
-        takeScreenshot(this);
+   //     takeScreenshot(this);
         BuggerService.getInstance().wakeUpJon();
     }
 

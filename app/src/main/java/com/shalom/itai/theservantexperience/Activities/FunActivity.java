@@ -33,6 +33,7 @@ import static android.view.View.VISIBLE;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
+import static com.shalom.itai.theservantexperience.Utils.Functions.saveBmpToFile;
 
 
 //TODO more interaction
@@ -181,10 +182,12 @@ public class FunActivity extends AppCompatActivity {
                             Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
                                     Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(-1);
+                            saveBmpToFile(photo);
                         }else {
                             Toast.makeText(FunActivity.this, "you  smile!",
                                     Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(1);
+                            saveBmpToFile(photo);
                         }
                         stopTimer();
                     }

@@ -50,9 +50,10 @@ public class TimerTrip extends ContextTimerTask {
         if(startingDistance == -1){
             startingDistance = distanceFromDestination;
         }else{
+            //distanceFromDestination = 0.001;
             if(startingDistance> distanceFromDestination){
                 TripActivity.getInstance().notGettingCloser();
-            }else if(Math.abs(distanceFromDestination)<1){
+            }else if(Math.abs(distanceFromDestination)<0.01){
                 TripActivity.getInstance().weAreThere();
             }
         }

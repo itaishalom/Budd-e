@@ -93,7 +93,7 @@ public void setDistanceToDest(double lat,double lng){
         boolean isLocked = settings.getBoolean(IS_LOCKED, false);*/
 
         isServiceUP= true;
-        if (intent.getBooleanExtra("runMainActivity",false))
+        if (intent !=null &&intent.getBooleanExtra("runMainActivity",false))// TODO CHECK NULL
         {
             Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(startMainActivity);

@@ -15,8 +15,13 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 
+import java.io.File;
+import java.util.ArrayList;
+
+import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+
 public class MemoriesActivity extends AppCompatActivity {
-    private int[] imageIDs;
+    private ArrayList<Integer> imageIDs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +37,25 @@ public class MemoriesActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 // display the images selected
                 ImageView imageView = (ImageView) findViewById(R.id.image1);
-                imageView.setImageResource(imageIDs[position]);
+                imageView.setImageResource(imageIDs.get(position));
             }
         });
     }
 
     private void loadImages(){
-        String fnm = "cat"; //  this is image file name
+      //  String path = Environment.getExternalStorageDirectory().toString()+"/Pictures";
         String PACKAGE_NAME = getApplicationContext().getPackageName();
-        int imgId = getResources().getIdentifier(PACKAGE_NAME+":drawable/"+fnm , null, null);
+        imageIDs = new ArrayList<>();
+        String path = Directory;
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        for (int i = 0; i < files.length; i++)
+        {
+            String fileName = files[i].getAbsolutePath();
+            int imgId = getResources().getIdentifier(PACKAGE_NAME+":drawable/"+fileName , null, null);
+            imageIDs.add(imgId);
+
+        }
 
      /*   System.out.println("IMG ID :: "+imgId);
         System.out.println("PACKAGE_NAME :: "+PACKAGE_NAME);
@@ -62,7 +77,7 @@ public class MemoriesActivity extends AppCompatActivity {
         }
         // returns the number of images
         public int getCount() {
-            return imageIDs.length;
+            return imageIDs.size();
         }
         // returns the ID of an item
         public Object getItem(int position) {
@@ -75,7 +90,7 @@ public class MemoriesActivity extends AppCompatActivity {
         // returns an ImageView view
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(context);
-            imageView.setImageResource(imageIDs[position]);
+            imageView.setImageResource(imageIDs.get(position));
             imageView.setLayoutParams(new Gallery.LayoutParams(100, 100));
             imageView.setBackgroundResource(itemBackground);
             return imageView;

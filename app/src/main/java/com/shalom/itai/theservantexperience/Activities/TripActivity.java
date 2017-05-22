@@ -1,10 +1,13 @@
 package com.shalom.itai.theservantexperience.Activities;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -38,6 +41,7 @@ import com.shalom.itai.theservantexperience.R;
 import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -65,17 +69,26 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Scanner;
 
+import static com.shalom.itai.theservantexperience.Services.BuggerService.indexActive;
+import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
+import static com.shalom.itai.theservantexperience.Services.DayActions.Activities;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.Utils.Functions.getDistanceFromLatLonInKm;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
 
 public class TripActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DialogCaller {
-
+    private int TAKE_IMAGE = 1;
     private GoogleMap mMap;
-
+    private double savedDistLat =0;
+    private double savedDistLng =0;
+    private boolean isRestarted  = false;
     protected static final String TAG = "TripActivity";
 
     /**
@@ -98,6 +111,11 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
+        Intent intent = getIntent();
+        if(intent.getBooleanExtra("restart",false)){
+            isRestarted= true;
+            this.showDialog();;
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -143,55 +161,55 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     .addApi(LocationServices.API)
                     .build();
         }
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(5 * 1000);
-            locationRequest.setFastestInterval(5 * 1000);
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest);
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
 
-            //**************************
-            builder.setAlwaysShow(true); //this is the key ingredient
-            //**************************
+        //**************************
+        builder.setAlwaysShow(true); //this is the key ingredient
+        //**************************
 
-            PendingResult<LocationSettingsResult> result =
-                    LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-                @Override
-                public void onResult(LocationSettingsResult result) {
-                    final Status status = result.getStatus();
-                    final LocationSettingsStates state = result.getLocationSettingsStates();
-                    Log.d(TAG, "onResult: "+ state.isGpsPresent());
-                    switch (status.getStatusCode()) {
-                        case LocationSettingsStatusCodes.SUCCESS:
-                            Log.d(TAG, "onResult: good");
-                            placeMe();
-                            // All location settings are satisfied. The client can initialize location
-                            // requests here.
-                            break;
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the user
-                            // a dialog.
-                            try {
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
-                                Log.d(TAG, "onResult: res req");
-                                status.startResolutionForResult(
-                                        getInstance(), 1000);
-                            } catch (IntentSender.SendIntentException e) {
-                                Log.d(TAG, "onResult: exp");
-                                // Ignore the error.
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            Log.d(TAG, "onResult: donno");
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
-                            break;
-                    }
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                Log.d(TAG, "onResult: "+ state.isGpsPresent());
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.d(TAG, "onResult: good");
+                        placeMe();
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            Log.d(TAG, "onResult: res req");
+                            status.startResolutionForResult(
+                                    getInstance(), 1000);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.d(TAG, "onResult: exp");
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Log.d(TAG, "onResult: donno");
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
                 }
-            });
-        }
+            }
+        });
+    }
 
     protected void onStart() {
         mGoogleApiClient.connect();
@@ -199,7 +217,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     protected void onStop() {
-      //  mGoogleApiClient.disconnect();
+        //  mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -208,7 +226,19 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == 1000) {
             if (resultCode == RESULT_OK) {
                 mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                placeMe();
+                if( mLastLocation== null) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                            placeMe();
+                        }
+
+                    }, 2000);
+                }else{
+                    placeMe();
+                }
                 // Make sure the app is not already connected or attempting to connect
                /*
                 if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
@@ -219,6 +249,16 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             else{
                 buildGoogleApiClient();
                 Log.d(TAG, "onActivityResult: error! canceled");
+            }
+        }else if (requestCode ==TAKE_IMAGE){
+
+            if(resultCode == Activity.RESULT_OK){
+                Toast.makeText(TripActivity.this ,"Thanks!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                askForPicure();
+                //Write your code if there's no result
             }
         }
         else{
@@ -246,10 +286,16 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         this.runOnUiThread(new Runnable() {
             public void run() {
                 Toast.makeText(TripActivity.this ,"Yey! We are here!! Show me !!!", Toast.LENGTH_LONG).show();
+
             }
         });
-
+        askForPicure();
         mGoogleApiClient.disconnect();
+    }
+
+    private void askForPicure(){
+        Intent i = new Intent(this, PictureActivty.class);
+        startActivityForResult(i, TAKE_IMAGE);
     }
 
     /**
@@ -266,7 +312,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         readyMap = true;
         mMap = googleMap;
         if(connected) {
-          //  placeMe();
+            //  placeMe();
         }
         // Add a marker in Sydney and move the camera
 
@@ -279,7 +325,19 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng whereAreWe = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(whereAreWe).title("Our position"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(whereAreWe));
-            searchFood();
+            if (!isRestarted) {
+                searchFood();
+            }
+            else{
+                LatLng target = new LatLng(savedDistLat, savedDistLng);
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(target)      // Sets the center of the map to Mountain View
+                    .zoom(16)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
+                    .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
         }
     }
     /**
@@ -294,7 +352,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         connected = true;
         if(readyMap && mLastLocation != null) {
-       //     placeMe();
+            //     placeMe();
         }
 
         /*
@@ -402,14 +460,16 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     double distanceFromDestination = getDistanceFromLatLonInKm(lat,lng, mLastLocation.getLatitude(),mLastLocation.getLongitude());
                     Toast.makeText(getInstance(), "Let's go to the " + name +"! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
                     BuggerService.getInstance().setDistanceToDest(lat,lng);
-
+                    savedDistLat = lat;
+                    savedDistLng = lng;
+//TODO SAVE IT!
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            showDialog();;
+                            showDialog();
                         }
-                    }, 4000);
+                    }, 3000);
                     break;
                 }
             } catch (JSONException e) {
@@ -421,12 +481,28 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void showDialog() {
-        DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Trip_buttons_title,"Yes","No",getClass().getName());
-        newFragment.show(getSupportFragmentManager(),"dialog");
+    @Override
+    public void onSaveInstanceState( Bundle outState ) {
+
     }
 
+    public void showDialog() {
+        ActivityManager mActivityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
+        ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
+        String activityOnTop = ar.topActivity.getClassName();
+
+
+        if (!activityOnTop.contains("com.shalom.itai.theservantexperience.Activities.TripActivity")) {
+
+            Intent intent = new Intent(this, TripActivity.class).putExtra("restart",true);
+            this.startActivity(intent);
+        } else {
+            DialogFragment newFragment = MyAlertDialogFragment
+                    .newInstance(R.string.alert_dialog_Trip_buttons_title, "Yes", "No", getClass().getName());
+            newFragment.show(getSupportFragmentManager(), "dialog");
+        }
+    }
     @Override
     public void doPositive() {
         BuggerService.setSYSTEM_GlobalPoints(1);
@@ -445,8 +521,8 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void searchFood() {
-    //    https://maps.googleapis.com/maps/api/place/search/json?types=bar&restaurant&radius=500&&key=AIzaSyCvcfb2pxac2baMGVFvzCAKFPmY735Cw14&location=31.7813273,35.2148459
-      new getData().execute();
+        //    https://maps.googleapis.com/maps/api/place/search/json?types=bar&restaurant&radius=500&&key=AIzaSyCvcfb2pxac2baMGVFvzCAKFPmY735Cw14&location=31.7813273,35.2148459
+        new getData().execute();
     }
     @Override
     public void onConnectionSuspended(int i) {
