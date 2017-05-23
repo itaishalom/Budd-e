@@ -77,6 +77,7 @@ import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBu
 import static com.shalom.itai.theservantexperience.Services.DayActions.Activities;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SAVE_IMAGE;
 import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.Utils.Functions.getDistanceFromLatLonInKm;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
@@ -216,6 +217,12 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStart();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        BuggerService.getInstance().unbug();
+    }
+
     protected void onStop() {
         //  mGoogleApiClient.disconnect();
         super.onStop();
@@ -294,7 +301,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void askForPicure(){
-        Intent i = new Intent(this, PictureActivty.class);
+        Intent i = new Intent(this, PictureActivty.class).putExtra(SAVE_IMAGE,true);
         startActivityForResult(i, TAKE_IMAGE);
     }
 
@@ -329,15 +336,16 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                 searchFood();
             }
             else{
-                LatLng target = new LatLng(savedDistLat, savedDistLng);
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(target)      // Sets the center of the map to Mountain View
-                    .zoom(16)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
-                    .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
+                LatLng target = new LatLng(BuggerService.getInstance().getDistanceLat(), BuggerService.getInstance().getDistanceLng());
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(target)      // Sets the center of the map to Mountain View
+                        .zoom(16)                   // Sets the zoom
+                        .bearing(90)                // Sets the orientation of the camera to east
+                        .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mMap.addMarker(new MarkerOptions().position(target).title("Jon wants to visit"));
+            }
         }
     }
     /**
@@ -416,7 +424,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             return false;
         }
 
-        @Override
+
+
+            @Override
         protected void onPostExecute(String result) {
             try {
                 JSONObject jsonList = new JSONObject(result);
@@ -460,8 +470,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     double distanceFromDestination = getDistanceFromLatLonInKm(lat,lng, mLastLocation.getLatitude(),mLastLocation.getLongitude());
                     Toast.makeText(getInstance(), "Let's go to the " + name +"! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
                     BuggerService.getInstance().setDistanceToDest(lat,lng);
-                    savedDistLat = lat;
-                    savedDistLng = lng;
+
 //TODO SAVE IT!
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {

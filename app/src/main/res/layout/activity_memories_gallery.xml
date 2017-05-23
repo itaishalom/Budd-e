@@ -6,10 +6,26 @@
     android:layout_height="match_parent"
     tools:context="com.shalom.itai.theservantexperience.Activities.MemoriesGalleryActivity">
 
+    <TextView
+        android:id="@+id/data"
+        android:layout_width="330dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/displayImage"
+        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView2"
+        app:layout_constraintVertical_bias="0.272" />
+
     <ImageView
         android:id="@+id/displayImage"
-        android:layout_width="331dp"
-        android:layout_height="336dp"
+        android:layout_width="339dp"
+        android:layout_height="376dp"
         android:layout_weight="1.0"
         android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,7 +35,9 @@
         android:layout_marginTop="8dp"
         app:layout_constraintVertical_bias="0.86"
         android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="161dp"
+        app:layout_constraintHorizontal_bias="0.511" />
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView2"
@@ -42,4 +60,5 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" />
     </HorizontalScrollView>
+
 </android.support.constraint.ConstraintLayout>

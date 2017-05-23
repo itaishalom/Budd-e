@@ -105,7 +105,7 @@ public double smilingProb;
 
         if ((mBitmap != null) && (mFaces != null)) {
             double scale = drawBitmap(canvas);
-            drawFaceLandmarks(canvas, scale);
+         //   drawFaceLandmarks(canvas, scale);
         }
     }
 

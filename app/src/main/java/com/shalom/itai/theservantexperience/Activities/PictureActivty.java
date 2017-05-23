@@ -19,23 +19,30 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_BYTE_ARRAY;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SAVE_IMAGE;
 
 public class PictureActivty extends AppCompatActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri fileUri;
+    boolean toSave;
+    int width =0;
+    int height = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture_activty);
         onCaptureImage();
+        toSave = getIntent().getBooleanExtra(SAVE_IMAGE,false);
+
     }
 
 
     public void onCaptureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-        intent.putExtra( MediaStore.EXTRA_OUTPUT,  fileUri);
+            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+            intent.putExtra( MediaStore.EXTRA_OUTPUT,  fileUri);
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
@@ -65,6 +72,12 @@ public class PictureActivty extends AppCompatActivity {
         setResult(status,returnIntent);
         finish();
     }
+    private void finalize(int status,byte[] image){
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(IMAGE_BYTE_ARRAY,image);
+        setResult(status,returnIntent);
+        finish();
+    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -76,6 +89,7 @@ public class PictureActivty extends AppCompatActivity {
                 if(fileUri != null) {
                     try {
                         //   ImageView newImage =  (ImageView)findViewById(R.id.ResultImage);
+/*
                         final BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inJustDecodeBounds = true;
                         options.inSampleSize = 2;
@@ -86,16 +100,21 @@ public class PictureActivty extends AppCompatActivity {
                         Bitmap bMap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
 
                        // Bitmap bMap = BitmapFactory.decodeFile(fileUri.getPath());
-
+*/
                         //newImage.setImageBitmap(bMap);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                        bMap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        Bitmap bmp = BitmapFactory.decodeFile(fileUri.getPath());
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+                        byte[] arr = stream.toByteArray();
 
-                        stream.flush();
-
-                        stream.close();
-                        finalize(Activity.RESULT_OK);
+                            stream.flush();
+                            stream.close();
+                        if(!toSave){
+                            File f = new File(fileUri.getPath());
+                            f.delete();
+                        }
+                        finalize(Activity.RESULT_OK,arr);
                     } catch (IOException e) {
                         finalize(Activity.RESULT_CANCELED);
                         e.printStackTrace();

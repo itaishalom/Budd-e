@@ -114,8 +114,7 @@ public class updateOS extends AppCompatActivity {
           //   editor.putBoolean(IS_INSTALLED, false);
         //editor.commit();
         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
-        if(isInstalled)
-        {
+        if(isInstalled) {
 
             /*
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -191,13 +190,6 @@ public class updateOS extends AppCompatActivity {
 
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
-      //          mp.release();
-
-/*
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("runMainActivity",true);
-                startActivity(intent);
-  */
                 startService(new Intent(getApplicationContext(), BuggerService.class).putExtra("runMainActivity",true));
                 finish();
             }

@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -26,14 +25,14 @@ import com.shalom.itai.theservantexperience.Utils.SilentCamera;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import com.shalom.itai.theservantexperience.Utils.Functions;
+
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.saveBmpToFile;
+import static com.shalom.itai.theservantexperience.Utils.Functions.saveMemory;
 
 
 //TODO more interaction
@@ -177,24 +176,28 @@ public class FunActivity extends AppCompatActivity {
                             GlobalPoints -= 2;*/
                         mFaceOverlayView.setBitmap(photo);
                         double smilingProbability = mFaceOverlayView.getSmilingProb();
-                        if(smilingProbability>-1 && smilingProbability<0.7) {
-                            mFaceOverlayView.invalidateThis();
-                            Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
-                                    Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(-1);
-                            saveBmpToFile(photo);
-                        }else {
-                            Toast.makeText(FunActivity.this, "you  smile!",
-                                    Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(1);
-                            saveBmpToFile(photo);
+                        if(smilingProbability>-1) {
+                            String data = "";
+                            if (smilingProbability < 0.7) {
+                                mFaceOverlayView.invalidateThis();
+                                Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
+                                        Toast.LENGTH_LONG).show();
+                                BuggerService.setSYSTEM_GlobalPoints(-1);
+                              data = "You told me I'm funny but you lied";
+                            } else {
+                                Toast.makeText(FunActivity.this, "you  smile!",
+                                        Toast.LENGTH_LONG).show();
+                                BuggerService.setSYSTEM_GlobalPoints(1);
+                                data = "Your beautiful smile!";
+                            }
+                            saveMemory(photo,data);
                         }
                         stopTimer();
                     }
                 });
             }
 
-        }, 0, 3000); // End of your timer code.
+        }, 0, 3000);
     }
 
     private void stopTimer()

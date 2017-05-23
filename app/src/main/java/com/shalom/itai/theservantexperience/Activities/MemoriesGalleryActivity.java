@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.shalom.itai.theservantexperience.R;
 
@@ -36,11 +37,13 @@ public class MemoriesGalleryActivity extends AppCompatActivity {
     private static final String TAG = "MemoriesGalleryActivity";
      LinearLayout myGallery;// = (LinearLayout) findViewById(R.id.mygallery);
     private Uri fileUri;
+    TextView memoData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memories_gallery);
         final ImageView diplayImage = (ImageView) findViewById(R.id.displayImage);
+         memoData = (TextView) findViewById(R.id.data);
           myGallery = (LinearLayout) findViewById(R.id.mygallery);
 
 /*
@@ -65,54 +68,61 @@ public class MemoriesGalleryActivity extends AppCompatActivity {
             File directory = new File(galleryDirectoryName);
             File[] files = directory.listFiles();
             for (int i = 0; i < files.length; i++) {
-                fis = new FileInputStream(files[i]);
-                final Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                if(files[i].getAbsolutePath().endsWith(".jpg")) {
+                    final BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    options.inSampleSize = 2;
+                    options.inJustDecodeBounds = false;
+                    options.inTempStorage = new byte[16 * 1024];
 
-                ImageView imageView = new ImageView(getApplicationContext());
+                    Bitmap bmp = BitmapFactory.decodeFile(files[i].getAbsolutePath(),options);
+                    final Bitmap bitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
+                   // final Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                    String text = "";
+                    ImageView imageView = new ImageView(getApplicationContext());
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setImageBitmap(bitmap);
+                    String fileName =  files[i].getAbsolutePath();
+                    String imageNoExt =fileName.substring(0,fileName.lastIndexOf('.'));
+                    String dataFile = imageNoExt+".txt";
+                    File f = new File(dataFile);
+                    if (f.exists()){
+                        int length = (int)f.length();
 
-       //         imageView.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setImageBitmap(bitmap);
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        diplayImage.setImageBitmap(bitmap);
+                        byte[] bytes = new byte[length];
+
+                        FileInputStream in = new FileInputStream(f);
+                        try {
+                            in.read(bytes);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            in.close();
+                        }
+
+                        text = new String(bytes);
+                        String temp = "On: " + imageNoExt.substring(imageNoExt.lastIndexOf('/')+1,imageNoExt.length())+ "\n" + text;
+                        text =temp;
                     }
-                });
+                    final String memoText = text;
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            diplayImage.setImageBitmap(bitmap);
+                            diplayImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                            memoData.setText(memoText);
 
-
-     //           imageView.setLayoutParams(new ViewGroup.LayoutParams(70, 70));
-                imageView.setLayoutParams(new ViewGroup.LayoutParams(params.width /3 ,params.height /4 ));
-                myGallery.addView(imageView);
+                        }
+                    });
+                    imageView.setLayoutParams(new ViewGroup.LayoutParams(params.width / 3, params.height / 4));
+                    myGallery.addView(imageView);
+                }
             }
-        } catch (FileNotFoundException e1) {
+        } catch (IOException e1) {
             e1.printStackTrace();
         }
     }
 
 
-
-    public static void takeScreenshot(AppCompatActivity activity) {
-        Date now = new Date();
-        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        try {
-            // image naming and path  to include sd card  appending name you choose for file
-            String mPath =Directory + "/" + now + ".jpg";
-            // create bitmap screen capture
-            View v1 = activity.getWindow().getDecorView().getRootView();
-            v1.setDrawingCacheEnabled(true);
-            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
-            v1.setDrawingCacheEnabled(false);
-            File imageFile = new File(mPath);
-            FileOutputStream outputStream = new FileOutputStream(imageFile);
-            int quality = 100;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-            outputStream.flush();
-            outputStream.close();
-        } catch (Throwable e) {
-            // Several error may come out with file handling or OOM
-            e.printStackTrace();
-        }
-    }
 }
 

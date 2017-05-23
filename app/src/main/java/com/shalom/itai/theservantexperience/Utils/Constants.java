@@ -18,5 +18,7 @@ public class Constants {
     public static final int LISTEN_SOUND_INTERVAL = 1000;
     public static final int SECOND = 1000;
     public static final int MINUTE = 60000;
+    public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
+    public static final String SAVE_IMAGE =  "toSaveImage";
     public static String Directory ;
 }

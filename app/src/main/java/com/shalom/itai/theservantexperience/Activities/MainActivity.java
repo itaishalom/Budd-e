@@ -113,37 +113,11 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-        //  startService(new Intent(this, BuggerService.class));
         initializeGui();
-
-        //  setBubbleFunction(false);
-        //   popUpMessage();
         thisActivity = this;
-
-        //    sm = new NoiseListener();
-        //    sm.start();
     }
 
-    /*
-    private void setBubbleFunction(boolean wakeUp){
-        if(!wakeUp) {
-            chatImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.getInstance(),
-                            ChatActivity.class).putExtra(CHAT_START_MESSAGE,
-                            "Jon is here"));
-                }
-            });
-        }else
-        {
-            chatImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    doSleepLogic();
-                }
-            });
-        }
-    }
-*/
+
     private void initializeGui(){
         setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
@@ -156,10 +130,13 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+      //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
                         MemoriesGalleryActivity.class));
+
             }
         });
+
     }
     /*
         private void doSleepLogic()
@@ -190,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.options, menu);
         MenuItem te =menu.findItem(R.id.action_favorite);
-        te.setIcon(BuggerService.getInstance().getRelationsStatus().getIconId());
+        if (te !=null)
+            te.setIcon(BuggerService.getInstance().getRelationsStatus().getIconId());
         return true;
     }
 
@@ -297,8 +275,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
             newFragment.show(getSupportFragmentManager(),"dialog");
         }
     */
-    private void changeLayoutAwake()
-    {
+    private void changeLayoutAwake() {
         BuggerService.getInstance().wakeUpJon();
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
         Toast.makeText(MainActivity.this, "Morning!",

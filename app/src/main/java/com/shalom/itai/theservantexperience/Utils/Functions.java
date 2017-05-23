@@ -33,6 +33,7 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -183,7 +184,7 @@ public class Functions {
                         SharedPreferences settings = activity.getSharedPreferences(PREFS_NAME, 0);
                         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
                         if(!isInstalled) {
-
+                            takeScreenshot(activity,"I was born");
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putBoolean(IS_INSTALLED, true);
                             editor.commit();
@@ -231,41 +232,15 @@ public class Functions {
 
     }
 
-    public static void takeScreenshot(AppCompatActivity activity) {
-        Date now = new Date();
-        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        try {
-            // image naming and path  to include sd card  appending name you choose for file
-            String mPath =Directory + "/" + now + ".jpg";
-            // create bitmap screen capture
+    public static void takeScreenshot(Activity activity, String text) {
+
             View v1 = activity.getWindow().getDecorView().getRootView();
             v1.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
             v1.setDrawingCacheEnabled(false);
-
-            File imageFile = new File(mPath);
-
-            FileOutputStream outputStream = new FileOutputStream(imageFile);
-            int quality = 100;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
-            outputStream.flush();
-            outputStream.close();
-
-     //      openScreenshot(imageFile,activity);
-        } catch (Throwable e) {
-            // Several error may come out with file handling or OOM
-            e.printStackTrace();
-        }
+            saveMemory(bitmap,  text);
     }
-/*
-    public static void openScreenshot(File imageFile, AppCompatActivity activity) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        Uri uri = Uri.fromFile(imageFile);
-        intent.setDataAndType(uri, "image/*");
-        activity.startActivity(intent);
-    }
-*/
+
 
     public static boolean createJonFolder(){
 
@@ -285,21 +260,29 @@ public class Functions {
     }
 
 
-    public static void saveBmpToFile(Bitmap bmp){
+    public static void saveMemory(Bitmap bmp, String text){
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        String mPath =Directory + "/" + now + ".jpg";
-        FileOutputStream out = null;
+        String mPathImage =Directory + "/" + now + ".jpg";
+        String mPathData =Directory + "/" + now + ".txt";
+        FileOutputStream outImage = null;
+        FileOutputStream fileData = null;
+        File file = new File(mPathData);
         try {
-            out = new FileOutputStream(mPath);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            fileData = new FileOutputStream(file);
+            outImage = new FileOutputStream(mPathImage);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outImage); // bmp is your Bitmap instance
+            fileData.write(text.getBytes());
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (out != null) {
-                    out.close();
+                if (outImage != null) {
+                    outImage.close();
+                }
+                if (fileData != null) {
+                    fileData.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

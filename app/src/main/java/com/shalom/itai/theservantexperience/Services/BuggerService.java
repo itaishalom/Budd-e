@@ -76,7 +76,12 @@ public void setDistanceToDest(double lat,double lng){
     latDistanceToDest = lat;
     lngDistanceToDest = lng;
 }
-
+    public double getDistanceLat() {
+        return latDistanceToDest;
+    }
+    public double getDistanceLng() {
+        return lngDistanceToDest;
+    }
 
     public  RelationsStatus getRelationsStatus()
     {
