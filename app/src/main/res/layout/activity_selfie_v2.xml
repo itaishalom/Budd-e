@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.shalom.itai.theservantexperience.SelfieV2"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="check"
+        />
+
+    <Button
+        android:id="@+id/startcamerapreview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="- Start Camera Preview -"
+        />
+
+    <Button
+        android:id="@+id/stopcamerapreview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="- Stop Camera Preview -"
+        />
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <com.shalom.itai.theservantexperience.Utils.CameraPreview
+        android:id ="@+id/camerapreview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="192dp"
+            android:layout_height="313dp"
+            app:srcCompat="@drawable/angry" />
+
+    </FrameLayout>
+</LinearLayout>

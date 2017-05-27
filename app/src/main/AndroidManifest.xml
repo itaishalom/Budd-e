@@ -151,9 +151,10 @@
         <activity
             android:name=".Activities.SelfieActivity"
             android:hardwareAccelerated="false"
-            android:launchMode="singleInstance"
             android:label="@string/title_activity_selfie"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".SelfieV2"></activity>
     </application>
 
 </manifest>

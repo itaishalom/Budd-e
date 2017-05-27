@@ -97,8 +97,8 @@ public class SilentCamera {
     }
 
     private void prepareCamera(){
-        SurfaceView view = new SurfaceView(context);
-
+      //  SurfaceView view = new SurfaceView(context);
+        mySurfaceView view = new mySurfaceView(context);
         try{
             camera.setPreviewDisplay(view.getHolder());
 
@@ -149,6 +149,7 @@ public class SilentCamera {
         @Override
         public void onPictureTaken(byte[] data, Camera camera){
             Intent i = new Intent("android.intent.action.ImageReady").putExtra("path", data);
+            releaseCamera();
             context.sendBroadcast(i);
         }
     };
