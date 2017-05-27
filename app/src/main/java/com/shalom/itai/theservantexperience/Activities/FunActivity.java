@@ -149,7 +149,7 @@ public class FunActivity extends AppCompatActivity {
 
     public void analayze() {
         SilentCamera c = new SilentCamera(this);
-        c.getCameraInstance();
+        c.getCameraInstanceSilentMode();
         c.takePicture();
         return;
     }

@@ -1,10 +1,14 @@
 package com.shalom.itai.theservantexperience;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
@@ -26,20 +30,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.Utils.Functions.saveMemory;
 
 public class SelfieV2 extends AppCompatActivity {
 
     CameraPreview surfaceView;
     SurfaceHolder surfaceHolder;
-    boolean previewing = false;
+    SelfieV2 inst;
+    private BroadcastReceiver mReceiver;
 
-    private boolean hasCamera;
-   AppCompatActivity inst;
-    private Camera camera;
-    private int cameraId;
-    ;
-
-    String stringPath = "/sdcard/samplevideo.3gp";
 
     /**
      * Called when the activity is first created.
@@ -50,11 +49,7 @@ public class SelfieV2 extends AppCompatActivity {
         setContentView(R.layout.activity_selfie_v2);
 
         Button buttonStartCameraPreview = (Button) findViewById(R.id.startcamerapreview);
-        Button buttonStopCameraPreview = (Button) findViewById(R.id.stopcamerapreview);
-        //LinearLayout ln = (LinearLayout) findViewById(R.id.linearLayout1);
-     //   ln.bringToFront();
-   //     ImageView jonsFace = (ImageView) findViewById(R.id.jonsFace);
-     //   jonsFace.bringToFront();
+
         getWindow().setFormat(PixelFormat.UNKNOWN);
 
         surfaceView = (CameraPreview) findViewById(R.id.camerapreview);
@@ -64,95 +59,65 @@ public class SelfieV2 extends AppCompatActivity {
         surfaceHolder.addCallback(surfaceView);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-  //      surfaceView.surfaceCreated(surfaceHolder);
 
-        // = c.getApplicationContext();
-
-inst = this;
-
-
-  /*
-        camera = Camera.open(cameraId);
-        if (camera != null) {
-
-            //    camera.setPreviewDisplay(surfaceHolder);
-                camera.startPreview();
-             //   surfaceView.startFromOutside = true;
-            // //   surfaceView.surfaceCreated(surfaceHolder);
-                Camera.Parameters params = camera.getParameters();
-                params.setJpegQuality(50);
-                params.setRotation(270);
-                params.setRotation(90);
-                camera.setParameters(params);
-                previewing = true;
-         /*
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
-        */
         buttonStartCameraPreview.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                surfaceView.takeImage(inst);
+                try {
+           //         surfaceView.onStart(inst);
+                    surfaceView.takeImage();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
-                // TODO Auto-generated method stub
+        inst = this;
+       // surfaceView.onStart(this);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //  BuggerService.isFunActivityUp = false;
+        this.unregisterReceiver(this.mReceiver);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // BuggerService.isMainActivityUp = true;
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.ImageReady");
 
-
-        buttonStopCameraPreview.setOnClickListener(new Button.OnClickListener() {
+        mReceiver = new BroadcastReceiver() {
 
             @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (camera != null && previewing) {
-                    camera.stopPreview();
-                    camera.release();
-                    camera = null;
-
-                    previewing = false;
-                }
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                byte[] data = intent.getByteArrayExtra("path");
+                mergeImages(data);
             }
-        });
-
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
     }
 
+    private void mergeImages(byte[] imageTaken) {
+
+        Bitmap bottomImage = BitmapFactory.decodeByteArray(imageTaken, 0, imageTaken.length);
+
+        Bitmap topImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.angry);
+
+        Bitmap bmOverlay = Bitmap.createBitmap(bottomImage.getWidth(), bottomImage.getHeight(), bottomImage.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
 
 
-    private void getCamera(){
-        if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            cameraId = getFrontCameraId();
+        canvas.drawBitmap(bottomImage, new Matrix(), null);
+        canvas.drawBitmap(topImage, bottomImage.getWidth() - topImage.getWidth(), 300, null);
+        saveMemory(bmOverlay, "Our selfie!");
 
-            if(cameraId != -1){
-                hasCamera = true;
-            }else{
-                hasCamera = false;
-            }
-        }else{
-            hasCamera = false;
-        }
+        finish();
     }
-
-
-
-    private int getFrontCameraId(){
-        int camId = -1;
-        int numberOfCameras = Camera.getNumberOfCameras();
-        Camera.CameraInfo ci = new Camera.CameraInfo();
-
-        for(int i = 0;i < numberOfCameras;i++){
-            Camera.getCameraInfo(i,ci);
-            if(ci.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
-                camId = i;
-            }
-        }
-
-        return camId;
-    }
-
 }

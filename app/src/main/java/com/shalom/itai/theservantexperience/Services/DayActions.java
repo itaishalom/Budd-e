@@ -44,7 +44,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     public static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{FunActivity.class,SelfieV2.class, TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{SelfieV2.class,FunActivity.class, TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
