@@ -67,6 +67,7 @@ public abstract class Actions {
     public abstract void StopTimers();
 
     public abstract void unLock();
+    public void restartCheckStatus(){}
 
     protected void removeNotification()
     {

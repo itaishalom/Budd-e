@@ -45,7 +45,7 @@ public class BuggerService extends Service {
     public static boolean stopBugger = false;
   //  public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
-    private static int SYSTEM_GlobalPoints = 10;     //TODO READ FROM CONF!
+    private static int SYSTEM_GlobalPoints ;
     private static BuggerService mInstance;
     private static RelationsStatus currentStatus;
     private int mStartId =-1;
@@ -62,15 +62,11 @@ public class BuggerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        loadPoints();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
-
         mInstance = this;
-        startService();
     }
-    private void startService() {
 
-        //    new CheckRunningActivity(getBaseContext()).start();
-    }
 
 public void setDistanceToDest(double lat,double lng){
     latDistanceToDest = lat;
@@ -94,9 +90,6 @@ public void setDistanceToDest(double lat,double lng){
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       /* SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        boolean isLocked = settings.getBoolean(IS_LOCKED, false);*/
-
         isServiceUP= true;
         if (intent !=null &&intent.getBooleanExtra("runMainActivity",false))// TODO CHECK NULL
         {
@@ -112,9 +105,9 @@ public void setDistanceToDest(double lat,double lng){
         return isServiceUP;
     }
 
-    //TODO save!
     public static void setSYSTEM_GlobalPoints(int pts){
         SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
+        savePoints();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
     }
 
@@ -122,31 +115,22 @@ public void setDistanceToDest(double lat,double lng){
         return SYSTEM_GlobalPoints;
     }
 
+    private static void savePoints(){
+        SharedPreferences settings = MainActivity.getInstance().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(GLOBAL_POINTS, SYSTEM_GlobalPoints);
+        editor.commit();
+    }
 
+    private void loadPoints(){
+        SharedPreferences settings = MainActivity.getInstance().getSharedPreferences(PREFS_NAME, 0);
+        SYSTEM_GlobalPoints = settings.getInt(GLOBAL_POINTS,INITIAL_POINTS);
+    }
 
     @Override
     public boolean stopService(Intent name) {
-      /*  this.unbug();
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-
-      */
       currentAction.StopTimers();
-
-    /*if(NightService.getInstance()!=null) {
-        Intent down = (new Intent(getApplicationContext(), NightService.class));
-        down.putExtra("IS_MY_STOP", true);
-
-        NightService.getInstance().stopService(down);
-    }
-        if(MorningService.getInstance()!=null) {
-            Intent down2 = (new Intent(getApplicationContext(), MorningService.class));
-            down2.putExtra("IS_MY_STOP", true);
-            MorningService.getInstance().stopService(down2);
-        }
-        */
         stopSelf(mStartId);
-
       return super.stopService(name);
 
     }
@@ -187,6 +171,7 @@ public void setDistanceToDest(double lat,double lng){
             ((DayActions)currentAction).goToTrip(latDistanceToDest,lngDistanceToDest);
         }
     }
+
     public void unTrip() {
         if (currentAction instanceof DayActions){
             ((DayActions)currentAction).unTrip();
@@ -203,6 +188,9 @@ public void setDistanceToDest(double lat,double lng){
         this.onRefresh(gifImageView, mainLayout, chatImage);
     }
 
+    public void restartCheckStatus() {
+        currentAction.restartCheckStatus();
+    }
 
 
     public void stopNoiseListener() {

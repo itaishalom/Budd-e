@@ -31,6 +31,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_ME
 import static com.shalom.itai.theservantexperience.Utils.Constants.IS_LOCKED;
 import static com.shalom.itai.theservantexperience.Utils.Constants.LOCATION_DISTNCE_CHECK;
 import static com.shalom.itai.theservantexperience.Utils.Constants.LOCK_WAIT_TIME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.MINUTE;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
@@ -53,6 +54,7 @@ public class DayActions extends Actions {
     private static Timer timerBugger;
     private static Timer timerLock;
     private static Timer timerTrip;
+    private static Timer moodTimer;
 
     private static boolean isUp=false;
     private static DayActions instance = null;
@@ -88,12 +90,8 @@ public class DayActions extends Actions {
         else
         {
             this.bug();
+            this.checkStatus();;
         }
-/*
-            SharedPreferences.Editor editor = settings.edit();
-           editor.putBoolean(IS_INSTALLED, true);
-            editor.commit();
-*/
         isUp= true;
     }
 
@@ -140,13 +138,27 @@ public class DayActions extends Actions {
         }
     }
 
+    public void checkStatus(){
+        moodTimer = new Timer();
+        moodTimer.scheduleAtFixedRate(new MoodTimer(mContext), 0, MINUTE * throwRandom(30,15));
+    }
+    public void restartCheckStatus(){
+        this.unCheckStatus();
+        this.checkStatus();
+    }
 
-
+    public void unCheckStatus(){
+        if(moodTimer != null) {
+            moodTimer.cancel();
+            moodTimer.purge();
+        }
+    }
 
     @Override
     public void StopTimers() {
         this.unbug();
         this.unLock();
+        this.unCheckStatus();
         removeNotification();
     }
 

@@ -78,10 +78,12 @@ import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
+import static com.shalom.itai.theservantexperience.Utils.Functions.getBatteryLevel;
+import static com.shalom.itai.theservantexperience.Utils.Functions.getReceptionLevel;
 import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
 
 
-public class MainActivity extends AppCompatActivity implements DialogCaller{
+public class MainActivity extends AppCompatActivity implements DialogCaller {
     private boolean readyToInvalidate = false;
     public static final String TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
@@ -96,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     private boolean permissionToCalendarWrite = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
-            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR,RECEIVE_BOOT_COMPLETED,
-            VIBRATE,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_COARSE_LOCATION,READ_PHONE_STATE,ACCESS_WIFI_STATE,INTERNET};
+            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
+            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE, ACCESS_WIFI_STATE, INTERNET};
     private boolean isSleeping = false;
     public static MainActivity thisActivity;
     TextView signalStrength;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     ImageView chatImage;
     ListView chatListView;
     ImageView memoriesImage;
+
     @Override
     public void onCreate(Bundle icicle) {
 
@@ -118,19 +121,19 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     }
 
 
-    private void initializeGui(){
+    private void initializeGui() {
         setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
-        chatListView = ( ListView ) findViewById( R.id.chat_list);
+        chatListView = (ListView) findViewById(R.id.chat_list);
         gifImageView = (GifImageView) findViewById(R.id.GifImageView);
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-      //          takeScreenshot(MainActivity.getInstance(),"Check install");
+                //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
                         MemoriesGalleryActivity.class));
 
@@ -138,51 +141,28 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         });
 
     }
-    /*
-        private void doSleepLogic()
-        {
-            if(isSleeping)
-            {//
-                showDialog();
 
-            }
-            else {
-                changeToSleepingJon();
-            }
-        }
-    */
-    /*
-    private void changeToSleepingJon()
-    {
-        BuggerService.getInstance().sendJonToSleep();
-        gifImageView.setGifImageResource(R.drawable.jon_sleeping);
-        Toast.makeText(MainActivity.this, "Good night!",
-                Toast.LENGTH_SHORT).show();
-        mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
-        isSleeping = !isSleeping;
-    }
-*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.options, menu);
-        MenuItem te =menu.findItem(R.id.action_favorite);
-        if (te !=null)
+        MenuItem te = menu.findItem(R.id.action_favorite);
+        if (te != null)
             te.setIcon(BuggerService.getInstance().getRelationsStatus().getIconId());
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final ConstraintLayout relationsLayout =(ConstraintLayout) findViewById(R.id.relation_layout);
-        final ConstraintLayout moodLayout =(ConstraintLayout) findViewById(R.id.mood_layout);
+        final ConstraintLayout relationsLayout = (ConstraintLayout) findViewById(R.id.relation_layout);
+        final ConstraintLayout moodLayout = (ConstraintLayout) findViewById(R.id.mood_layout);
 
         switch (item.getItemId()) {
             case R.id.action_settings:
                 //       startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
                 return true;
             case R.id.action_mood:
-                if(moodLayout.getVisibility() == View.VISIBLE)
+                if (moodLayout.getVisibility() == View.VISIBLE)
                     moodLayout.setVisibility(View.INVISIBLE);
                 else {
                     moodLayout.setVisibility(View.VISIBLE);
@@ -194,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
                 return true;
             case R.id.action_favorite:
 //                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
-                if(relationsLayout.getVisibility() == View.VISIBLE)
+                if (relationsLayout.getVisibility() == View.VISIBLE)
                     relationsLayout.setVisibility(View.INVISIBLE);
                 else {
                     invalidateRelationsData();
@@ -212,15 +192,13 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         }
     }
 
-    private void invalidateStatusParam()
-    {
-        signalStrength.setText(String.valueOf(getReceptionLevel()));
-        batteryStrength.setText(String.valueOf( getBatteryLevel()));
+    private void invalidateStatusParam() {
+        signalStrength.setText(String.valueOf(getReceptionLevel(this))+"/5");
+        batteryStrength.setText(String.valueOf(getBatteryLevel(this))+"/5");
     }
 
 
-    private void invalidateRelationsData(){
-
+    private void invalidateRelationsData() {
         RelationsStatus status = BuggerService.getInstance().getRelationsStatus();
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarRelations);
         pb.setMax(status.getMaxValProgress());
@@ -229,52 +207,8 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         friendshipLevel.setText(status.getRelationStatus());
     }
 
-    //getRelationStatus
-    private int getBatteryLevel(){
-        BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
-        return bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-    }
 
-    private int getReceptionLevel(){
 
-        WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        int numberOfLevels=5;
-        if (mWifiManager.isWifiEnabled()) {
-            int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
-            int level = WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
-            return level;
-        }
-        int num =-1000;
-        TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-        Object obj = telephonyManager.getAllCellInfo().get(0);
-        if (obj instanceof CellInfoLte) {
-
-            CellInfoLte cellinfogsm = (CellInfoLte)obj;
-            CellSignalStrengthLte cellSignalStrengthLTE = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthLTE.getDbm();
-        }
-        else if (obj instanceof CellInfoWcdma)
-        {
-            CellInfoWcdma cellinfogsm = (CellInfoWcdma) obj;
-            CellSignalStrengthWcdma cellSignalStrengthWCDMA = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthWCDMA.getDbm();
-        }
-        else if (obj instanceof CellInfoCdma)
-        {
-            CellInfoCdma cellinfogsm = (CellInfoCdma) obj;
-            CellSignalStrengthCdma cellSignalStrengthCDMA = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthCDMA.getDbm();
-        }
-        return num;
-    }
-
-    /*
-        public void showDialog() {
-            DialogFragment newFragment = MyAlertDialogFragment
-                    .newInstance(R.string.alert_dialog_two_buttons_title);
-            newFragment.show(getSupportFragmentManager(),"dialog");
-        }
-    */
     private void changeLayoutAwake() {
         BuggerService.getInstance().wakeUpJon();
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
@@ -285,20 +219,6 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     }
 
 
-    public void callSpeech() {
-        Intent intent = new Intent(this, SpeechRecognitionActivity.class);
-
-        startActivity(intent);
-    }
-
-
-
-    public void callSms() {
-        Intent intent = new Intent(this, SmsSendActivity.class);
-
-        startActivity(intent);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -306,37 +226,35 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
             case REQUESTS:
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 permissionToCameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                permissionToConttactsAccepted= grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                permissionToAccounts= grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                permissionToCalendarRead =  grantResults[5] == PackageManager.PERMISSION_GRANTED;
-                permissionToCalendarWrite =  grantResults[6] == PackageManager.PERMISSION_GRANTED;
+                permissionToConttactsAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                permissionToAccounts = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                permissionToCalendarRead = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                permissionToCalendarWrite = grantResults[6] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted || !permissionToCameraAccepted ||!permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead) finish();
-        Functions.fadingText(this,R.id.jon_text);
-        readyToInvalidate= true;
+        if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
+            finish();
+        Functions.fadingText(this, R.id.jon_text);
+        readyToInvalidate = true;
         createJonFolder();
-   //     takeScreenshot(this);
         BuggerService.getInstance().wakeUpJon();
     }
 
 
-    public void showDialog(){
+    public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Wake_up_buttons_title,"Wake up!","Shh...",getClass().getName());
-        newFragment.show(MainActivity.getInstance().getSupportFragmentManager(),"dialog");
+                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName());
+        newFragment.show(MainActivity.getInstance().getSupportFragmentManager(), "dialog");
     }
 
 
     public void onBackPressed() {
-
         this.finish();
         super.onBackPressed();
     }
 
 
-    public static MainActivity getInstance()
-    {
+    public static MainActivity getInstance() {
         return thisActivity;
     }
 
@@ -350,14 +268,8 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-/*
-        setBubbleFunction(true);
-        if(intent.getBooleanExtra("sleep",false)) {
-            changeToSleepingJon();
-            return;
-        }
-    */
-        if(intent.getBooleanExtra("wakeUpOptions",false)){
+
+        if (intent.getBooleanExtra("wakeUpOptions", false)) {
             forceWakeUp();
         }
     }
@@ -366,11 +278,11 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     protected void onResume() {
         super.onResume();
         BuggerService.isMainActivityUp = true;
-        invalidateOptionsMenu ();
-        if(readyToInvalidate && BuggerService.getIsServiceUP()) {
+        invalidateOptionsMenu();
+        if (readyToInvalidate && BuggerService.getIsServiceUP()) {
             invalidateRelationsData();
             invalidateStatusParam();
-            BuggerService.getInstance().onRefresh(gifImageView,mainLayout,chatImage);
+            BuggerService.getInstance().onRefresh(gifImageView, mainLayout, chatImage);
         }
 
         //   mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
@@ -386,32 +298,32 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
 
     private void forceWakeUp() {
         isSleeping = false;
-        List<String> legendList= new ArrayList<String>();
+        List<String> legendList = new ArrayList<String>();
         legendList.add("Put hear plugs and go back to bad");
         legendList.add("Stay awake");
         legendList.add("Ohhh... Sorry");
-        chatListView.setAdapter( new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList ) );
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //   String o = (String) parent.getItemAtPosition(position);
                 //   Toast.makeText(MainActivity.getInstance(), o, Toast.LENGTH_SHORT).show();
-                switch (position){
+                switch (position) {
                     case 0:
-                        Toast.makeText(MainActivity.getInstance(),"Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                     case 1:
-                        Toast.makeText(MainActivity.getInstance(),"Ok", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "Ok", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+                        chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.getInstance(),"You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
-                        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                        chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
                 }
                 cleanListOptions();
@@ -419,37 +331,36 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         });
     }
 
-    private void cleanListOptions()
-    {
-        chatListView.setAdapter( new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()) );
+    private void cleanListOptions() {
+        chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
     }
 
     private void talkAboutWakeUp() {
-        List<String> legendList= new ArrayList<String>();
+        List<String> legendList = new ArrayList<String>();
         legendList.add("Sorry to wake you up, Did you hear the news?");
         legendList.add("Stop sleeping you piece of metal");
         legendList.add("Ohhh... oops");
-        chatListView.setAdapter( new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList ) );
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //   String o = (String) parent.getItemAtPosition(position);
                 //   Toast.makeText(MainActivity.getInstance(), o, Toast.LENGTH_SHORT).show();
-                switch (position){
+                switch (position) {
                     case 0:
-                        Toast.makeText(MainActivity.getInstance(),"What happened? Checking Ynet..", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "What happened? Checking Ynet..", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(1);
                         talkAboutNews();
                         break;
                     case 1:
-                        Toast.makeText(MainActivity.getInstance(),"You woke me up for that? I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "You woke me up for that? I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.getInstance(),"You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView,mainLayout,chatImage);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                 }
                 cleanListOptions();
@@ -457,8 +368,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         });
     }
 
-    private void talkAboutNews()
-    {
+    private void talkAboutNews() {
         RSSFeedParser feeder = new RSSFeedParser();
 
         Thread thread = feeder.fetchXML("http://www.ynet.co.il/Integration/StoryRss3254.xml");
@@ -470,20 +380,20 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         }
 
         List<RSSFeedParser.Entry> entries = feeder.vals;
-        List<String> newsList= new ArrayList<String>();
-        for(int i =0;i<entries.size();i++ ){
+        List<String> newsList = new ArrayList<String>();
+        for (int i = 0; i < entries.size(); i++) {
             newsList.add(entries.get(i).toString());
         }
-        chatListView.setAdapter( new ChatListViewAdapter(this, R.layout.layout_for_listview, newsList ) );
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, newsList));
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //   String o = (String) parent.getItemAtPosition(position);
-                String toStartWith = chatListView.getItemAtPosition(position).toString()+". What you think about it??";
+                String toStartWith = chatListView.getItemAtPosition(position).toString() + ". What you think about it??";
                 Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
                 cleanListOptions();
                 startActivity(new Intent(MainActivity.getInstance(),
-                        ChatActivity.class).putExtra(CHAT_START_MESSAGE,toStartWith));
+                        ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
             }
         });
     }
@@ -502,5 +412,18 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
+/*
+    public void callSpeech() {
+        Intent intent = new Intent(this, SpeechRecognitionActivity.class);
 
+        startActivity(intent);
+    }
+
+
+    public void callSms() {
+        Intent intent = new Intent(this, SmsSendActivity.class);
+
+        startActivity(intent);
+    }
+*/
 }

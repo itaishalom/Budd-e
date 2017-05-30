@@ -28,8 +28,6 @@ public class TimerTaskForUser extends ContextTimerTask {
         super(context);
     }
 
-
-
     @Override
     public void run() {
         ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);

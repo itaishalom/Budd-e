@@ -21,5 +21,7 @@ public class Constants {
     public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
     public static final String SAVE_IMAGE =  "toSaveImage";
     public static final String IMAGE_READY = "android.intent.action.ImageReady";
+    public static final String GLOBAL_POINTS = "GLOBAL_POINTS";
+    public static final int INITIAL_POINTS = 10;
     public static String Directory ;
 }

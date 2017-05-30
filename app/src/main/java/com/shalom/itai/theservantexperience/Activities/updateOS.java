@@ -107,8 +107,6 @@ public class updateOS extends AppCompatActivity {
 
         setContentView(R.layout.activity_update_os);
 
-
-
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
           //   editor.putBoolean(IS_INSTALLED, false);
