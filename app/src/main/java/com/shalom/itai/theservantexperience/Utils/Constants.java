@@ -20,5 +20,6 @@ public class Constants {
     public static final int MINUTE = 60000;
     public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
     public static final String SAVE_IMAGE =  "toSaveImage";
+    public static final String IMAGE_READY = "android.intent.action.ImageReady";
     public static String Directory ;
 }

@@ -3,6 +3,8 @@ package com.shalom.itai.theservantexperience.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Environment;
@@ -20,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
 
 /**
  * Created by Itai on 21/04/2017.
@@ -34,6 +38,8 @@ public class SilentCamera {
     private Camera camera;
     private int cameraId;
     private String latestImage;
+    private String pathToTextImage;
+    private Bitmap imageBitmap;
 
     public SilentCamera(Context c) {
         context = c.getApplicationContext();
@@ -160,29 +166,68 @@ public class SilentCamera {
     }
 
 
+
+    public Bitmap getImageBitmap(){
+        return imageBitmap;
+    }
+
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
+        public void onPictureTaken(byte[] imageByteArray, Camera camera) {
             releaseCamera();
-            Intent i = new Intent("android.intent.action.ImageReady").putExtra("path", data);
+            imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+
+//            String pathToImage = saveMemory(photo, mText);
+
+            Intent i = new Intent(IMAGE_READY);//.putExtra("path", pathToImage);
             try {
                 context.sendBroadcast(i);
             }catch(Exception e){
                 Log.i("ISSUE IN SEND","issue not send");
-                sendAgain(data);
             }
 
         }
     };
 
-    private void sendAgain(byte[] data){
-        Intent i = new Intent("android.intent.action.ImageReady").putExtra("path", data);
+
+    public static String saveMemory(Bitmap bmp, String text){
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+        String mPathImage =Directory + "/" + now + ".jpg";
+        String mPathData =Directory + "/" + now + ".txt";
+        FileOutputStream outImage = null;
+        FileOutputStream fileData = null;
+        File file = new File(mPathData);
         try {
-            context.sendBroadcast(i);
-        }catch(Exception e){
-            Log.i("ISSUE IN SEND","issue not send");
-            sendAgain(data);
+            fileData = new FileOutputStream(file);
+            outImage = new FileOutputStream(mPathImage);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outImage); // bmp is your Bitmap instance
+            fileData.write(text.getBytes());
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outImage != null) {
+                    outImage.close();
+                }
+                if (fileData != null) {
+                    fileData.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return mPathImage;
+    }
+
+    public void clearRam(){
+        if(imageBitmap != null) {
+            imageBitmap.recycle();
+            imageBitmap = null;
+        }
+        Runtime.getRuntime().gc();
+        Log.i(TAG, "clearRam");
     }
 
     /*

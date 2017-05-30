@@ -31,8 +31,8 @@ import static android.view.View.VISIBLE;
 
 import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
 import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.saveMemory;
 
 
 //TODO more interaction
@@ -44,6 +44,7 @@ public class FunActivity extends AppCompatActivity {
     private BroadcastReceiver mReceiver;
     public static FunActivity thisActivity;
     private Timer timerUI;
+    private SilentCamera mCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class FunActivity extends AppCompatActivity {
 
     }
 
-    private void putResponseButtons(final byte[] pathToImage)
+    private void putResponseButtons(final Bitmap bitmapImage)
     {
         likeBut = (Button) findViewById(R.id.like);
         likeBut.setVisibility(VISIBLE);
@@ -89,7 +90,7 @@ public class FunActivity extends AppCompatActivity {
             public void onClick(View v) {
                 unlikeBut.setVisibility(INVISIBLE);
                 likeBut.setVisibility(INVISIBLE);
-                continueAnalyze(pathToImage);
+                continueAnalyze(bitmapImage);
                 text.setText("Thanks!!");
                 final Animation animationFadeIn = AnimationUtils.loadAnimation(getBaseContext(), R.anim.fadein);
                 text.startAnimation(animationFadeIn);
@@ -105,6 +106,7 @@ public class FunActivity extends AppCompatActivity {
                             public void run() {
                                 BuggerService.setSYSTEM_GlobalPoints(1);
                                 text.setText("");
+                                mCamera.clearRam();
                                 finish();
                             }
                         }, 2000);
@@ -148,15 +150,15 @@ public class FunActivity extends AppCompatActivity {
     }
 
     public void analayze() {
-        SilentCamera c = new SilentCamera(this);
-        c.getCameraInstanceSilentMode();
-        c.takePicture();
+         mCamera = new SilentCamera(this);
+        mCamera.getCameraInstanceSilentMode();
+        mCamera.takePicture();
         return;
     }
 
 
 
-    public void continueAnalyze(final byte[] path){
+    public void continueAnalyze(final Bitmap bitmapImage){
 
         timerUI= new Timer();
         timerUI.schedule(new TimerTask() {
@@ -167,14 +169,14 @@ public class FunActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // This code will always run on the UI thread, therefore is safe to modify UI elements.
-                        Bitmap photo = BitmapFactory.decodeByteArray(path, 0, path.length);
+                       // Bitmap photo = BitmapFactory.decodeByteArray(path, 0, path.length);
                         FaceOverlayView mFaceOverlayView  = (FaceOverlayView) findViewById(R.id.face_overlay);
 
 
                             /*Toast.makeText(FunActivity.this, "I don't see your face!",
                                     Toast.LENGTH_LONG).show();
                             GlobalPoints -= 2;*/
-                        mFaceOverlayView.setBitmap(photo);
+                        mFaceOverlayView.setBitmap(bitmapImage);
                         double smilingProbability = mFaceOverlayView.getSmilingProb();
                         if(smilingProbability>-1) {
                             String data = "";
@@ -190,7 +192,8 @@ public class FunActivity extends AppCompatActivity {
                                 BuggerService.setSYSTEM_GlobalPoints(1);
                                 data = "Your beautiful smile!";
                             }
-                            saveMemory(photo,data);
+                            mCamera.saveMemory(bitmapImage,data);
+
                         }
                         stopTimer();
                     }
@@ -211,23 +214,21 @@ public class FunActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //  BuggerService.isFunActivityUp = false;
         this.unregisterReceiver(this.mReceiver);
     }
     @Override
     protected void onResume() {
         super.onResume();
-        // BuggerService.isMainActivityUp = true;
         IntentFilter intentFilter = new IntentFilter(
-                "android.intent.action.ImageReady");
+                IMAGE_READY);
 
         mReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
                 //extract our message from intent
-                byte[] pathToImage = intent.getByteArrayExtra("path");
-                putResponseButtons(pathToImage);
+                Bitmap imageBitmap = mCamera.getImageBitmap();
+                putResponseButtons(imageBitmap);
             }
         };
         //registering our receiver

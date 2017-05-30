@@ -55,9 +55,7 @@ public class NightActions extends Actions {
         mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                DialogFragment newFragment = MyAlertDialogFragment
-                        .newInstance(R.string.alert_dialog_Wake_up_buttons_title,"Wake up!","Shh...",getClass().getName());
-                newFragment.show(MainActivity.getInstance().getSupportFragmentManager(),"dialog");
+                MainActivity.getInstance().showDialog();
             }
         });
     }

@@ -28,11 +28,13 @@ public class FaceOverlayView extends View {
 
     private Bitmap mBitmap;
     private SparseArray<Face> mFaces;
-public double smilingProb;
+    public double smilingProb;
     FaceDetector detector;
+
     public double getSmilingProb() {
         return smilingProb;
     }
+
     public FaceOverlayView(Context context) {
         this(context, null);
     }
@@ -45,9 +47,25 @@ public double smilingProb;
         super(context, attrs, defStyleAttr);
     }
 
-    public SparseArray<Face> setBitmap( Bitmap bitmap ) {
+    public static boolean isFaceInImage(Bitmap bitmap, Context context) {
+        FaceDetector detector = new FaceDetector.Builder(context)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .build();
+
+        if (!detector.isOperational()) {
+            return false;
+        } else {
+            Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+            int numOfFaces =  detector.detect(frame).size();
+            detector.release();
+            return numOfFaces>0;
+        }
+    }
+
+    public SparseArray<Face> setBitmap(Bitmap bitmap) {
         mBitmap = bitmap;
-        FaceDetector detector = new FaceDetector.Builder( getContext() )
+        FaceDetector detector = new FaceDetector.Builder(getContext())
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
@@ -59,22 +77,22 @@ public double smilingProb;
             mFaces = detector.detect(frame);
             detector.release();
         }
-       if(mFaces.size()>0)
+        if (mFaces.size() > 0)
             smilingProb = mFaces.valueAt(0).getIsSmilingProbability();
         else
-           smilingProb = -1;
-      //  logFaceData();
-       // invalidate();
+            smilingProb = -1;
+        //  logFaceData();
+        // invalidate();
         return mFaces;
     }
 
-    public void invalidateThis(){
+    public void invalidateThis() {
         invalidate();
     }
 
-    public SparseArray<Face> setBitmapLight( Bitmap bitmap ) {
+    public SparseArray<Face> setBitmapLight(Bitmap bitmap) {
         mBitmap = bitmap;
-        FaceDetector detector = new FaceDetector.Builder( getContext() )
+        FaceDetector detector = new FaceDetector.Builder(getContext())
                 .setMode(FaceDetector.ACCURATE_MODE).setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
@@ -99,13 +117,13 @@ public double smilingProb;
     }
 */
 
-        @Override
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         if ((mBitmap != null) && (mFaces != null)) {
             double scale = drawBitmap(canvas);
-         //   drawFaceLandmarks(canvas, scale);
+            //   drawFaceLandmarks(canvas, scale);
         }
     }
 
@@ -116,7 +134,7 @@ public double smilingProb;
         double imageHeight = mBitmap.getHeight();
         double scale = Math.min(viewWidth / imageWidth, viewHeight / imageHeight);
 
-        Rect destBounds = new Rect(0, 0, (int)(imageWidth * scale), (int)(imageHeight * scale));
+        Rect destBounds = new Rect(0, 0, (int) (imageWidth * scale), (int) (imageHeight * scale));
         canvas.drawBitmap(mBitmap, null, destBounds, null);
         return scale;
     }
@@ -135,31 +153,31 @@ public double smilingProb;
         float right = 0;
         float bottom = 0;
 
-        for( int i = 0; i < mFaces.size(); i++ ) {
+        for (int i = 0; i < mFaces.size(); i++) {
             Face face = mFaces.valueAt(i);
 
-            left = (float) ( face.getPosition().x * scale );
-            top = (float) ( face.getPosition().y * scale );
-            right = (float) scale * ( face.getPosition().x + face.getWidth() );
-            bottom = (float) scale * ( face.getPosition().y + face.getHeight() );
+            left = (float) (face.getPosition().x * scale);
+            top = (float) (face.getPosition().y * scale);
+            right = (float) scale * (face.getPosition().x + face.getWidth());
+            bottom = (float) scale * (face.getPosition().y + face.getHeight());
 
-            canvas.drawRect( left, top, right, bottom, paint );
+            canvas.drawRect(left, top, right, bottom, paint);
         }
     }
 
-    private void drawFaceLandmarks( Canvas canvas, double scale ) {
+    private void drawFaceLandmarks(Canvas canvas, double scale) {
         Paint paint = new Paint();
-        paint.setColor( Color.GREEN );
-        paint.setStyle( Paint.Style.STROKE );
-        paint.setStrokeWidth( 5 );
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
 
-        for( int i = 0; i < mFaces.size(); i++ ) {
+        for (int i = 0; i < mFaces.size(); i++) {
             Face face = mFaces.valueAt(i);
 
-            for ( Landmark landmark : face.getLandmarks() ) {
-                int cx = (int) ( landmark.getPosition().x * scale );
-                int cy = (int) ( landmark.getPosition().y * scale );
-                canvas.drawCircle( cx, cy, 10, paint );
+            for (Landmark landmark : face.getLandmarks()) {
+                int cx = (int) (landmark.getPosition().x * scale);
+                int cy = (int) (landmark.getPosition().y * scale);
+                canvas.drawCircle(cx, cy, 10, paint);
             }
 
         }
@@ -171,7 +189,7 @@ public double smilingProb;
         float rightEyeOpenProbability;
         float eulerY;
         float eulerZ;
-        for( int i = 0; i < mFaces.size(); i++ ) {
+        for (int i = 0; i < mFaces.size(); i++) {
             Face face = mFaces.valueAt(i);
 
             smilingProbability = face.getIsSmilingProbability();
@@ -180,11 +198,11 @@ public double smilingProb;
             eulerY = face.getEulerY();
             eulerZ = face.getEulerZ();
 
-            Log.e( "Tuts+ Face Detection", "Smiling: " + smilingProbability );
-            Log.e( "Tuts+ Face Detection", "Left eye open: " + leftEyeOpenProbability );
-            Log.e( "Tuts+ Face Detection", "Right eye open: " + rightEyeOpenProbability );
-            Log.e( "Tuts+ Face Detection", "Euler Y: " + eulerY );
-            Log.e( "Tuts+ Face Detection", "Euler Z: " + eulerZ );
+            Log.e("Tuts+ Face Detection", "Smiling: " + smilingProbability);
+            Log.e("Tuts+ Face Detection", "Left eye open: " + leftEyeOpenProbability);
+            Log.e("Tuts+ Face Detection", "Right eye open: " + rightEyeOpenProbability);
+            Log.e("Tuts+ Face Detection", "Euler Y: " + eulerY);
+            Log.e("Tuts+ Face Detection", "Euler Z: " + eulerZ);
         }
     }
 }

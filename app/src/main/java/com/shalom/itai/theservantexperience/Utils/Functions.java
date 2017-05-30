@@ -51,6 +51,7 @@ import static com.shalom.itai.theservantexperience.Services.DayActions.allFacts;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
 
 /**
  * Created by Itai on 11/04/2017.
@@ -239,6 +240,8 @@ public class Functions {
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
             v1.setDrawingCacheEnabled(false);
             saveMemory(bitmap,  text);
+
+
     }
 
 
@@ -260,35 +263,7 @@ public class Functions {
     }
 
 
-    public static void saveMemory(Bitmap bmp, String text){
-        Date now = new Date();
-        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        String mPathImage =Directory + "/" + now + ".jpg";
-        String mPathData =Directory + "/" + now + ".txt";
-        FileOutputStream outImage = null;
-        FileOutputStream fileData = null;
-        File file = new File(mPathData);
-        try {
-            fileData = new FileOutputStream(file);
-            outImage = new FileOutputStream(mPathImage);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, outImage); // bmp is your Bitmap instance
-            fileData.write(text.getBytes());
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (outImage != null) {
-                    outImage.close();
-                }
-                if (fileData != null) {
-                    fileData.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
 
     public static boolean allowToChangeFromChat(){
         java.util.Calendar c = java.util.Calendar.getInstance();

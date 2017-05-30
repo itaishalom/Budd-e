@@ -7,5 +7,5 @@ package com.shalom.itai.theservantexperience.Activities;
 public interface DialogCaller {
     public void doPositive();
     public void doNegative();
-
+    public void showDialog();
 }

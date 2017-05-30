@@ -321,6 +321,11 @@ public class MainActivity extends AppCompatActivity implements DialogCaller{
     }
 
 
+    public void showDialog(){
+        DialogFragment newFragment = MyAlertDialogFragment
+                .newInstance(R.string.alert_dialog_Wake_up_buttons_title,"Wake up!","Shh...",getClass().getName());
+        newFragment.show(MainActivity.getInstance().getSupportFragmentManager(),"dialog");
+    }
 
 
     public void onBackPressed() {

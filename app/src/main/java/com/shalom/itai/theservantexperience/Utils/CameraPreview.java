@@ -154,11 +154,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void takeImage() {
-     //   mContext = context;
-        //  getCamera();
-
-        // supported preview sizes
-      //  mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
         mCamera.takePicture();
     }
+
+    public Bitmap getImageBitmap(){
+        return mCamera.getImageBitmap();
+    }
+
+    public void clearRam(){
+         mCamera.clearRam();
+    }
+
 }

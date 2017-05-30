@@ -512,6 +512,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             newFragment.show(getSupportFragmentManager(), "dialog");
         }
     }
+
     @Override
     public void doPositive() {
         BuggerService.setSYSTEM_GlobalPoints(1);
