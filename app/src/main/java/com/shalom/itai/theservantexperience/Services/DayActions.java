@@ -12,12 +12,12 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.Activities.DancingActivity;
 import com.shalom.itai.theservantexperience.Activities.FunActivity;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.SelfieActivity;
 import com.shalom.itai.theservantexperience.Activities.SmsSendActivity;
 import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity;
 import com.shalom.itai.theservantexperience.Activities.TripActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
+import com.shalom.itai.theservantexperience.Activities.MatchesGameActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.SelfieV2;
 import com.shalom.itai.theservantexperience.Utils.Functions;
@@ -45,7 +45,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     public static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{SelfieV2.class,FunActivity.class, TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{MatchesGameActivity.class, SelfieV2.class,FunActivity.class, TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
