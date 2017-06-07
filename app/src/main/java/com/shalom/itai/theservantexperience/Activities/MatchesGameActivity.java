@@ -27,7 +27,7 @@ public class MatchesGameActivity extends AppCompatActivity {
     int randomNum;
     int userNum = 0;
     boolean isFirstCase = false;
-
+//check
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
