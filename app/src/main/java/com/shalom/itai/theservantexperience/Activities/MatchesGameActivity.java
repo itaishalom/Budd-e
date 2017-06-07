@@ -37,10 +37,12 @@ public class MatchesGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (matchesCounterTurn != 0) {
-                    deleteMatches();
+
                     if(takeFromHeapOne){
+                        deleteMatches(R.id.heap1);
                         heap1 -= matchesCounterTurn;
                     }else{
+                        deleteMatches(R.id.heap2);
                         heap2 -= matchesCounterTurn;
                     }
                     matchesCounterTurn = 0;
@@ -56,8 +58,8 @@ public class MatchesGameActivity extends AppCompatActivity {
         firstStep();
     }
 
-    private void deleteMatches(){
-        ConstraintLayout ll = (ConstraintLayout) findViewById(R.id.matches_layout);
+    private void deleteMatches(int id){
+        ConstraintLayout ll = (ConstraintLayout) findViewById(id);
         final int childCount = ll.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View img = ll.getChildAt(i);
@@ -101,7 +103,7 @@ public class MatchesGameActivity extends AppCompatActivity {
             int parentId = ((View) view.getParent()).getId();
             ImageView match = (ImageView) view;
             if (match.getDrawable().getConstantState() == ContextCompat.getDrawable(this, R.drawable.match).getConstantState()) {
-                if ((parentId == R.id.heap1 && takeFromHeapOne && matchesCounterTurn < 5) || (parentId == R.id.heap2 && !takeFromHeapOne && matchesCounterTurn < 5)) {
+                if ((parentId == R.id.heap1 && takeFromHeapOne && matchesCounterTurn < 4) || (parentId == R.id.heap2 && !takeFromHeapOne && matchesCounterTurn < 4)) {
                     match.setImageResource(R.drawable.match_burned);
                     matchesCounterTurn++;
                 }
@@ -291,26 +293,26 @@ public class MatchesGameActivity extends AppCompatActivity {
     }
 
 
-    private void jonBurn(int id,int numOfBurns){
+    private void jonBurn(final int id, int numOfBurns){
         ConstraintLayout ll = (ConstraintLayout) findViewById(id);
         final int childCount = ll.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            if(numOfBurns>0){
-                numOfBurns--;
+        for (int i = 0; i < childCount && numOfBurns>0; i++) {
+
             View img = ll.getChildAt(i);
             if (img instanceof ImageView) {
                 ImageView match = (ImageView) img;
                 if (match.getDrawable().getConstantState() == ContextCompat.getDrawable(act, R.drawable.match).getConstantState()) {
                     match.setImageResource(R.drawable.match_burned);
+                    numOfBurns--;
                 }
-            }}
+            }
         }
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // Do something after 5s = 5000ms
-                deleteMatches();
+                deleteMatches(id);
             }
         }, 2000);
 

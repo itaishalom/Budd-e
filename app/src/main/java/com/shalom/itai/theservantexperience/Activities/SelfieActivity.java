@@ -1,3 +1,4 @@
+/*
 package com.shalom.itai.theservantexperience.Activities;
 
 import android.app.Activity;
@@ -73,6 +74,7 @@ public class SelfieActivity extends AppCompatActivity {
               //  mFaceOverlayView.invalidateThis();
                 gifImageView.bringToFront();
                 takeScreenshot(this,"Our selfie!");
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 askForPicure();
@@ -85,3 +87,4 @@ public class SelfieActivity extends AppCompatActivity {
     }
 
 }
+*/

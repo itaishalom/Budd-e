@@ -30,6 +30,7 @@
     <string name="alert_dialog_ok">Wake up Jon!</string>
     <string name="title_activity_trip">Map</string>
     <string name="title_activity_selfie">SelfieActivity</string>
+    <string name="send_to">Share..</string>
 </resources>
 
 

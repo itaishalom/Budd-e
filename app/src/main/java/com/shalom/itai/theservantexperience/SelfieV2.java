@@ -10,13 +10,18 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.Activities.DialogCaller;
@@ -25,6 +30,14 @@ import com.shalom.itai.theservantexperience.Activities.MyAlertDialogFragment;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.CameraPreview;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
 import static com.shalom.itai.theservantexperience.R.id.imageView;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
@@ -36,7 +49,8 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     SelfieV2 inst;
     private BroadcastReceiver mReceiver;
     private ImageView jonPng;
-
+    private ShareActionProvider mShareActionProvider;
+    private boolean isBackFromShare = false;
     /**
      * Called when the activity is first created.
      */
@@ -81,6 +95,9 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     @Override
     protected void onResume() {
         super.onResume();
+        if(isBackFromShare){
+            finish();
+        }
         IntentFilter intentFilter = new IntentFilter(
                 IMAGE_READY);
 
@@ -89,6 +106,8 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Bitmap imageBitmap = surfaceView.getImageBitmap();
+                mergeImages(imageBitmap);
+                /*
                 if (FaceOverlayView.isFaceInImage(imageBitmap, inst)) {
                     BuggerService.setSYSTEM_GlobalPoints(2);
                     mergeImages(imageBitmap);
@@ -97,6 +116,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
                     BuggerService.setSYSTEM_GlobalPoints(-2);
                     finish();
                 }
+                */
             }
         };
         //registering our receiver
@@ -104,7 +124,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     }
 
     private void mergeImages(Bitmap bottomImage) {
-       // (ImageView) findViewById(R.id.jon_in_slefie);
+        // (ImageView) findViewById(R.id.jon_in_slefie);
         ImageView jonPng = ((ImageView) findViewById(R.id.jon_in_slefie));
         //Bitmap topImag2e = BitmapFactory.decodeResource(this.getResources(), R.drawable.jon_png);
         Bitmap topImage = ((BitmapDrawable)jonPng.getDrawable()).getBitmap();
@@ -116,11 +136,74 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 
         canvas.drawBitmap(bottomImage, new Matrix(), null);
         canvas.drawBitmap(topImage, bottomImage.getWidth() - topImage.getWidth(), 300, null);
-        saveMemory(bmOverlay, "Our selfie!");
+        String path = saveMemory(bmOverlay, "Our selfie!");
         Toast.makeText(inst ,"Thanks for the selfie!", Toast.LENGTH_LONG).show();
         surfaceView.clearRam();
-        finish();
+      //  String tempFilePath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+        if (this.copy(new File(path),new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)+ File.separator+"temporary_file.jpeg"))) {
+            Uri uriToImage = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)+ File.separator+"temporary_file.jpeg"));
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+            shareIntent.setType("image/jpeg");
+            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Check me and Jon!");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Check me and Jon!");
+            setShareIntent(shareIntent);
+            isBackFromShare = true;
+            BuggerService.getInstance().unbug();
+            Intent result = Intent.createChooser(shareIntent, getResources().getText(R.string.send_to));
+            startActivity(result);
+            //   finish();
+        }
     }
+
+    public boolean copy(File src, File dst)  {
+        InputStream in = null;
+        OutputStream out = null;
+
+        try {
+            in = new FileInputStream(src);
+            out = new FileOutputStream(dst);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }catch(Exception e){
+            return false;
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+        // Return true to display menu
+        return true;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
 
     @Override
     public void doPositive() {

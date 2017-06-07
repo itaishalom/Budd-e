@@ -62,7 +62,7 @@ public class BuggerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        loadPoints();
+       // loadPoints();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         mInstance = this;
     }
@@ -107,7 +107,7 @@ public void setDistanceToDest(double lat,double lng){
 
     public static void setSYSTEM_GlobalPoints(int pts){
         SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
-        savePoints();
+        mInstance.savePoints();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
     }
 
@@ -115,15 +115,15 @@ public void setDistanceToDest(double lat,double lng){
         return SYSTEM_GlobalPoints;
     }
 
-    private static void savePoints(){
-        SharedPreferences settings = MainActivity.getInstance().getSharedPreferences(PREFS_NAME, 0);
+    private  void savePoints(){
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(GLOBAL_POINTS, SYSTEM_GlobalPoints);
         editor.commit();
     }
 
-    private void loadPoints(){
-        SharedPreferences settings = MainActivity.getInstance().getSharedPreferences(PREFS_NAME, 0);
+    public void loadPoints(){
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SYSTEM_GlobalPoints = settings.getInt(GLOBAL_POINTS,INITIAL_POINTS);
     }
 

@@ -92,8 +92,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
         // stop preview before making changes
+        if(mCamera != null){
         mCamera.stopPreview();
         mCamera.getCameraInstanceLoudMode(mHolder, mPreviewSize.width, mPreviewSize.height);
+    }
     }
 
     @Override

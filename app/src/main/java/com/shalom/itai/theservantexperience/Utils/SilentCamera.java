@@ -63,7 +63,8 @@ public class SilentCamera {
     }
 
     public void stopPreview() {
-        camera.stopPreview();
+        if (camera != null)
+            camera.stopPreview();
     }
 
     public boolean hasCamera() {
@@ -72,7 +73,7 @@ public class SilentCamera {
 
     public void getCameraInstanceSilentMode() {
 
-                prepareCamera();
+        prepareCamera();
     }
 
     private void open() {
@@ -88,7 +89,7 @@ public class SilentCamera {
 
     public void getCameraInstanceLoudMode(SurfaceHolder surface, int width, int height) {
 
-                prepareCameraLoud(surface,width,height);
+        prepareCameraLoud(surface, width, height);
     }
 
     public void takePicture() {
@@ -98,7 +99,7 @@ public class SilentCamera {
     }
 
     public void takePicture(Context context) {
-      this.context = context;
+        this.context = context;
         takePicture();
     }
 
@@ -151,23 +152,23 @@ public class SilentCamera {
     private void prepareCameraLoud(SurfaceHolder surface, int width, int height) {
         //  SurfaceView view = new SurfaceView(context);
         //    mySurfaceView view = new mySurfaceView(context);
-        Camera.Parameters parameters = camera.getParameters();
-        parameters.setPreviewSize(width, height);
-        parameters.setRotation(270);
-        parameters.setJpegQuality(50);
-        camera.setParameters(parameters);
-        camera.setDisplayOrientation(90);
-        try {
-            camera.setPreviewDisplay(surface);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (camera != null) {
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setPreviewSize(width, height);
+            parameters.setRotation(270);
+            parameters.setJpegQuality(50);
+            camera.setParameters(parameters);
+            camera.setDisplayOrientation(90);
+            try {
+                camera.setPreviewDisplay(surface);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            camera.startPreview();
         }
-        camera.startPreview();
     }
 
-
-
-    public Bitmap getImageBitmap(){
+    public Bitmap getImageBitmap() {
         return imageBitmap;
     }
 
@@ -182,26 +183,26 @@ public class SilentCamera {
             Intent i = new Intent(IMAGE_READY);//.putExtra("path", pathToImage);
             try {
                 context.sendBroadcast(i);
-            }catch(Exception e){
-                Log.i("ISSUE IN SEND","issue not send");
+            } catch (Exception e) {
+                Log.i("ISSUE IN SEND", "issue not send");
             }
 
         }
     };
 
 
-    public static String saveMemory(Bitmap bmp, String text){
+    public static String saveMemory(Bitmap bmp, String text) {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        String mPathImage =Directory + "/" + now + ".jpg";
-        String mPathData =Directory + "/" + now + ".txt";
+        String mPathImage = Directory + "/" + now + ".jpeg";
+        String mPathData = Directory + "/" + now + ".txt";
         FileOutputStream outImage = null;
         FileOutputStream fileData = null;
         File file = new File(mPathData);
         try {
             fileData = new FileOutputStream(file);
             outImage = new FileOutputStream(mPathImage);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, outImage); // bmp is your Bitmap instance
+            bmp.compress(Bitmap.CompressFormat.JPEG, 60, outImage); // bmp is your Bitmap instance
             fileData.write(text.getBytes());
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
@@ -221,8 +222,8 @@ public class SilentCamera {
         return mPathImage;
     }
 
-    public void clearRam(){
-        if(imageBitmap != null) {
+    public void clearRam() {
+        if (imageBitmap != null) {
             imageBitmap.recycle();
             imageBitmap = null;
         }

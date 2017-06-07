@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
+        BuggerService.getInstance().loadPoints();
         thisActivity = this;
     }
 
