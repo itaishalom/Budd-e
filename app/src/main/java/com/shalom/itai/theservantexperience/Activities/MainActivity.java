@@ -100,7 +100,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
             Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
             VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
-            ACCESS_WIFI_STATE, INTERNET,WRITE_SETTINGS,WAKE_LOCK};
+            ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK};
     private boolean isSleeping = false;
     public static MainActivity thisActivity;
     TextView signalStrength;
@@ -119,7 +119,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
-       // BuggerService.getInstance().loadPoints();
+        // BuggerService.getInstance().loadPoints();
        /*
         if(!Settings.System.canWrite(getApplicationContext())){
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -135,7 +135,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
 
     private void initializeGui() {
-     //   setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
+        //   setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
@@ -155,10 +155,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         });
 
     }
-
-
-
-
 
 
     private void changeLayoutAwake() {
@@ -183,8 +179,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 permissionToCalendarRead = grantResults[5] == PackageManager.PERMISSION_GRANTED;
                 permissionToCalendarWrite = grantResults[6] == PackageManager.PERMISSION_GRANTED;
                 break;
-            case REQUESTS+1:
-                permissionToSettings= grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            case REQUESTS + 1:
+                permissionToSettings = grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
             finish();
@@ -195,7 +191,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
-        if(!settings.getBoolean(IS_INSTALLED, false)){
+        if (!settings.getBoolean(IS_INSTALLED, false)) {
             setUserName();
             addCalendarMeeting();
 
@@ -209,36 +205,36 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     }
 
-    private void setUserName(){
-       Cursor c = null;
+    private void setUserName() {
+        Cursor c = null;
         try {
             c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-           c.moveToFirst();
-           String name = (c.getString(c.getColumnIndex("display_name")));
-           if(name !=null && !name.isEmpty()){
-               USER_NAME = name;
-           }else{
-               throw new Exception();
-           }
-       }catch(Exception e){
+            c.moveToFirst();
+            String name = (c.getString(c.getColumnIndex("display_name")));
+            if (name != null && !name.isEmpty()) {
+                USER_NAME = name;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             Log.d(TAG, "setUserName: failed getting user name with cursor.. trying from mail");
             String name = getPrimaryEmail();
-            if(!name.isEmpty()){
+            if (!name.isEmpty()) {
                 USER_NAME = name;
-            }else {
+            } else {
                 Log.d(TAG, "setUserName: failed getting user name from mail");
                 // TODO ASK FOR NAME
             }
-       }finally {
-           if(c != null)
-            c.close();
-            if(USER_NAME !=null && !USER_NAME.isEmpty()){
+        } finally {
+            if (c != null)
+                c.close();
+            if (USER_NAME != null && !USER_NAME.isEmpty()) {
                 SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(SETTINGS_NAME, USER_NAME);
                 editor.commit();
             }
-       }
+        }
     }
 
     private String getPrimaryEmail() {
@@ -263,19 +259,16 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     }
 
 
-
-
-    public void setAlarm(Context context)
-    {
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    public void setAlarm() {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, MyScheduledReceiver.class);
-        i.putExtra("BirthDay",true);
+        i.putExtra("BirthDay", true);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ (1000 * 60 * 60),pi); // Millisec * Second * Minute
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (60 * 60 * 1000), pi); // Millisec * Second * Minute
     }
 
 
-    public  void addCalendarMeeting() {
+    public void addCalendarMeeting() {
 
         try {
             ContentResolver cr = getContentResolver();
@@ -300,6 +293,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             if (uri == null) {
                 secondTryCalendar();
             }
+            setAlarm();
             Toast.makeText(getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
             Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
             startActivity(LaunchIntent);
@@ -317,7 +311,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
     }
 
-    public  void secondTryCalendar() {
+    public void secondTryCalendar() {
         Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
@@ -326,6 +320,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
         intent.putExtra(CalendarContract.Events.TITLE, "Jon's birthday!");
         Toast.makeText(getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+        setAlarm();
         startActivity(intent);
     }
 

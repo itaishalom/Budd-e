@@ -26,7 +26,7 @@ public class Constants {
     public static String Directory ;
     
     ////SETTINGS:
-    public static final String SETTINGS_POINTS = "SETTINGS_POINTS";
+    public static final String SETTINGS_POINTS = "GLOBAL_POINTS";
     public static final String SETTINGS_NAME = "SETTINGS_NAME";
     
 }
