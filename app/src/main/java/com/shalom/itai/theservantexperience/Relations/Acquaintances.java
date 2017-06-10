@@ -9,7 +9,7 @@ import com.shalom.itai.theservantexperience.R;
 public class Acquaintances extends RelationsStatus {
    private static Acquaintances instance;
     private Acquaintances(){
-        iconId = R.drawable.ic_favorite_black_48dp;
+        iconId = R.drawable.rel_stranger;
         RESPONSE_NUMBER = 0;
         maxValProgress = 20;
         this.relationStatus = "Acquaintances";

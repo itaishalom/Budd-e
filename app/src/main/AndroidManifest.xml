@@ -26,6 +26,7 @@
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -57,7 +58,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/jon_png"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -89,7 +90,7 @@
         <activity
             android:name=".Activities.updateOS"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_update_os"
+            android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -121,7 +122,8 @@
         <activity android:name=".Activities.RecordActivity" />
         <activity
             android:name=".ChatBot.ChatActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".MessageBox"
             android:launchMode="singleInstance"
@@ -155,7 +157,9 @@
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".SelfieV2" />
-        <activity android:name=".Activities.MatchesGameActivity"></activity>
+        <activity android:name=".Activities.MatchesGameActivity" />
+        <activity android:name=".Gallery.FullScreenImageActivity" />
+        <activity android:name=".Gallery.GalleryActivity"></activity>
     </application>
 
 </manifest>

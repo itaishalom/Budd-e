@@ -64,8 +64,7 @@ public class DancingActivity extends AppCompatActivity {
     }
 
 
-    private void prepareMusic()
-    {
+    private void prepareMusic() {
         AudioManager am =
                 (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(
@@ -81,15 +80,11 @@ public class DancingActivity extends AppCompatActivity {
                 handleShakeEvent(count);
             }
         });
-
-
-
         startMusic();
 
     }
 
-    private void startMusic()
-    {
+    private void startMusic() {
         mediaPlayer.start();
         new CountDownTimer(30000, 1000) {
 

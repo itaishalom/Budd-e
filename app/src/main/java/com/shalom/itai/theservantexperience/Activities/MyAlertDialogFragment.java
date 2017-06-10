@@ -37,7 +37,7 @@ public class MyAlertDialogFragment extends DialogFragment {
         final String name= getArguments().getString("name");
         setCancelable(false);
         return new AlertDialog.Builder(getActivity())
-                .setIcon(R.drawable.ic_favorite_black_48dp)
+                .setIcon(R.drawable.rel_friend)
                 .setTitle(title)
                 .setPositiveButton(posButton,
                         new DialogInterface.OnClickListener() {

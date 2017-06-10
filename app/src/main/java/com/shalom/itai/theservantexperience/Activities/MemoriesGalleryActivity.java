@@ -31,7 +31,7 @@ import java.util.Date;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
 
-public class MemoriesGalleryActivity extends AppCompatActivity {
+public class MemoriesGalleryActivity extends ToolBarActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String TAG = "MemoriesGalleryActivity";
@@ -40,13 +40,13 @@ public class MemoriesGalleryActivity extends AppCompatActivity {
     TextView memoData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memories_gallery);
+        super.onCreate(savedInstanceState,R.layout.activity_memories_gallery);
+      //  setContentView(R.layout.activity_memories_gallery);
         final ImageView diplayImage = (ImageView) findViewById(R.id.displayImage);
          memoData = (TextView) findViewById(R.id.data);
           myGallery = (LinearLayout) findViewById(R.id.mygallery);
 
-/*
+/*slide_left_out
         String PACKAGE_NAME = getApplicationContext().getPackageName();
         imageIDs = new ArrayList<>();
         String path = Directory;
@@ -123,6 +123,10 @@ public class MemoriesGalleryActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+       overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+    }
 }
 

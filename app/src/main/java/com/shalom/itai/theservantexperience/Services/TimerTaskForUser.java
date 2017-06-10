@@ -41,8 +41,9 @@ public class TimerTaskForUser extends ContextTimerTask {
         if(!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
                 && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
                 && !activityOnTop.toLowerCase().contains("camera")
-                && !activityOnTop.toLowerCase().contains("com.google.android.location.settings.LocationSettingsCheckerActivity".toLowerCase())&&
-                !activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())) { //"com.google.android.location.settings.LocationSettingsCheckerActivity"
+                && !activityOnTop.toLowerCase().contains("com.google.android.location.settings.LocationSettingsCheckerActivity".toLowerCase())
+                &&!activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())
+                &&!activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())){ //"com.google.android.location.settings.LocationSettingsCheckerActivity"
                 if(!stopBugger){
                 Intent intent = new Intent(this.mContext, Activities[indexActive]);
                 indexActive++;

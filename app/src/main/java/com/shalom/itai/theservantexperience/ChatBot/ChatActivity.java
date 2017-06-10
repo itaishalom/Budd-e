@@ -15,13 +15,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.Activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
-import java.util.Calendar;
 import java.util.List;
-import java.util.function.Function;
 
 import ai.api.AIDataService;
 import ai.api.AIListener;
@@ -38,7 +37,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_RE
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 
 
-public class ChatActivity extends AppCompatActivity implements AIListener {
+public class ChatActivity extends ToolBarActivity implements AIListener {
     private static final String TAG = "ChatActivity";
     private static ChatActivity instance;
     private ChatArrayAdapter chatArrayAdapter;
@@ -53,9 +52,9 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState,R.layout.activity_chat);
 
-        setContentView(R.layout.activity_chat);
+      //  setContentView(R.layout.activity_chat);
 
         buttonSend = (Button) findViewById(R.id.send);
 
@@ -249,5 +248,10 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
     @Override
     public void onListeningFinished() {
 
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_top_in, R.anim.slide_bottom_out);
     }
 }

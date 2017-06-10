@@ -173,6 +173,8 @@ public class DayActions extends Actions {
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
                         ChatActivity.class).putExtra(CHAT_START_MESSAGE,
                         "Jon is here"));
+               // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
+                MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
             }
         });
     }

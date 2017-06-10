@@ -4,7 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#04967D"
     tools:context="com.shalom.itai.theservantexperience.Activities.MemoriesGalleryActivity">
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/toolbar" />
+
+
+    <include
+        android:id="@+id/relation_layout"
+        layout="@layout/relations_layout" />
+
+    <include
+        android:id="@+id/mood_layout"
+        layout="@layout/mood_layout" />
 
     <TextView
         android:id="@+id/data"
@@ -51,8 +64,8 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
 
         <LinearLayout
             android:id="@+id/mygallery"

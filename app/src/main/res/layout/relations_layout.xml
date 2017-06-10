@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/relation_layout"
+    android:layout_width="319dp"
+    android:layout_height="77dp"
+    android:layout_marginBottom="203dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/layout_soft_corners"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toTopOf="@+id/GifImageView"
+    app:layout_constraintHorizontal_bias="0.51"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+    app:layout_constraintVertical_bias="0.0">
+
+
+        <TextView
+            android:id="@+id/friendship_level_ind"
+            style="@style/CustomText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="53dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="53dp"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.27"
+            app:layout_constraintLeft_toRightOf="@+id/friendship_level"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/friendship_level"
+            style="@style/CustomText"
+            android:layout_width="93dp"
+            android:layout_height="23dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Friendship level"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.03"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.75" />
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/CustomText"
+            android:layout_width="115dp"
+            android:layout_height="23dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Friendship Progress"
+            app:layout_constraintHorizontal_bias="0.042"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBarRelations"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="89dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:bottomLeftRadius="5px"
+            android:bottomRightRadius="5px"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/custom_progressbar"
+            android:topLeftRadius="5px"
+            android:topRightRadius="5px"
+            app:layout_constraintHorizontal_bias="0.53"
+            app:layout_constraintLeft_toRightOf="@+id/textView4"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>

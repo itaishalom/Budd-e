@@ -6,60 +6,37 @@ package com.shalom.itai.theservantexperience.Activities;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
        */
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.vision.text.Text;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
+import com.shalom.itai.theservantexperience.Gallery.GalleryActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
-import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
-import com.shalom.itai.theservantexperience.Services.DayActions;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
-import com.shalom.itai.theservantexperience.Utils.NoiseListener;
 
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import android.graphics.Color;
 
-import android.media.Image;
-import android.net.wifi.WifiManager;
-import android.os.BatteryManager;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 
-import android.support.v7.widget.Toolbar;
-import android.telephony.CellInfoCdma;
-import android.telephony.CellInfoLte;
-import android.telephony.CellInfoWcdma;
-import android.telephony.CellSignalStrengthCdma;
-import android.telephony.CellSignalStrengthLte;
-import android.telephony.CellSignalStrengthWcdma;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,14 +53,12 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getBatteryLevel;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getReceptionLevel;
-import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
 
 
-public class MainActivity extends AppCompatActivity implements DialogCaller {
+public class MainActivity extends ToolBarActivity implements DialogCaller {
     private boolean readyToInvalidate = false;
     public static final String TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
@@ -96,10 +71,11 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
     private boolean permissionToAccounts = false;
     private boolean permissionToCalendarRead = false;
     private boolean permissionToCalendarWrite = false;
+    private boolean permissionToSettings = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
             Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
-            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE, ACCESS_WIFI_STATE, INTERNET};
+            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE, ACCESS_WIFI_STATE, INTERNET,WRITE_SETTINGS};
     private boolean isSleeping = false;
     public static MainActivity thisActivity;
     TextView signalStrength;
@@ -110,20 +86,31 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
     ListView chatListView;
     ImageView memoriesImage;
 
-    @Override
-    public void onCreate(Bundle icicle) {
 
-        super.onCreate(icicle);
-        setContentView(R.layout.activity_main);
+    protected final void onCreate(Bundle icicle) {
+        super.onCreate(icicle, R.layout.activity_main);
+        //super.onCreate(icicle);
+        //setContentView(R.layout.activity_main);
+
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
         BuggerService.getInstance().loadPoints();
+       /*
+        if(!Settings.System.canWrite(getApplicationContext())){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + this.getPackageName()));
+                this.startActivityForResult(intent, MainActivity.REQUESTS+1);
+            }
+        }
+        */
         thisActivity = this;
+
     }
 
 
     private void initializeGui() {
-        setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
+     //   setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
@@ -134,79 +121,18 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
-                        MemoriesGalleryActivity.class));
-
+                        GalleryActivity.class));
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             }
         });
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.options, menu);
-        MenuItem te = menu.findItem(R.id.action_favorite);
-        if (te != null)
-            te.setIcon(BuggerService.getInstance().getRelationsStatus().getIconId());
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final ConstraintLayout relationsLayout = (ConstraintLayout) findViewById(R.id.relation_layout);
-        final ConstraintLayout moodLayout = (ConstraintLayout) findViewById(R.id.mood_layout);
-
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                //       startActivity(new Intent(MainActivity.getInstance(), GameActivity.class));
-                return true;
-            case R.id.action_mood:
-                if (moodLayout.getVisibility() == View.VISIBLE)
-                    moodLayout.setVisibility(View.INVISIBLE);
-                else {
-                    moodLayout.setVisibility(View.VISIBLE);
-                    relationsLayout.setVisibility(View.INVISIBLE);
-                    invalidateStatusParam();
-
-                }
-                //       showDialog();
-                return true;
-            case R.id.action_favorite:
-//                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar3);
-                if (relationsLayout.getVisibility() == View.VISIBLE)
-                    relationsLayout.setVisibility(View.INVISIBLE);
-                else {
-                    invalidateRelationsData();
-                    relationsLayout.setVisibility(View.VISIBLE);
-                    moodLayout.setVisibility(View.INVISIBLE);
-                }
-                //       showDialog();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-    private void invalidateStatusParam() {
-        signalStrength.setText(String.valueOf(getReceptionLevel(this))+"/5");
-        batteryStrength.setText(String.valueOf(getBatteryLevel(this))+"/5");
-    }
 
 
-    private void invalidateRelationsData() {
-        RelationsStatus status = BuggerService.getInstance().getRelationsStatus();
-        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarRelations);
-        pb.setMax(status.getMaxValProgress());
-        pb.setProgress(BuggerService.getInstance().getSYSTEM_GlobalPoints());
-        TextView friendshipLevel = (TextView) findViewById(R.id.friendship_level_ind);
-        friendshipLevel.setText(status.getRelationStatus());
-    }
 
 
 
@@ -232,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
                 permissionToCalendarRead = grantResults[5] == PackageManager.PERMISSION_GRANTED;
                 permissionToCalendarWrite = grantResults[6] == PackageManager.PERMISSION_GRANTED;
                 break;
+            case REQUESTS+1:
+                permissionToSettings= grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
             finish();
@@ -245,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements DialogCaller {
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
                 .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName());
-        newFragment.show(MainActivity.getInstance().getSupportFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
 

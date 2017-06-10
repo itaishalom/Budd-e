@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 import static com.shalom.itai.theservantexperience.Utils.Constants.*;
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
+
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
@@ -119,6 +119,7 @@ public class updateOS extends AppCompatActivity {
             intent.putExtra("runMainActivity",true);
             startActivity(intent);
 */
+            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             startService(new Intent(this, BuggerService.class).putExtra("runMainActivity",true));
 
             finish();
@@ -185,9 +186,9 @@ public class updateOS extends AppCompatActivity {
                 }
             }
         });
-
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 startService(new Intent(getApplicationContext(), BuggerService.class).putExtra("runMainActivity",true));
                 finish();
             }
