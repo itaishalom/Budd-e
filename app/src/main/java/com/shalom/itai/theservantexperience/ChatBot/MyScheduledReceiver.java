@@ -18,8 +18,7 @@ public class MyScheduledReceiver extends BroadcastReceiver {
     private final String TAG = "MyScheduledReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO Auto-generated method stub
-
+  
         if(intent.getBooleanExtra("BirthDay",false)){
             Intent scheduledIntent = new Intent(context, MainActivity.class);
             scheduledIntent.putExtra("Birthday",true);
