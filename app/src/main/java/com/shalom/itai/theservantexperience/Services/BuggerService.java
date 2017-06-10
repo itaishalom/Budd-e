@@ -62,7 +62,7 @@ public class BuggerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-       // loadPoints();
+        loadPoints();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         mInstance = this;
     }
@@ -100,8 +100,7 @@ public void setDistanceToDest(double lat,double lng){
         return Service.START_STICKY;
     }
 
-    public static boolean getIsServiceUP()
-    {
+    public static boolean getIsServiceUP() {
         return isServiceUP;
     }
 
@@ -118,13 +117,13 @@ public void setDistanceToDest(double lat,double lng){
     private  void savePoints(){
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(GLOBAL_POINTS, SYSTEM_GlobalPoints);
+        editor.putInt(SETTINGS_POINTS, SYSTEM_GlobalPoints);
         editor.commit();
     }
 
     public void loadPoints(){
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        SYSTEM_GlobalPoints = settings.getInt(GLOBAL_POINTS,INITIAL_POINTS);
+        SYSTEM_GlobalPoints = settings.getInt(SETTINGS_POINTS,INITIAL_POINTS);
     }
 
     @Override

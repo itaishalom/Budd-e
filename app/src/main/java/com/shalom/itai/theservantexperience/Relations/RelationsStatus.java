@@ -7,6 +7,7 @@ package com.shalom.itai.theservantexperience.Relations;
 public abstract class RelationsStatus {
     protected String relationStatus;
     protected int RESPONSE_NUMBER;
+    protected double probabilityNumber =0.0;
 //    protected static RelationsStatus instance;
     int iconId;
     public int getIconId(){return iconId;}
@@ -14,5 +15,6 @@ public abstract class RelationsStatus {
     public String getRelationStatus(){return relationStatus;}
     public int getMaxValProgress(){return maxValProgress;}
     public int getResponseNumber(){return RESPONSE_NUMBER;}
+    public double getProbabilityNumber(){return probabilityNumber;}
    // public static RelationsStatus getInstance();
 }

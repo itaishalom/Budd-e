@@ -1,5 +1,6 @@
 package com.shalom.itai.theservantexperience.Utils;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -11,18 +12,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.icu.util.Calendar;
+//import android.icu.util.Calendar;
+import java.util.Calendar;
+
 import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.CalendarContract;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
@@ -37,18 +42,18 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.Activities.SplashActivity;
 import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -60,7 +65,10 @@ import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_ol
 import static com.shalom.itai.theservantexperience.Services.DayActions.allFacts;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
-import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
+import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
 
 /**
@@ -93,47 +101,71 @@ public class Functions {
     }
 
 
-    private static void addCalendarMeeting(Context context) {
-        ContentResolver cr = context.getContentResolver();
-        ContentValues values = new ContentValues();
-        Calendar cal = Calendar.getInstance();
-        values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
-        values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
-        values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
-        TimeZone timeZone = TimeZone.getDefault();
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
-        // default calendar
-        values.put(CalendarContract.Events.CALENDAR_ID, 1);
-        values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
-        //for one hour
-        values.put(CalendarContract.Events.DURATION, "+P1H");
-        values.put(CalendarContract.Events.HAS_ALARM, 1);
-        // insert event to calendar
-        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+    public static void addCalendarMeeting(final Context context) {
 
-        Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
-        context.startActivity(LaunchIntent);
-    }
-
-    public static String getPrimaryEmail(Context context) {
         try {
-            AccountManager accountManager = AccountManager.get(context);
-            if (accountManager == null)
-                return "";
-            Account[] accounts = accountManager.getAccounts();
-            Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-            for (Account account : accounts) {
-                // make sure account.name is an email address before adding to the list
-                if (emailPattern.matcher(account.name).matches()) {
-                    return account.name.split("@")[0];
-                }
+            ContentResolver cr = context.getContentResolver();
+            ContentValues values = new ContentValues();
+
+            Calendar cal = Calendar.getInstance();
+            values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
+            values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
+            values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
+            //  TimeZone.getTimeZone("2");
+            //  TimeZone timeZone = TimeZone.getDefault();
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC/GMT +2:00");
+            // default calendar
+            values.put(CalendarContract.Events.CALENDAR_ID, 1);
+            values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+            values.put("hasAlarm", 1);
+            //for one hour
+            values.put(CalendarContract.Events.DURATION, "+P1H");
+            values.put(CalendarContract.Events.HAS_ALARM, 1);
+            // insert event to calendar
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
             }
-            return "";
-        } catch (SecurityException e) {
-            // exception will occur if app doesn't have GET_ACCOUNTS permission
-            return "";
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            if (uri == null) {
+                secondTryCalendar(context);
+            }
+            Toast.makeText(context.getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+            Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
+            context.startActivity(LaunchIntent);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
+                }
+            }, 4000);
+        } catch (Exception e) {
+            secondTryCalendar(context);
         }
     }
+
+    public static void secondTryCalendar(Context context) {
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis() + 60 * 60 * 1000);
+        intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
+        intent.putExtra(CalendarContract.Events.TITLE, "Jon's birthday!");
+        Toast.makeText(context.getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+        context.startActivity(intent);
+    }
+
+
+
 
     private static boolean isPassOrPinSet(Context context) {
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE); //api 16+
@@ -171,10 +203,12 @@ public class Functions {
         TextView welcome_text = (TextView) activity.findViewById(viewID);
         SharedPreferences settings = activity.getSharedPreferences(PREFS_NAME, 0);
         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
+      /*
         if (!isInstalled)
             welcome_text.setText("Hello " + getPrimaryEmail(activity.getApplicationContext()) + "\n I am Jon, your new friend");
         else
             welcome_text.setText("Welcome back " + getPrimaryEmail(activity.getApplicationContext()) + "!!");
+        */
         welcome_text.startAnimation(animationFadeIn);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -225,6 +259,11 @@ public class Functions {
         return rand.nextInt(upper) + lower;
     }
 
+    public static double throwRandomProb() {
+        Random rand = new Random();
+        return rand.nextDouble();
+    }
+
     public static void popUpMessage(Context context, String text) {
         int x = 1; //Mins
         Intent intent = new Intent(context, MyScheduledReceiver.class);
@@ -254,10 +293,6 @@ public class Functions {
     public static boolean createJonFolder() {
 
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "Jon");
-
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -337,4 +372,28 @@ public class Functions {
             return false;
         }
     }
+
+    public static boolean copy(File src, File dst) {
+        InputStream in = null;
+        OutputStream out = null;
+
+        try {
+            in = new FileInputStream(src);
+            out = new FileOutputStream(dst);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        } catch (Exception e) {
+            return false;
+
+        }
+        return true;
+    }
+
 }

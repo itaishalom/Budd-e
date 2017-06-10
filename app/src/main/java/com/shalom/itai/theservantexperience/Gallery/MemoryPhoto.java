@@ -65,23 +65,10 @@ public class MemoryPhoto implements Parcelable {
             if((files[i].getAbsolutePath().endsWith(".jpg"))||files[i].getAbsolutePath().endsWith(".jpeg")) {
                 mems.add(new MemoryPhoto(files[i].getAbsolutePath(), "check"));
             }
-           /* if(mems.size()==6){
-                break;
-            }*/
         }
         MemoryPhoto[] allMems = new MemoryPhoto[mems.size()];
         allMems = mems.toArray(allMems);
         return allMems;
-/*
-        return new MemoryPhoto[]{
-                new MemoryPhoto("http://i.imgur.com/zuG2bGQ.jpg", "Galaxy"),
-                new MemoryPhoto("http://i.imgur.com/ovr0NAF.jpg", "Space Shuttle"),
-                new MemoryPhoto("http://i.imgur.com/n6RfJX2.jpg", "Galaxy Orion"),
-                new MemoryPhoto("http://i.imgur.com/qpr5LR2.jpg", "Earth"),
-                new MemoryPhoto("http://i.imgur.com/pSHXfu5.jpg", "Astronaut"),
-                new MemoryPhoto("http://i.imgur.com/3wQcZeY.jpg", "Satellite"),
-        };
-    */
     }
 
     @Override

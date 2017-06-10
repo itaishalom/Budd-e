@@ -39,6 +39,8 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     private TextView heap2_text;
     private Button fire;
     private final String NUM_OF_MATCHES = "Number of matches: ";
+    private final String JON_WINS = "Jon beats the user";
+
     private MediaPlayer mediaPlayer;
     private Button newGame;
     private boolean isJonPlay = true;
@@ -54,19 +56,13 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         heap2_text = (TextView) findViewById(R.id.heap2_data);
         newGame = (Button) findViewById(R.id.new_game);
         setBrightness(0.1f);
-        newGame.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-                                           turnIsBegan = false;
-                                           matchesCounterTurn = 0;
-                                           takeFromHeapOne = false;
-                                           heap1 = 12;
-                                           heap2 = 12;
-                                           restoreMatches();
-                                           setBrightness(0.5f);
-                                           firstStep();
-                                       }
-                                   }
+        newGame.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        newGame();
+                    }
+                }
         );
 
         fire = (Button) findViewById(R.id.fire);
@@ -74,6 +70,17 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         act = this;
         showDialog();
         //  firstStep();
+    }
+
+    private void newGame(){
+        turnIsBegan = false;
+        matchesCounterTurn = 0;
+        takeFromHeapOne = false;
+        heap1 = 12;
+        heap2 = 12;
+        restoreMatches();
+        setBrightness(0.5f);
+        firstStep();
     }
 
     public void setBrightness(float brightness) {
@@ -98,6 +105,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     private void endOfGame(boolean isJonWon) {
         if (isJonWon) {
+            toastThis(JON_WINS);
             mediaPlayer = MediaPlayer.create(this, R.raw.jon_wins);
             setBrightness(0.9f);
         } else {
@@ -111,14 +119,15 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
                 am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                 0);
         mediaPlayer.start();
-
-        new CountDownTimer(mediaPlayer.getDuration(), 1000) {
+//mediaPlayer.getDuration()
+        new CountDownTimer(5000, 1000) {
 
             public void onTick(long millisUntilFinished) {
             }
 
             public void onFinish() {
                 mediaPlayer.stop();
+                newGame();
 
             }
         }.start();
@@ -250,25 +259,22 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         heap2_text.setText(NUM_OF_MATCHES + heap2);
         if (isFirstCase) {
             if (heap1 <= 0) {
-                toastThis("Jon beats the user");
                 endOfGame(true);
                 return;
             }
             if (heap2 <= 0) {
-                toastThis("Jon beats the user");
                 endOfGame(true);
                 return;
             }
 
         } else {
             if (heap1 <= 0) {
-                toastThis("Jon beats the user");
                 endOfGame(true);
                 return;
             }
 
             if (heap2 <= 0) {
-                toastThis("Jon beats the user");
+
                 endOfGame(true);
                 return;
             }
@@ -386,6 +392,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     public void doNegative() {
         BuggerService.setSYSTEM_GlobalPoints(-1);
         toastThis("Demit you!");
+        finish();
     }
 
     @Override

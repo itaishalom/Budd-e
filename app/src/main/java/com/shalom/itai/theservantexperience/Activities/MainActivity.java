@@ -8,6 +8,7 @@ package com.shalom.itai.theservantexperience.Activities;
 
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
+import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.Gallery.GalleryActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.R;
@@ -18,13 +19,26 @@ import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
+import android.database.Cursor;
 import android.graphics.Color;
 
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.provider.CalendarContract;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -32,6 +46,7 @@ import android.support.v4.app.DialogFragment;
 
 import android.util.Log;
 
+import android.util.Patterns;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -42,7 +57,9 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
@@ -52,9 +69,16 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.VIBRATE;
+import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_POINTS;
+import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Functions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
 
 
@@ -75,7 +99,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
             Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
-            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE, ACCESS_WIFI_STATE, INTERNET,WRITE_SETTINGS};
+            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
+            ACCESS_WIFI_STATE, INTERNET,WRITE_SETTINGS,WAKE_LOCK};
     private boolean isSleeping = false;
     public static MainActivity thisActivity;
     TextView signalStrength;
@@ -94,7 +119,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
-        BuggerService.getInstance().loadPoints();
+       // BuggerService.getInstance().loadPoints();
        /*
         if(!Settings.System.canWrite(getApplicationContext())){
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -124,7 +149,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
                 //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
-                        GalleryActivity.class));
+                        SplashActivity.class));
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             }
         });
@@ -163,10 +188,145 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
             finish();
-        Functions.fadingText(this, R.id.jon_text);
         readyToInvalidate = true;
+        //Functions.fadingText(this, R.id.jon_text);
+
+        //addCalendarMeeting(getApplicationContext());
+
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
+        if(!settings.getBoolean(IS_INSTALLED, false)){
+            setUserName();
+            addCalendarMeeting();
+
+
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(IS_INSTALLED, true);
+            editor.commit();
+        }
+
         BuggerService.getInstance().wakeUpJon();
+
+    }
+
+    private void setUserName(){
+       Cursor c = null;
+        try {
+            c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+           c.moveToFirst();
+           String name = (c.getString(c.getColumnIndex("display_name")));
+           if(name !=null && !name.isEmpty()){
+               USER_NAME = name;
+           }else{
+               throw new Exception();
+           }
+       }catch(Exception e){
+            Log.d(TAG, "setUserName: failed getting user name with cursor.. trying from mail");
+            String name = getPrimaryEmail();
+            if(!name.isEmpty()){
+                USER_NAME = name;
+            }else {
+                Log.d(TAG, "setUserName: failed getting user name from mail");
+                // TODO ASK FOR NAME
+            }
+       }finally {
+           if(c != null)
+            c.close();
+            if(USER_NAME !=null && !USER_NAME.isEmpty()){
+                SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(SETTINGS_NAME, USER_NAME);
+                editor.commit();
+            }
+       }
+    }
+
+    private String getPrimaryEmail() {
+        try {
+            AccountManager accountManager = AccountManager.get(this);
+            if (accountManager == null)
+                return "";
+            Account[] accounts = accountManager.getAccounts();
+            Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+            for (Account account : accounts) {
+                // make sure account.name is an email address before adding to the list
+                if (emailPattern.matcher(account.name).matches()) {
+
+                    return account.name.split("@")[0].replaceAll("\\P{L}", " ").trim();
+                }
+            }
+            return "";
+        } catch (SecurityException e) {
+            // exception will occur if app doesn't have GET_ACCOUNTS permission
+            return "";
+        }
+    }
+
+
+
+
+    public void setAlarm(Context context)
+    {
+        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, MyScheduledReceiver.class);
+        i.putExtra("BirthDay",true);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ (1000 * 60 * 60),pi); // Millisec * Second * Minute
+    }
+
+
+    public  void addCalendarMeeting() {
+
+        try {
+            ContentResolver cr = getContentResolver();
+            ContentValues values = new ContentValues();
+            Calendar cal = Calendar.getInstance();
+            values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
+            values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
+            values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
+            //  TimeZone timeZone = TimeZone.getDefault();
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC/GMT +2:00");
+            // default calendar
+            values.put(CalendarContract.Events.CALENDAR_ID, 1);
+            values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+            values.put("hasAlarm", 1);
+            values.put(CalendarContract.Events.DURATION, "+P1H");
+            values.put(CalendarContract.Events.HAS_ALARM, 1);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+                return;
+            }
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            if (uri == null) {
+                secondTryCalendar();
+            }
+            Toast.makeText(getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+            Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
+            startActivity(LaunchIntent);
+            final Handler handler = new Handler();
+            final Context con = this;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(con, MainActivity.class);
+                    startActivity(intent);
+                }
+            }, 4000);
+        } catch (Exception e) {
+            secondTryCalendar();
+        }
+    }
+
+    public  void secondTryCalendar() {
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis() + 60 * 60 * 1000);
+        intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
+        intent.putExtra(CalendarContract.Events.TITLE, "Jon's birthday!");
+        Toast.makeText(getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 
 

@@ -23,6 +23,8 @@ android {
     useLibrary 'org.apache.http.legacy'
 }
 
+
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2', {
@@ -44,5 +46,6 @@ dependencies {
     compile 'ai.api:libai:1.4.8'
     compile 'org.apache.logging.log4j:log4j:2.8.2'
     testCompile 'junit:junit:4.12'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 //apply plugin: 'com.google.gms.google-services'

@@ -12,6 +12,7 @@ public class Haters extends RelationsStatus {
         iconId = R.drawable.rel_hate;
         RESPONSE_NUMBER = 1;
         maxValProgress = 10;
+        probabilityNumber = -0.2;
         this.relationStatus = "Haters";
     }
 

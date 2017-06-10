@@ -27,6 +27,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -159,7 +160,11 @@
         <activity android:name=".SelfieV2" />
         <activity android:name=".Activities.MatchesGameActivity" />
         <activity android:name=".Gallery.FullScreenImageActivity" />
-        <activity android:name=".Gallery.GalleryActivity"></activity>
+        <activity android:name=".Gallery.GalleryActivity" />
+        <activity android:name=".Activities.SplashActivity" />
+        <activity
+            android:name=".Gallery.FullScreenMemory"
+            android:label="@string/title_activity_full_screen_memory"></activity>
     </application>
 
 </manifest>

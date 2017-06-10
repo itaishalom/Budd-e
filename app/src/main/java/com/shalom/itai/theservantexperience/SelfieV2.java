@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static com.shalom.itai.theservantexperience.R.id.imageView;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
+import static com.shalom.itai.theservantexperience.Utils.Functions.copy;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
 
 public class SelfieV2 extends AppCompatActivity implements DialogCaller {
@@ -140,7 +141,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
         Toast.makeText(inst ,"Thanks for the selfie!", Toast.LENGTH_LONG).show();
         surfaceView.clearRam();
       //  String tempFilePath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-        if (this.copy(new File(path),new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)+ File.separator+"temporary_file.jpeg"))) {
+        if (copy(new File(path),new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)+ File.separator+"temporary_file.jpeg"))) {
             Uri uriToImage = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES)+ File.separator+"temporary_file.jpeg"));
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
@@ -159,28 +160,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
         }
     }
 
-    public boolean copy(File src, File dst)  {
-        InputStream in = null;
-        OutputStream out = null;
 
-        try {
-            in = new FileInputStream(src);
-            out = new FileOutputStream(dst);
-
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-        }catch(Exception e){
-            return false;
-
-        }
-        return true;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

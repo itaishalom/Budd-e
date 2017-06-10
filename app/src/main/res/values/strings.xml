@@ -24,7 +24,8 @@
     <string name="action_settings">settings</string>
     <string name="action_favorite">favorite</string>
     <string name="alert_dialog_Wake_up_buttons_title">Wake up Jon?</string>
-    <string name="alert_dialog_Game">Want to do a game?</string>
+    <string name="alert_dialog_Confirm">Are you sure?</string>
+    <string name="alert_dialog_Game">Want to play a game?</string>
     <string name="alert_dialog_Trip_buttons_title">Can we go there?</string>
     <string name="alert_dialog_Selfie_buttons_title">Can we do selfie?</string>
     <string name="alert_dialog_cancel">Shhhh...</string>
@@ -32,6 +33,10 @@
     <string name="title_activity_trip">Map</string>
     <string name="title_activity_selfie">SelfieActivity</string>
     <string name="send_to">Share..</string>
+    <string name="title_activity_full_screen_memory">FullScreenMemory</string>
+    <string name="title_home">Home</string>
+    <string name="delete_option">Delete</string>
+    <string name="share_option">Share</string>
 </resources>
 
 

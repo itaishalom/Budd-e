@@ -1,5 +1,6 @@
 package com.shalom.itai.theservantexperience.Activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     protected ConstraintLayout relationsLayout;
     protected ConstraintLayout moodLayout;
     protected View[] arr;
+    protected ConstraintLayout lLayout;
     protected final void onCreate(Bundle savedInstanceState, int layoutId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
@@ -32,6 +34,9 @@ public abstract class ToolBarActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //   getSupportActionBar().setDisplayShowTitleEnabled(false);
+         lLayout = (ConstraintLayout) findViewById(R.id.main_layout);
+        lLayout.setBackgroundColor(Color.parseColor("#04967D"));
+
         relationsLayout = (ConstraintLayout) findViewById(R.id.relation_layout);
         relationsLayout.bringToFront();
         moodLayout = (ConstraintLayout) findViewById(R.id.mood_layout);

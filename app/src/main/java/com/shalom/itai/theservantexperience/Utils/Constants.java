@@ -19,9 +19,14 @@ public class Constants {
     public static final int SECOND = 1000;
     public static final int MINUTE = 60000;
     public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
+    public static String USER_NAME ;// "imageByteArray";
     public static final String SAVE_IMAGE =  "toSaveImage";
     public static final String IMAGE_READY = "android.intent.action.ImageReady";
-    public static final String GLOBAL_POINTS = "GLOBAL_POINTS";
     public static final int INITIAL_POINTS = 10;
     public static String Directory ;
+    
+    ////SETTINGS:
+    public static final String SETTINGS_POINTS = "SETTINGS_POINTS";
+    public static final String SETTINGS_NAME = "SETTINGS_NAME";
+    
 }

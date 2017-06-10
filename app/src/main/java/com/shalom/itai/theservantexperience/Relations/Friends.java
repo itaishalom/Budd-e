@@ -9,6 +9,7 @@ import com.shalom.itai.theservantexperience.R;
 public class Friends extends RelationsStatus {
     private static Friends instance;
     private Friends(){
+        probabilityNumber = 0.2;
         maxValProgress = 30;
         RESPONSE_NUMBER = 2;
         iconId = R.drawable.rel_friend;

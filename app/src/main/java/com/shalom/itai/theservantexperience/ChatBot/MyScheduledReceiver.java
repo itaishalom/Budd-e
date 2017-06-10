@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.Activities.MainActivity;
 import com.shalom.itai.theservantexperience.MessageBox;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
@@ -17,9 +19,19 @@ public class MyScheduledReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
+
+        if(intent.getBooleanExtra("BirthDay",false)){
+            Intent scheduledIntent = new Intent(context, MainActivity.class);
+            scheduledIntent.putExtra("Birthday",true);
+            context.startActivity(scheduledIntent);
+            Toast.makeText(context.getApplicationContext(), "Birthday!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         Intent scheduledIntent = new Intent(context, MessageBox.class);
-        String temo = intent.getStringExtra(MESSAGE_BOX_START_ACTIVITY);
-        Log.d(TAG, "onReceive: " + temo);
+        String temp = intent.getStringExtra(MESSAGE_BOX_START_ACTIVITY);
+        Log.d(TAG, "onReceive: " + temp);
         scheduledIntent.putExtra(MESSAGE_BOX_START_ACTIVITY,intent.getStringExtra(MESSAGE_BOX_START_ACTIVITY));
         scheduledIntent.putExtra("START_TEXT",intent.getStringExtra("START_TEXT"));
         scheduledIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

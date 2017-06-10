@@ -177,16 +177,13 @@ public class SilentCamera {
         public void onPictureTaken(byte[] imageByteArray, Camera camera) {
             releaseCamera();
             imageBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
-
 //            String pathToImage = saveMemory(photo, mText);
-
             Intent i = new Intent(IMAGE_READY);//.putExtra("path", pathToImage);
             try {
                 context.sendBroadcast(i);
             } catch (Exception e) {
                 Log.i("ISSUE IN SEND", "issue not send");
             }
-
         }
     };
 
@@ -202,7 +199,7 @@ public class SilentCamera {
         try {
             fileData = new FileOutputStream(file);
             outImage = new FileOutputStream(mPathImage);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 60, outImage); // bmp is your Bitmap instance
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, outImage); // bmp is your Bitmap instance
             fileData.write(text.getBytes());
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
