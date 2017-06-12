@@ -259,7 +259,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     }
 
     /**
-     * Sets alarm to one hour from now..
+     * Sets alarm to one hour from now...
      */
     public void setAlarm() {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
