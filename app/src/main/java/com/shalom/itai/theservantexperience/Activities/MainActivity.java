@@ -268,7 +268,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     }
 
     /**
-     * Adds to Jon's birthday to the user's calendar
+     * This Adds to Jon's birthday to the user's calendar
      */
     public void addCalendarMeeting() {
 
