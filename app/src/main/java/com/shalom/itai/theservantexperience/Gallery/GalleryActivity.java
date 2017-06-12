@@ -67,8 +67,11 @@ public class GalleryActivity extends ToolBarActivity {
         public void onBindViewHolder(ImageGalleryAdapter.MyViewHolder holder, int position) {
 
             MemoryPhoto memoryPhoto = mMemoryPhoto[position];
-            ImageView imageView = holder.mPhotoImageView;
-/*
+            final ImageView imageView = holder.mPhotoImageView;
+            final ProgressBar progressBar = holder.mProgressBar;
+            imageView.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            /*
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(memoryPhoto.getUrl(), options);
@@ -78,7 +81,23 @@ public class GalleryActivity extends ToolBarActivity {
 */
 
 
-            Picasso.with(context).load(new File(memoryPhoto.getUrl())).resize(100, 100).centerCrop().into(imageView);
+            Picasso.with(context).load(new File(memoryPhoto.getUrl())).resize(100, 100).centerCrop().into(imageView, new com.squareup.picasso.Callback() {
+                @Override
+                public void onSuccess() {
+                    if (progressBar != null) {
+                        progressBar.setVisibility(View.GONE);
+                        imageView.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+
+            // Show progress bar
+
 
         }
 
@@ -129,10 +148,13 @@ public class GalleryActivity extends ToolBarActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             public ImageView mPhotoImageView;
+            public ProgressBar mProgressBar;
             public MyViewHolder(View itemView) {
 
                 super(itemView);
                 mPhotoImageView = (ImageView) itemView.findViewById(R.id.iv_photo);
+                mProgressBar = (ProgressBar) itemView.findViewById(R.id.iv_progress);
+
                 itemView.setOnClickListener(this);
             }
 

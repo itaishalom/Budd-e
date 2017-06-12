@@ -19,7 +19,7 @@ import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.Activities.MatchesGameActivity;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.SelfieV2;
+import com.shalom.itai.theservantexperience.Activities.SelfieV2;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.ArrayList;

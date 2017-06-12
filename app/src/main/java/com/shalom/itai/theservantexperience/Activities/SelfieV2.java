@@ -1,11 +1,10 @@
-package com.shalom.itai.theservantexperience;
+package com.shalom.itai.theservantexperience.Activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
@@ -24,21 +23,13 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
-import com.shalom.itai.theservantexperience.Activities.DialogCaller;
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.MyAlertDialogFragment;
+import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.CameraPreview;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
-import static com.shalom.itai.theservantexperience.R.id.imageView;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
 import static com.shalom.itai.theservantexperience.Utils.Functions.copy;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;

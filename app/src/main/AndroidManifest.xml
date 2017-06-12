@@ -152,14 +152,12 @@
             android:launchMode="singleInstance" />
         <activity android:name=".Activities.PictureActivty" />
         <activity
-            android:name=".Activities.SelfieActivity"
+            android:name=".Activities.SelfieV2"
             android:hardwareAccelerated="false"
             android:label="@string/title_activity_selfie"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".SelfieV2" />
         <activity android:name=".Activities.MatchesGameActivity" />
-        <activity android:name=".Gallery.FullScreenImageActivity" />
         <activity android:name=".Gallery.GalleryActivity" />
         <activity android:name=".Activities.SplashActivity" />
         <activity

@@ -267,7 +267,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (60 * 60 * 1000), pi); // Millisec * Second * Minute
     }
 
-
+    /**
+     * Adds to Jon's birthday to the user's calendar
+     */
     public void addCalendarMeeting() {
 
         try {
