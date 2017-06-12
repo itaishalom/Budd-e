@@ -1,19 +1,9 @@
 package com.shalom.itai.theservantexperience.Services;
 
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NoiseListener;
-
-import java.util.List;
-
-import static com.shalom.itai.theservantexperience.Services.BuggerService.indexActive;
-import static com.shalom.itai.theservantexperience.Services.BuggerService.stopBugger;
-import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -23,10 +13,11 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
     private NoiseListener mNoiseListener;
     private double mNoiseLevel;
     private boolean shouldContinue;
+
     ListenToNoiseTimerTask(Context context) {
         super(context);
         mNoiseLevel = 75.0;
-     //   mNoiseListener = new NoiseListener();
+        //   mNoiseListener = new NoiseListener();
         shouldContinue = true;
     }
 
@@ -40,7 +31,7 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
 
     @Override
     public void run() {
-        if(!shouldContinue)
+        if (!shouldContinue)
             return;
         mNoiseListener = new NoiseListener();
         mNoiseListener.start();
@@ -51,11 +42,10 @@ public class ListenToNoiseTimerTask extends ContextTimerTask {
         }
         double noise = mNoiseListener.stop();
 
-        if(noise>NightActions.getNoiseLevel()) {
+        if (noise > NightActions.getNoiseLevel()) {
             shouldContinue = false;
             mNoiseListener.dispose();
             Functions.popUpMessage(mContext, "Hi! You woke me up!");
-            BuggerService.getInstance().wakeUpJon();
             return;
         }
 /*

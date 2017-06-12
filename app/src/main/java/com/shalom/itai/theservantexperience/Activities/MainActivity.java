@@ -21,6 +21,7 @@ import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -39,6 +40,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -80,6 +82,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Functions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
+import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
 
 
 public class MainActivity extends ToolBarActivity implements DialogCaller {
@@ -112,25 +115,13 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     ImageView memoriesImage;
 
 
+
+    @SuppressLint("MissingSuperCall")
     protected final void onCreate(Bundle icicle) {
         super.onCreate(icicle, R.layout.activity_main);
-        //super.onCreate(icicle);
-        //setContentView(R.layout.activity_main);
-
-        ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
-        // BuggerService.getInstance().loadPoints();
-       /*
-        if(!Settings.System.canWrite(getApplicationContext())){
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + this.getPackageName()));
-                this.startActivityForResult(intent, MainActivity.REQUESTS+1);
-            }
-        }
-        */
         thisActivity = this;
-
     }
 
 
@@ -146,7 +137,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
                         SplashActivity.class));
@@ -194,8 +184,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         if (!settings.getBoolean(IS_INSTALLED, false)) {
             setUserName();
             addCalendarMeeting();
-
-
+            takeScreenshot(MainActivity.getInstance(),"Check install");
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(IS_INSTALLED, true);
             editor.commit();
@@ -385,6 +374,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
 
     private void forceWakeUp() {
+        BuggerService.getInstance().wakeUpJon();
         isSleeping = false;
         List<String> legendList = new ArrayList<String>();
         legendList.add("Put hear plugs and go back to bad");
@@ -403,12 +393,22 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                     case 1:
-                        Toast.makeText(MainActivity.getInstance(), "Ok", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-2);
+                        if(BuggerService.getInstance().shouldIDoThis()>=0.5) {
+                            Toast.makeText(MainActivity.getInstance(), "Ok", Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(-2);
+                        }else{
+                            Toast.makeText(MainActivity.getInstance(), "Nope", Toast.LENGTH_LONG).show();
+                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                        }
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
+
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        if(BuggerService.getInstance().shouldIDoThis()>=0.5) {
+                            Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(MainActivity.getInstance(), "What hell", Toast.LENGTH_LONG).show(); // TODO Course him!!
+                        }
                         BuggerService.setSYSTEM_GlobalPoints(-1);
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
@@ -498,6 +498,16 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     public void doNegative() {
         Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
         Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
+    private void checkSettingsPermissions(){
+        if(!Settings.System.canWrite(getApplicationContext())){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + this.getPackageName()));
+                this.startActivityForResult(intent, MainActivity.REQUESTS+1);
+            }
+        }
     }
 
 /*

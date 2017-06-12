@@ -93,9 +93,9 @@ public class FullScreenMemory extends AppCompatActivity {
 
     private void delete() {
         if (deleteProb == -1 ){
-            deleteProb = BuggerService.getInstance().getRelationsStatus().getProbabilityNumber() + throwRandomProb();
+            deleteProb = BuggerService.getInstance().shouldIDoThis();
         }
-        if (1 >= 0.5) {
+        if (deleteProb >= 0.5) {
             File file = new File(mImagePath);
             if (file.delete()) {
                 Toast.makeText(this.getApplicationContext(), "Forgot it :(", Toast.LENGTH_SHORT).show();

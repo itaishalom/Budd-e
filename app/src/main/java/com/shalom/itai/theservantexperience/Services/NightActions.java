@@ -82,8 +82,4 @@ public class NightActions extends Actions {
         removeNotification();
     }
 
-    @Override
-    public void unLock() {
-
-    }
 }

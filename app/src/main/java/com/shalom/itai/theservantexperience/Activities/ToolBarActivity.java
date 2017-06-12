@@ -30,7 +30,6 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     protected final void onCreate(Bundle savedInstanceState, int layoutId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //   getSupportActionBar().setDisplayShowTitleEnabled(false);

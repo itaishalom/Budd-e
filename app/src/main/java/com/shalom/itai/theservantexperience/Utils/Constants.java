@@ -28,5 +28,6 @@ public class Constants {
     ////SETTINGS:
     public static final String SETTINGS_POINTS = "GLOBAL_POINTS";
     public static final String SETTINGS_NAME = "SETTINGS_NAME";
+    public static final String SETTINGS_IS_ASLEEP = "SETTINGS_SLEEP";
     
 }
