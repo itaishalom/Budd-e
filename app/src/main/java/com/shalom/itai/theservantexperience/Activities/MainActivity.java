@@ -258,7 +258,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
     }
 
-
+    /**
+     * Sets alarm
+     */
     public void setAlarm() {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, MyScheduledReceiver.class);
