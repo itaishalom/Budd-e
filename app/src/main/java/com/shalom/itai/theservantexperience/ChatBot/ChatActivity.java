@@ -54,7 +54,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState,R.layout.activity_chat);
 
-      //  setContentView(R.layout.activity_chat);
+        //  setContentView(R.layout.activity_chat);
 
         buttonSend = (Button) findViewById(R.id.send);
 
@@ -128,6 +128,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
         chatArrayAdapter.add(new ChatMessage(isLeft,query ));
         if(!waitForRespond)
             return true;
+
         final AIRequest aiRequest = new AIRequest();
         aiRequest.setQuery(query);
         new AsyncTask<AIRequest, Void, AIResponse>() {
@@ -162,12 +163,18 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                                 sendChatMessage(false,false,"I hope it helped you");
                                 return;
                             }
-                            if(Functions.allowToChangeFromChat()) {
-                                if (result.getAction().equals("lowerPoints")) {
-                                    BuggerService.setSYSTEM_GlobalPoints(-1);
-                                } else if (result.getAction().equals("incPoints")) {
-                                    BuggerService.setSYSTEM_GlobalPoints(1);
-                                }
+                            int point = 0;
+                            if (result.getAction().equals("lowerPoints")) {
+                                BuggerService.getInstance().saveInsults(query);
+                                point = -1;
+                            } else if (result.getAction().equals("incPoints")) {
+                                BuggerService.getInstance().saveBless(query);
+                                point = 1;
+                            }
+
+
+                            if((Functions.allowToChangeFromChat()) && (point != 0)){
+                                BuggerService.setSYSTEM_GlobalPoints(point);
                             }
                             Fulfillment answer =result.getFulfillment();
 
@@ -195,7 +202,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                             sendChatMessage(false,false,finalAnswer);
 
 
-                           // Toast.makeText(getApplicationContext(),res,Toast.LENGTH_LONG).show();
+                            // Toast.makeText(getApplicationContext(),res,Toast.LENGTH_LONG).show();
                             /*Toast.makeText(getApplicationContext(),"Query:" + result.getResolvedQuery() +
                                     "\nAction: " + result.getAction() +
                                     "\nParameters: " + finalParameterString,Toast.LENGTH_LONG).show();

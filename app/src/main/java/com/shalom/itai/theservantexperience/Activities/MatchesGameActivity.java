@@ -194,7 +194,6 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
             case UNBURN_DIRECTION:
                 view.animate().translationY(0);
         }
-
     }
 
     public void onImageClick(View view) {

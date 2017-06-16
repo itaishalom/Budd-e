@@ -27,7 +27,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -93,6 +93,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -162,7 +163,8 @@
         <activity android:name=".Activities.SplashActivity" />
         <activity
             android:name=".Gallery.FullScreenMemory"
-            android:label="@string/title_activity_full_screen_memory"></activity>
+            android:label="@string/title_activity_full_screen_memory" />
+        <activity android:name=".Introduction.TutorialActivity"   android:launchMode="singleInstance"></activity>
     </application>
 
 </manifest>

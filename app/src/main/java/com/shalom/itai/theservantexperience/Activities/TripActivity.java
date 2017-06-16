@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.shalom.itai.theservantexperience.R;
+
 import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -84,12 +85,12 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
 
 public class TripActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DialogCaller {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DialogCaller {
     private int TAKE_IMAGE = 1;
     private GoogleMap mMap;
-    private double savedDistLat =0;
-    private double savedDistLng =0;
-    private boolean isRestarted  = false;
+    private double savedDistLat = 0;
+    private double savedDistLng = 0;
+    private boolean isRestarted = false;
     protected static final String TAG = "TripActivity";
 
     /**
@@ -113,9 +114,10 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
         Intent intent = getIntent();
-        if(intent.getBooleanExtra("restart",false)){
-            isRestarted= true;
-            this.showDialog();;
+        if (intent.getBooleanExtra("restart", false)) {
+            isRestarted = true;
+            this.showDialog();
+            ;
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -130,9 +132,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         return act;
     }
 
-    private void askForGPS(){
+    private void askForGPS() {
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             // Build the alert dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -180,7 +182,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             public void onResult(LocationSettingsResult result) {
                 final Status status = result.getStatus();
                 final LocationSettingsStates state = result.getLocationSettingsStates();
-                Log.d(TAG, "onResult: "+ state.isGpsPresent());
+                Log.d(TAG, "onResult: " + state.isGpsPresent());
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         Log.d(TAG, "onResult: good");
@@ -233,7 +235,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == 1000) {
             if (resultCode == RESULT_OK) {
                 mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                if( mLastLocation== null) {
+                if (mLastLocation == null) {
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -243,7 +245,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                         }
 
                     }, 2000);
-                }else{
+                } else {
                     placeMe();
                 }
                 // Make sure the app is not already connected or attempting to connect
@@ -252,47 +254,45 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     mGoogleApiClient.connect();
                 }
                 */
-            }
-            else{
+            } else {
                 buildGoogleApiClient();
                 Log.d(TAG, "onActivityResult: error! canceled");
             }
-        }else if (requestCode ==TAKE_IMAGE){
+        } else if (requestCode == TAKE_IMAGE) {
 
-            if(resultCode == Activity.RESULT_OK){
-                Toast.makeText(TripActivity.this ,"Thanks!", Toast.LENGTH_SHORT).show();
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(TripActivity.this, "Thanks!" +BuggerService.getInstance().getRandomBless(), Toast.LENGTH_SHORT).show();
                 finish();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 askForPicure();
                 //Write your code if there's no result
             }
-        }
-        else{
+        } else {
             buildGoogleApiClient();
             Log.d(TAG, "onActivityResult: error! canceled");
         }
     }
 
-    public Location getCurrentLocation(){
+    public Location getCurrentLocation() {
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
 
-    public void notGettingCloser(){
+    public void notGettingCloser() {
         this.runOnUiThread(new Runnable() {
             public void run() {
-                Toast.makeText(TripActivity.this ,"We are not getting close!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TripActivity.this, "We are not getting close!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-    public void weAreThere(){
+    public void weAreThere() {
         BuggerService.getInstance().unTrip();
         this.runOnUiThread(new Runnable() {
             public void run() {
-                Toast.makeText(TripActivity.this ,"Yey! We are here!! Show me !!!", Toast.LENGTH_LONG).show();
+                Toast.makeText(TripActivity.this, "Yey! We are here!! Show me !!!", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -300,8 +300,8 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.disconnect();
     }
 
-    private void askForPicure(){
-        Intent i = new Intent(this, PictureActivty.class).putExtra(SAVE_IMAGE,true);
+    private void askForPicure() {
+        Intent i = new Intent(this, PictureActivty.class).putExtra(SAVE_IMAGE, true);
         startActivityForResult(i, TAKE_IMAGE);
     }
 
@@ -318,13 +318,12 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         readyMap = true;
         mMap = googleMap;
-        if(connected) {
+        if (connected) {
             //  placeMe();
         }
         // Add a marker in Sydney and move the camera
 
     }
-
 
 
     private void placeMe() {
@@ -334,8 +333,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLng(whereAreWe));
             if (!isRestarted) {
                 searchFood();
-            }
-            else{
+            } else {
                 LatLng target = new LatLng(BuggerService.getInstance().getDistanceLat(), BuggerService.getInstance().getDistanceLng());
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(target)      // Sets the center of the map to Mountain View
@@ -348,6 +346,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
     /**
      * Runs when a GoogleApiClient object successfully connects.
      */
@@ -359,7 +358,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         // in rare cases when a location is not available.
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         connected = true;
-        if(readyMap && mLastLocation != null) {
+        if (readyMap && mLastLocation != null) {
             //     placeMe();
         }
 
@@ -374,9 +373,6 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         }
         */
     }
-
-
-
 
 
     public class getData extends AsyncTask<String, String, String> {
@@ -404,10 +400,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     result.append(line);
                 }
 
-            }catch( Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            }
-            finally {
+            } finally {
                 urlConnection.disconnect();
             }
 
@@ -425,8 +420,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
-
-            @Override
+        @Override
         protected void onPostExecute(String result) {
             try {
                 JSONObject jsonList = new JSONObject(result);
@@ -434,15 +428,15 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                 int counter = 0;
                 while (true) {
                     counter++;
-                    if(counter == arrayOfResults.length()) {
+                    if (counter == arrayOfResults.length()) {
                         break;
                     }
-                    int index = throwRandom(arrayOfResults.length(),0);
+                    int index = throwRandom(arrayOfResults.length(), 0);
                     JSONObject firstInList = arrayOfResults.optJSONObject(index);
-                    if(firstInList ==null){
+                    if (firstInList == null) {
                         continue;
                     }
-                    if(checkIsLodging(firstInList.optJSONArray("types"))) {
+                    if (checkIsLodging(firstInList.optJSONArray("types"))) {
                         if (counter < arrayOfResults.length() - 1) {
                             arrayOfResults.put(index, null);
                             continue;
@@ -467,9 +461,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                             .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                             .build();                   // Creates a CameraPosition from the builder
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    double distanceFromDestination = getDistanceFromLatLonInKm(lat,lng, mLastLocation.getLatitude(),mLastLocation.getLongitude());
-                    Toast.makeText(getInstance(), "Let's go to the " + name +"! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
-                    BuggerService.getInstance().setDistanceToDest(lat,lng);
+                    double distanceFromDestination = getDistanceFromLatLonInKm(lat, lng, mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    Toast.makeText(getInstance(), "Let's go to the " + name + "! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
+                    BuggerService.getInstance().setDistanceToDest(lat, lng);
 
 //TODO SAVE IT!
                     final Handler handler = new Handler();
@@ -491,7 +485,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onSaveInstanceState( Bundle outState ) {
+    public void onSaveInstanceState(Bundle outState) {
 
     }
 
@@ -504,7 +498,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (!activityOnTop.contains("com.shalom.itai.theservantexperience.Activities.TripActivity")) {
 
-            Intent intent = new Intent(this, TripActivity.class).putExtra("restart",true);
+            Intent intent = new Intent(this, TripActivity.class).putExtra("restart", true);
             this.startActivity(intent);
         } else {
             DialogFragment newFragment = MyAlertDialogFragment
@@ -516,14 +510,14 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void doPositive() {
         BuggerService.setSYSTEM_GlobalPoints(1);
-        Toast.makeText(this, "YeY!!! A Trip!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "YeY!!! A Trip! " + BuggerService.getInstance().getRandomBless(), Toast.LENGTH_LONG).show();
         BuggerService.getInstance().goToTrip();
         Log.i("FragmentAlertDialog", "Positive click!");
     }
 
     @Override
     public void doNegative() {
-        Toast.makeText(this, "You are not fun!!!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_LONG).show();
         BuggerService.setSYSTEM_GlobalPoints(-1);
         finish();
         Log.i("FragmentAlertDialog", "Negative click!");
@@ -534,6 +528,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         //    https://maps.googleapis.com/maps/api/place/search/json?types=bar&restaurant&radius=500&&key=AIzaSyCvcfb2pxac2baMGVFvzCAKFPmY735Cw14&location=31.7813273,35.2148459
         new getData().execute();
     }
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -543,7 +538,6 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
 
 
 }

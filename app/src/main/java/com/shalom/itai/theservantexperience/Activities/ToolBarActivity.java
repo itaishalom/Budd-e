@@ -26,11 +26,12 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     protected ConstraintLayout relationsLayout;
     protected ConstraintLayout moodLayout;
     protected View[] arr;
+    protected Toolbar myToolbar;
     protected ConstraintLayout lLayout;
     protected final void onCreate(Bundle savedInstanceState, int layoutId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //   getSupportActionBar().setDisplayShowTitleEnabled(false);
          lLayout = (ConstraintLayout) findViewById(R.id.main_layout);
@@ -46,7 +47,7 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.options, menu);
-        MenuItem te = menu.findItem(R.id.action_favorite);
+       MenuItem te = menu.findItem(R.id.action_favorite);
         if (te != null)
             te.setIcon(BuggerService.getInstance().getRelationsStatus().getIconId());
         return true;

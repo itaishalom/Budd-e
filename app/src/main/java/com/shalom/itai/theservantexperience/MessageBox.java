@@ -18,7 +18,8 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_S
 
 public class MessageBox extends Activity {
     private static MessageBox  instance;
-    /** Called when the activity is first created. */
+    /** Called when the activity is first created.
+     * Transparency defined on manifest!!! */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

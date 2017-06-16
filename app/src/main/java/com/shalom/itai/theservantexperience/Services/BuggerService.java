@@ -1,36 +1,33 @@
 package com.shalom.itai.theservantexperience.Services;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.widget.ImageView;
 
-import com.shalom.itai.theservantexperience.Activities.DancingActivity;
-import com.shalom.itai.theservantexperience.Activities.FunActivity;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.SmsSendActivity;
-import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
-import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Objects;
-import java.util.Timer;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.*;
-import static com.shalom.itai.theservantexperience.Utils.Functions.*;
+import static com.shalom.itai.theservantexperience.Utils.Constants.INITIAL_POINTS;
+import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_BLESSES;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_INSULTS;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_POINTS;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTING_USERNAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandomProb;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -52,7 +49,11 @@ public class BuggerService extends Service {
     private static RelationsStatus currentStatus;
     private int mStartId = -1;
     public Actions currentAction;
-    SharedPreferences settings;
+    private SharedPreferences settings;
+    private ArrayList<String> SYSTEM_Insults;
+    private ArrayList<String> SYSTEM_Blesses;
+
+
 
     @Nullable
     @Override
@@ -67,6 +68,8 @@ public class BuggerService extends Service {
     public void onCreate() {
         super.onCreate();
         loadPoints();
+        loadInsultsAndBless();
+        loadUserName();
         currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         mInstance = this;
     }
@@ -133,7 +136,7 @@ public class BuggerService extends Service {
             editor.commit();
         }
     */
-    private void writeToSettings(String settingString, Object data) {
+    public void writeToSettings(String settingString, Object data) {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         if (data instanceof Integer) {
@@ -144,7 +147,9 @@ public class BuggerService extends Service {
             editor.putString(settingString, (String) data);
         } else if (data instanceof Boolean) {
             editor.putBoolean(settingString, (Boolean) data);
-        }
+        } else if (data instanceof Set) {
+        editor.putStringSet(settingString, (Set) data);
+    }
 
         editor.commit();
     }
@@ -154,6 +159,67 @@ public class BuggerService extends Service {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SYSTEM_GlobalPoints = settings.getInt(SETTINGS_POINTS, INITIAL_POINTS);
     }
+
+    private void loadUserName(){
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        USER_NAME = settings.getString(SETTING_USERNAME, "");
+    }
+
+
+    public void loadInsultsAndBless(){
+        SYSTEM_Insults = new ArrayList<>();
+        Functions.createInsults(SYSTEM_Insults);
+        SYSTEM_Blesses = new ArrayList<>();
+        Functions.createBlesses(SYSTEM_Blesses);
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        Set<String> insults = settings.getStringSet(SETTINGS_INSULTS, null);
+        if(insults !=null ){
+            Iterator<String> itr = insults.iterator();
+            while (itr.hasNext()){
+                SYSTEM_Insults.add(itr.next());
+            }
+        }
+
+        Set<String> bless = settings.getStringSet(SETTINGS_BLESSES, null);
+        if(bless !=null ){
+            Iterator<String> itr = bless.iterator();
+            while (itr.hasNext()){
+                SYSTEM_Blesses.add(itr.next());
+            }
+        }
+
+    }
+
+    private void save(ArrayList<String> arr, String query,String SETTING){
+        query = query.replaceAll("(?i)jon", USER_NAME);
+        if(!arr.contains(query)){
+            arr.add(query);
+        }
+        Set s = new HashSet(arr);
+        writeToSettings(SETTING,s);
+    }
+
+    public void saveInsults(String insult){
+            save(SYSTEM_Insults,insult,SETTINGS_INSULTS);
+    }
+
+    public void saveBless(String bless){
+        save(SYSTEM_Blesses,bless,SETTINGS_BLESSES);
+    }
+
+
+    public String getRandomInsult(){
+        if(SYSTEM_Insults !=null && !SYSTEM_Insults.isEmpty())
+            return SYSTEM_Insults.get(Functions.throwRandom(SYSTEM_Insults.size(),0));
+        return "";
+    }
+
+    public String getRandomBless(){
+        if(SYSTEM_Blesses !=null && !SYSTEM_Blesses.isEmpty())
+            return SYSTEM_Blesses.get(Functions.throwRandom(SYSTEM_Blesses.size(),0));
+        return "";
+    }
+
 
     @Override
     public boolean stopService(Intent name) {

@@ -165,8 +165,8 @@ public class DayActions extends Actions {
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage) {
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
-        Toast.makeText(mContext.getApplicationContext(), "Morning!",
-                Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(mContext.getApplicationContext(), "Morning!",
+                Toast.LENGTH_SHORT).show();*/
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

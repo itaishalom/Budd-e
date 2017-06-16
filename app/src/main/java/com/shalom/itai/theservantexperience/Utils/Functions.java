@@ -69,6 +69,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
 
 /**
@@ -98,6 +99,20 @@ public class Functions {
         allInsults.add("Your momma is so old that she knew Burger King when he was a prince");
         allJokes.add("My friend thinks he is smart. He told me an onion is the only food that makes you cry, so I threw a coconut at his face.");
         allJokes.add("Q: Is Google male or female? \nA: Female, because it doesn't let you finish a sentence before making a suggestion.");
+    }
+
+
+    public static void createInsults(ArrayList<String> initialInsults){
+        initialInsults.add("Demn you");
+        initialInsults.add("What's wrong with you?");
+        initialInsults.add("What the hell??");
+    }
+
+
+    public static void createBlesses(ArrayList<String> initialIBlesses){
+        initialIBlesses.add("You are the best");
+        initialIBlesses.add("You are awesome!");
+        initialIBlesses.add("No one is better than you!");
     }
 
 

@@ -6,16 +6,22 @@ package com.shalom.itai.theservantexperience.Activities;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
        */
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.Gallery.GalleryActivity;
 import com.shalom.itai.theservantexperience.GifImageView;
+import com.shalom.itai.theservantexperience.Introduction.PageFragment;
+import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import com.shalom.itai.theservantexperience.Utils.Functions;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
+import com.shalom.itai.theservantexperience.Utils.ShowCaseObject;
 
 
 import android.Manifest;
@@ -23,6 +29,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -35,6 +42,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -46,9 +54,11 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import android.util.Patterns;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -86,6 +96,9 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreensho
 
 
 public class MainActivity extends ToolBarActivity implements DialogCaller {
+    private ArrayList<ShowCaseObject> mAllShowCases;
+    private ShowcaseView showcaseView;
+    private int showcaseViewCounter = 0;
     private boolean readyToInvalidate = false;
     public static final String TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
@@ -115,26 +128,34 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     ImageView memoriesImage;
 
 
-
     @SuppressLint("MissingSuperCall")
     protected final void onCreate(Bundle icicle) {
         super.onCreate(icicle, R.layout.activity_main);
-         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         initializeGui();
+        ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+
         thisActivity = this;
     }
 
 
     private void initializeGui() {
+        mAllShowCases = new ArrayList<>();
         //   setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = (ListView) findViewById(R.id.chat_list);
         gifImageView = (GifImageView) findViewById(R.id.GifImageView);
+        mAllShowCases.add(new ShowCaseObject(gifImageView, "Hello I am Jon"));
+
+
         chatImage = (ImageView) findViewById(R.id.chat_image);
+        mAllShowCases.add(new ShowCaseObject(chatImage, "Here we can chat"));
+
         gifImageView.setGifImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
+        mAllShowCases.add(new ShowCaseObject(memoriesImage, "Here I store my memories"));
+
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //          takeScreenshot(MainActivity.getInstance(),"Check install");
@@ -178,23 +199,81 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         //Functions.fadingText(this, R.id.jon_text);
 
         //addCalendarMeeting(getApplicationContext());
+          Intent intt = new Intent(this,TutorialActivity.class);
+          startActivity(intt);
+
+        //     Functions.popUpMessage(this, "Hi! You woke me up!");
+
+
+// Commit the transaction
+
 
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
         if (!settings.getBoolean(IS_INSTALLED, false)) {
             setUserName();
+            takeScreenshot(MainActivity.getInstance(), "I was born");
             addCalendarMeeting();
-            takeScreenshot(MainActivity.getInstance(),"Check install");
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(IS_INSTALLED, true);
-            editor.commit();
+            BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
         }
 
         BuggerService.getInstance().wakeUpJon();
+        mAllShowCases.add(new ShowCaseObject(myToolbar.findViewById(R.id.action_favorite), "Here you can see our relationship status"));
+        mAllShowCases.add(new ShowCaseObject(myToolbar.findViewById(R.id.action_mood), "Here you can see how I feel"));
+      /*
+        showcaseViewCounter = 1;
+        showcaseView = new ShowcaseView.Builder(this)
+                .set
+                .setTarget(new ViewTarget(gifImageView))
+                .setContentTitle("Hello " + USER_NAME + " I am Jon!")
+                .setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        if (showcaseViewCounter < mAllShowCases.size()) {
+                            showcaseView.setShowcase(new ViewTarget(mAllShowCases.get(showcaseViewCounter).mView), true);
+                            showcaseView.setContentTitle(mAllShowCases.get(showcaseViewCounter).mText);
+                            for(int i = 0; i< mAllShowCases.size()  ; i++ ){
+                                if(i != showcaseViewCounter)
+                                    setAlpha(0.4f, mAllShowCases.get(i));
+                                else
+                                    setAlpha(1.0f, mAllShowCases.get(i));
+                            }
+                        }else if(showcaseViewCounter == mAllShowCases.size()){
+                            showcaseView.setTarget(Target.NONE);
+                            showcaseView.setContentTitle("Always with you");
+                            showcaseView.setContentText("You can check with me later and I'll check with you too!");
+                            showcaseView.setButtonText("Got it!");
+                            setAlpha(0.4f, mAllShowCases);
+                        }else{
+                            showcaseView.hide();
+                            setAlpha(1.0f, mAllShowCases);
+                        }
+                        showcaseViewCounter++;
+                    }
+                })
+                .build();
+        showcaseView.setButtonText("Next");
+    */
+    }
 
+    private void setAlpha(float alpha, ArrayList<ShowCaseObject> showCases) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            for (ShowCaseObject showcase : showCases) {
+                showcase.mView.setAlpha(alpha);
+            }
+        }
+    }
+    private void setAlpha(float alpha, ShowCaseObject showCase) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+
+            showCase.mView.setAlpha(alpha);
+
+        }
     }
 
     private void setUserName() {
+        if (!USER_NAME.isEmpty()) {
+            return;
+        }
         Cursor c = null;
         try {
             c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
@@ -218,10 +297,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             if (c != null)
                 c.close();
             if (USER_NAME != null && !USER_NAME.isEmpty()) {
-                SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(SETTINGS_NAME, USER_NAME);
-                editor.commit();
+                BuggerService.getInstance().writeToSettings(SETTINGS_NAME, USER_NAME);
             }
         }
     }
@@ -348,6 +424,15 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
         if (intent.getBooleanExtra("wakeUpOptions", false)) {
             forceWakeUp();
+        } else if (intent.getBooleanExtra("tutorial_done", false)) {
+            SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+            createJonFolder();
+            if (!settings.getBoolean(IS_INSTALLED, false)) {
+                setUserName();
+                takeScreenshot(MainActivity.getInstance(), "I was born");
+                addCalendarMeeting();
+                BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
+            }
         }
     }
 
@@ -393,23 +478,18 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                     case 1:
-                        if(BuggerService.getInstance().shouldIDoThis()>=0.5) {
+                        if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
                             Toast.makeText(MainActivity.getInstance(), "Ok", Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(-2);
-                        }else{
+                            BuggerService.setSYSTEM_GlobalPoints(-1);
+                        } else {
                             Toast.makeText(MainActivity.getInstance(), "Nope", Toast.LENGTH_LONG).show();
                             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         }
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
-
                         break;
                     case 2:
-                        if(BuggerService.getInstance().shouldIDoThis()>=0.5) {
-                            Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
-                        }else{
-                            Toast.makeText(MainActivity.getInstance(), "What hell", Toast.LENGTH_LONG).show(); // TODO Course him!!
-                        }
-                        BuggerService.setSYSTEM_GlobalPoints(-1);
+                        Toast.makeText(MainActivity.getInstance(), BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        BuggerService.setSYSTEM_GlobalPoints(-2);
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
@@ -441,14 +521,18 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         talkAboutNews();
                         break;
                     case 1:
-                        Toast.makeText(MainActivity.getInstance(), "You woke me up for that? I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.getInstance(), BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.getInstance(), "You silly, I'm going back to sleep", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-1);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                        if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
+                            Toast.makeText(MainActivity.getInstance(), "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.getInstance(), BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(-1);
+                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                        }
                         break;
                 }
                 cleanListOptions();
@@ -491,21 +575,19 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     public void doPositive() {
         changeLayoutAwake();
         talkAboutWakeUp();
-        Log.i("FragmentAlertDialog", "Positive click!");
     }
 
     @Override
     public void doNegative() {
         Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
-        Log.i("FragmentAlertDialog", "Negative click!");
     }
 
-    private void checkSettingsPermissions(){
-        if(!Settings.System.canWrite(getApplicationContext())){
+    private void checkSettingsPermissions() {
+        if (!Settings.System.canWrite(getApplicationContext())) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + this.getPackageName()));
-                this.startActivityForResult(intent, MainActivity.REQUESTS+1);
+                this.startActivityForResult(intent, MainActivity.REQUESTS + 1);
             }
         }
     }
