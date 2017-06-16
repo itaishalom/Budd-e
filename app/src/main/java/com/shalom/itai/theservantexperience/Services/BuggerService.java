@@ -9,7 +9,6 @@ import android.support.constraint.ConstraintLayout;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.Utils.Functions;
@@ -18,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.INITIAL_POINTS;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
@@ -276,7 +278,7 @@ public class BuggerService extends Service {
         writeToSettings(SETTINGS_IS_ASLEEP, true);
     }
 
-    public void sendJonToSleep(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage) {
+    public void sendJonToSleep(pl.droidsonroids.gif.GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage) {
         this.sendJonToSleep();
         this.onRefresh(gifImageView, mainLayout, chatImage);
     }

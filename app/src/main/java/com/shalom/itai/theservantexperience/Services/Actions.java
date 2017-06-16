@@ -10,8 +10,10 @@ import android.support.v4.app.TaskStackBuilder;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.GifImageView;
 import com.shalom.itai.theservantexperience.R;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by Itai on 10/05/2017.
@@ -28,7 +30,7 @@ public abstract class Actions {
         return IS_AWAKE;
     }
 
-    public abstract void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage);
+    public abstract void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage);
 
     protected Actions(Context context){mContext = context;}
     public void addNotification(String headLine, String info){

@@ -1,8 +1,11 @@
+/*
 package com.shalom.itai.theservantexperience;
 
+*/
 /**
  * Created by Itai on 30/04/2017.
- */
+ *//*
+
 
 
 import android.content.Context;
@@ -97,4 +100,4 @@ public class GifImageView extends View {
             Log.e("GIfImageView", "File not found");
         }
     }
-}
+}*/

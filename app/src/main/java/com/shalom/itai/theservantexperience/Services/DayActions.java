@@ -7,24 +7,24 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.Activities.DancingActivity;
 import com.shalom.itai.theservantexperience.Activities.FunActivity;
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.Activities.MatchesGameActivity;
+import com.shalom.itai.theservantexperience.Activities.SelfieV2;
 import com.shalom.itai.theservantexperience.Activities.SmsSendActivity;
 import com.shalom.itai.theservantexperience.Activities.SpeechRecognitionActivity;
 import com.shalom.itai.theservantexperience.Activities.TripActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
-import com.shalom.itai.theservantexperience.GifImageView;
-import com.shalom.itai.theservantexperience.Activities.MatchesGameActivity;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Activities.SelfieV2;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Timer;
+
+import pl.droidsonroids.gif.GifImageView;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.BUG_WAIT_TIME;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
@@ -163,8 +163,8 @@ public class DayActions extends Actions {
     }
 
     @Override
-    public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage) {
-        gifImageView.setGifImageResource(R.drawable.jon_blinks);
+    public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage) {
+        gifImageView.setImageResource(R.drawable.jon_blinks);
         /*Toast.makeText(mContext.getApplicationContext(), "Morning!",
                 Toast.LENGTH_SHORT).show();*/
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));

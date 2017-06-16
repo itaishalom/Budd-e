@@ -6,30 +6,11 @@ package com.shalom.itai.theservantexperience.Activities;
         import com.google.android.gms.auth.api.signin.GoogleSignInResult;
        */
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
-import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
-import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
-import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
-import com.shalom.itai.theservantexperience.Gallery.GalleryActivity;
-import com.shalom.itai.theservantexperience.GifImageView;
-import com.shalom.itai.theservantexperience.Introduction.PageFragment;
-import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
-import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Services.BuggerService;
-
-import com.shalom.itai.theservantexperience.Utils.Functions;
-import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
-import com.shalom.itai.theservantexperience.Utils.ShowCaseObject;
-
-
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -37,14 +18,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
 import android.database.Cursor;
 import android.graphics.Color;
-
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
@@ -53,20 +31,24 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-
-import android.support.v4.app.Fragment;
 import android.util.Log;
-
 import android.util.Patterns;
-import android.view.MenuItem;
 import android.view.View;
-
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
+import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
+import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
+import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
+import com.shalom.itai.theservantexperience.Utils.ShowCaseObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -85,12 +67,10 @@ import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_POINTS;
 import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_NAME;
 import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
 
@@ -122,7 +102,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     TextView signalStrength;
     TextView batteryStrength;
     ConstraintLayout mainLayout;
-    GifImageView gifImageView;
+    pl.droidsonroids.gif.GifImageView gifImageView;
     ImageView chatImage;
     ListView chatListView;
     ImageView memoriesImage;
@@ -145,14 +125,14 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = (ListView) findViewById(R.id.chat_list);
-        gifImageView = (GifImageView) findViewById(R.id.GifImageView);
+        gifImageView = (pl.droidsonroids.gif.GifImageView ) findViewById(R.id.GifImageView);
         mAllShowCases.add(new ShowCaseObject(gifImageView, "Hello I am Jon"));
 
 
         chatImage = (ImageView) findViewById(R.id.chat_image);
         mAllShowCases.add(new ShowCaseObject(chatImage, "Here we can chat"));
 
-        gifImageView.setGifImageResource(R.drawable.jon_blinks);
+        gifImageView.setImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
         mAllShowCases.add(new ShowCaseObject(memoriesImage, "Here I store my memories"));
 
@@ -170,7 +150,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     private void changeLayoutAwake() {
         BuggerService.getInstance().wakeUpJon();
-        gifImageView.setGifImageResource(R.drawable.jon_blinks);
+        gifImageView.setImageResource(R.drawable.jon_blinks);
         Toast.makeText(MainActivity.this, "Morning!",
                 Toast.LENGTH_SHORT).show();
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));

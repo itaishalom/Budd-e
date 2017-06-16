@@ -164,7 +164,7 @@
         <activity
             android:name=".Gallery.FullScreenMemory"
             android:label="@string/title_activity_full_screen_memory" />
-        <activity android:name=".Introduction.TutorialActivity"   android:launchMode="singleInstance"></activity>
+        <activity android:name=".Introduction.TutorialActivity"   android:launchMode="singleInstance" android:hardwareAccelerated="false"></activity>
     </application>
 
 </manifest>

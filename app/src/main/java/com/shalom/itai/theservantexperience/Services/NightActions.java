@@ -1,25 +1,16 @@
 package com.shalom.itai.theservantexperience.Services;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.MyAlertDialogFragment;
-import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
-import com.shalom.itai.theservantexperience.GifImageView;
+import pl.droidsonroids.gif.GifImageView;
 import com.shalom.itai.theservantexperience.R;
 
 import java.util.Timer;
-
-import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.LISTEN_SOUND_INTERVAL;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
 /**
  * Created by Itai on 10/05/2017.
@@ -49,7 +40,7 @@ public class NightActions extends Actions {
 
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout,ImageView chatImage) {
-        gifImageView.setGifImageResource(R.drawable.jon_sleeping);
+        gifImageView.setImageResource(R.drawable.jon_sleeping);
      /*   Toast.makeText(mContext.getApplicationContext(), "Good night!",
                 Toast.LENGTH_SHORT).show();*/
         mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
