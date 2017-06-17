@@ -7,7 +7,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.MessageBox;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;

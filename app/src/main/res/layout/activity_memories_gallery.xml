@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#04967D"
-    tools:context="com.shalom.itai.theservantexperience.Activities.MemoriesGalleryActivity">
+    tools:context="com.shalom.itai.theservantexperience.activities.MemoriesGalleryActivity">
     <include
         android:id="@+id/my_toolbar"
         layout="@layout/toolbar" />

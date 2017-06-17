@@ -19,9 +19,7 @@ package com.shalom.itai.theservantexperience.ChatBot;
 
 class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
-    private TextView chatText;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
-    private Context context;
 
     @Override
     public void add(ChatMessage object) {
@@ -31,7 +29,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     public ChatArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
-        this.context = context;
+        Context context1 = context;
     }
 
     public int getCount() {
@@ -51,7 +49,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         }else{
             row = inflater.inflate(R.layout.left_msg, parent, false);
         }
-        chatText = (TextView) row.findViewById(R.id.msgr);
+        TextView chatText = (TextView) row.findViewById(R.id.msgr);
         chatText.setText(chatMessageObj.message);
         return row;
     }

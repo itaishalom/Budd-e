@@ -3,9 +3,6 @@ package com.shalom.itai.theservantexperience.Introduction;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -19,7 +16,6 @@ import static com.shalom.itai.theservantexperience.Introduction.TutorialActivity
 
 public class MyViewPager extends ViewPager {
     public static String TAG = "MyViewPager";
-    public ImageView mImgOfDots;
     public MyViewPager(Context context) {
         super(context);
     }
@@ -28,9 +24,7 @@ public class MyViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    public void setImageOfDots(ImageView img){
-        mImgOfDots = img;
-    }
+
 
     static class SimpleOnPageChangeListener implements OnPageChangeListener {
         private ImageView mImageOfDots;

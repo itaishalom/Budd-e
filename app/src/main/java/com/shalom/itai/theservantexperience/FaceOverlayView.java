@@ -1,9 +1,5 @@
 package com.shalom.itai.theservantexperience;
 
-/**
- * Created by Itai on 17/03/2017.
- */
-
 
 import android.content.Context;
 import android.graphics.Bitmap;

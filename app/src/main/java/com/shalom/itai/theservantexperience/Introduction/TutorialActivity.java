@@ -29,7 +29,6 @@ public class TutorialActivity extends FragmentActivity {
         ImageView imageDots = (ImageView) findViewById(R.id.dots);
         int imageResource = getResources().getIdentifier("@drawable/dots_1", null, this.getPackageName());
         imageDots.setImageResource(imageResource);
-        mViewPager.setImageOfDots(imageDots);
 
         idToImage = new SparseArray<>();
 

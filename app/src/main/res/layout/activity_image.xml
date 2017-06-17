@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.shalom.itai.theservantexperience.Activities.ImageActivity">
+    tools:context="com.shalom.itai.theservantexperience.activities.ImageActivity">
     <com.shalom.itai.theservantexperience.FaceOverlayView
         android:id="@+id/face_overlay"
         android:layout_width="224dp"

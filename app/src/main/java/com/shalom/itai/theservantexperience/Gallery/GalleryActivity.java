@@ -4,24 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.shalom.itai.theservantexperience.Activities.ToolBarActivity;
+import com.shalom.itai.theservantexperience.activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.HashMap;
 
 public class GalleryActivity extends ToolBarActivity {
   //  private HashMap<String,Bitmap> cacheBitmaps;
@@ -59,8 +55,7 @@ public class GalleryActivity extends ToolBarActivity {
              context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
             View photoView = inflater.inflate(R.layout.item_photo, parent, false);
-            ImageGalleryAdapter.MyViewHolder viewHolder = new ImageGalleryAdapter.MyViewHolder(photoView);
-            return viewHolder;
+            return new MyViewHolder(photoView);
         }
 
         @Override

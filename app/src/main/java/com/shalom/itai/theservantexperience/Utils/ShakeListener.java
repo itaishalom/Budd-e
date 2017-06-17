@@ -8,7 +8,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.FloatMath;
 
 public class ShakeListener implements SensorEventListener {
 
@@ -32,7 +31,7 @@ public class ShakeListener implements SensorEventListener {
     }
 
     public interface OnShakeListener {
-        public void onShake(int count);
+        void onShake(int count);
     }
 
     @Override

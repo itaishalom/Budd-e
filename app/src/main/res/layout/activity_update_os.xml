@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context="com.shalom.itai.theservantexperience.Activities.updateOS">
+    tools:context="com.shalom.itai.theservantexperience.activities.updateOS">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -33,8 +33,6 @@
             android:layout_height="606dp"
             android:layout_gravity="center"
             tools:background="@color/black_overlay" />
-49
-
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"

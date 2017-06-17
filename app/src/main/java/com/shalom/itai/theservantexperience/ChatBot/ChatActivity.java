@@ -5,7 +5,6 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,10 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.ToolBarActivity;
+import com.shalom.itai.theservantexperience.activities.MainActivity;
+import com.shalom.itai.theservantexperience.activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.List;
@@ -39,11 +38,10 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_ME
 
 public class ChatActivity extends ToolBarActivity implements AIListener {
     private static final String TAG = "ChatActivity";
-    private static ChatActivity instance;
+    //private static ChatActivity instance;
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
     private EditText chatText;
-    private Button buttonSend;
     private AIDataService aiDataService;
     private boolean side = false;
     private boolean LEFT = false;
@@ -56,7 +54,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
 
         //  setContentView(R.layout.activity_chat);
 
-        buttonSend = (Button) findViewById(R.id.send);
+        Button buttonSend = (Button) findViewById(R.id.send);
 
         listView = (ListView) findViewById(R.id.msgview);
 
@@ -106,13 +104,14 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                 AIConfiguration.RecognitionEngine.System);
 
         aiDataService = new AIDataService(config);
-        instance = this;
+   //     instance = this;
     }
-    public static ChatActivity getInstance()
+   /*
+    private static ChatActivity getInstance()
     {
         return instance;
     }
-
+*/
     private boolean sendChatMessage(boolean isLeft,boolean waitForRespond, String text) {
         String tempText = "";
         if(!text.isEmpty())
@@ -192,7 +191,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                             }
                             if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
                                 sendChatMessage(false,false,finalAnswer);
-                                Intent intent = new Intent(ChatActivity.getInstance(), MainActivity.class);
+                                Intent intent = new Intent(ChatActivity.this, MainActivity.class);
                                 //intent.putExtra("sleep",true); //TODO change sleep call to bugger
                                 BuggerService.getInstance().sendJonToSleep();
                                 startActivity(intent);

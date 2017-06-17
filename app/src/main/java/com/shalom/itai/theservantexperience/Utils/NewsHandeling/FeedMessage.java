@@ -1,8 +1,11 @@
+/*
 package com.shalom.itai.theservantexperience.Utils.NewsHandeling;
 
+*/
 /**
  * Created by Itai on 01/05/2017.
- */
+ *//*
+
 
 public class FeedMessage {
     String title;
@@ -59,3 +62,4 @@ public class FeedMessage {
     }
 
 }
+*/

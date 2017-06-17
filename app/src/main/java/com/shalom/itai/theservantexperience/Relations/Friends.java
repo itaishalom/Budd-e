@@ -6,7 +6,7 @@ import com.shalom.itai.theservantexperience.R;
  * Created by Itai on 30/04/2017.
  */
 
-public class Friends extends RelationsStatus {
+class Friends extends RelationsStatus {
     private static Friends instance;
     private Friends(){
         probabilityNumber = 0.2;

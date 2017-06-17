@@ -2,19 +2,15 @@ package com.shalom.itai.theservantexperience.Introduction;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-
-import com.shalom.itai.theservantexperience.R;
 
 /**
  * Created by Itai on 14/06/2017.
  */
 
-public class SwipeAdapter extends FragmentStatePagerAdapter {
-    FragmentManager mfm;
+class SwipeAdapter extends FragmentStatePagerAdapter {
+    private FragmentManager mfm;
     public SwipeAdapter(FragmentManager fm) {
         super(fm);
         mfm = fm;

@@ -45,6 +45,10 @@
     <string name="understood_tutorial">Got it!</string>
     <string name="response">Your response</string>
     <string name="chat_message">Chat message...</string>
+    <string name="ok">OK</string>
+    <string name="friendship_level">Friendship level</string>
+    <string name="hello_i_m_jon">Hello, I\'m Jon!</string>
+    <string name="this_is_how_we_can_chat">This is how we can chat</string>
 </resources>
 
 

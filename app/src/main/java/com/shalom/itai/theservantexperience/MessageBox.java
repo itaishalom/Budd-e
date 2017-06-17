@@ -2,14 +2,12 @@ package com.shalom.itai.theservantexperience;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_REPLY;
@@ -41,14 +39,14 @@ public class MessageBox extends Activity {
                 TextView textResponse = (TextView) findViewById(R.id.user_response) ;
                 Intent chatIntent = null;
                 if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("ChatActivity")) {
-                    chatIntent = new Intent(MainActivity.getInstance(), ChatActivity.class);
+                    chatIntent = new Intent(MessageBox.this, ChatActivity.class);
                     chatIntent.putExtra(CHAT_START_MESSAGE,textView.getText());
                     chatIntent.putExtra(CHAT_QUICK_REPLY,textResponse.getText());
                     TextView tx = (TextView) findViewById(R.id.jon_text) ;
                     tx.setText("");
                 }
                 else{
-                    chatIntent = new Intent(MainActivity.getInstance(), MainActivity.class);
+                    chatIntent = new Intent(MessageBox.this, MainActivity.class);
 
                     chatIntent.putExtra("wakeUpOptions",true);
                 }

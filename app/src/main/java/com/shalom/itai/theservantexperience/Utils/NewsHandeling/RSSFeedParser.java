@@ -16,12 +16,10 @@ package com.shalom.itai.theservantexperience.Utils.NewsHandeling;/*
 
 
 
-import android.text.format.Time;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +52,8 @@ public class RSSFeedParser {
     private static final String ns = null;
 
     public Thread fetchXML(final String urlString){
-        Thread thread = new Thread(new Runnable(){
+
+        return new Thread(new Runnable(){
             @Override
             public void run() {
 
@@ -81,8 +80,6 @@ public class RSSFeedParser {
                 }
             }
         });
-
-        return thread;
     }
 
 
@@ -93,7 +90,7 @@ public class RSSFeedParser {
      * @throws org.xmlpull.v1.XmlPullParserException on error parsing feed.
      * @throws java.io.IOException on I/O error.
      */
-    public List<Entry> parse(InputStream in)
+    private List<Entry> parse(InputStream in)
             throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();

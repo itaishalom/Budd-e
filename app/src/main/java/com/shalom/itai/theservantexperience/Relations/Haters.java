@@ -6,7 +6,7 @@ import com.shalom.itai.theservantexperience.R;
  * Created by Itai on 30/04/2017.
  */
 
-public class Haters extends RelationsStatus {
+class Haters extends RelationsStatus {
     private static Haters instance;
     private Haters(){
         iconId = R.drawable.rel_hate;

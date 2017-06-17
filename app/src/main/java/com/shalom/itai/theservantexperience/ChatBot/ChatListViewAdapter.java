@@ -7,29 +7,20 @@ package com.shalom.itai.theservantexperience.ChatBot;
 import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.shalom.itai.theservantexperience.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ChatListViewAdapter extends ArrayAdapter<String> {
     private Context mContext;
     private int id;
     private List<String> items ;
 
-    public ChatListViewAdapter(Context context, int textViewResourceId , List<String> list )
-    {
+    public ChatListViewAdapter(Context context, int textViewResourceId , List<String> list ) {
         super(context, textViewResourceId, list);
         mContext = context;
         id = textViewResourceId;

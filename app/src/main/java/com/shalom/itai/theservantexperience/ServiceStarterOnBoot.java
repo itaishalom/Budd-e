@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.shalom.itai.theservantexperience.Services.BuggerService;
+import com.shalom.itai.theservantexperience.services.BuggerService;
 
 /**
  * Created by Itai on 13/04/2017.

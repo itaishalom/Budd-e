@@ -1,8 +1,6 @@
 package com.shalom.itai.theservantexperience.Utils;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
@@ -11,18 +9,15 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.icu.util.Calendar;
 import java.util.Calendar;
 
-import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -35,17 +30,11 @@ import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
-import android.util.Patterns;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.shalom.itai.theservantexperience.Activities.MainActivity;
-import com.shalom.itai.theservantexperience.Activities.SplashActivity;
+import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
-import com.shalom.itai.theservantexperience.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,21 +44,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 
 import static android.content.Context.BATTERY_SERVICE;
-import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
-import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_NUM_OF_CHATS_POINTS;
-import static com.shalom.itai.theservantexperience.Services.DayActions.SYSTEM_oldDay;
-import static com.shalom.itai.theservantexperience.Services.DayActions.allFacts;
-import static com.shalom.itai.theservantexperience.Services.DayActions.allInsults;
-import static com.shalom.itai.theservantexperience.Services.DayActions.allJokes;
+import static com.shalom.itai.theservantexperience.services.DayActions.SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
+import static com.shalom.itai.theservantexperience.services.DayActions.SYSTEM_NUM_OF_CHATS_POINTS;
+import static com.shalom.itai.theservantexperience.services.DayActions.SYSTEM_oldDay;
+import static com.shalom.itai.theservantexperience.services.DayActions.allFacts;
+import static com.shalom.itai.theservantexperience.services.DayActions.allInsults;
+import static com.shalom.itai.theservantexperience.services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
-import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
 
 /**
@@ -116,7 +101,7 @@ public class Functions {
     }
 
 
-    public static void addCalendarMeeting(final Context context) {
+    private static void addCalendarMeeting(final Context context) {
 
         try {
             ContentResolver cr = context.getContentResolver();
@@ -167,7 +152,7 @@ public class Functions {
         }
     }
 
-    public static void secondTryCalendar(Context context) {
+    private static void secondTryCalendar(Context context) {
         Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
@@ -196,11 +181,10 @@ public class Functions {
                         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
                                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = R * c; // Distance in km
-        return d;
+        return R * c;
     }
 
-    public static double deg2rad(double deg) {
+    private static double deg2rad(double deg) {
         return deg * (Math.PI / 180);
     }
 
@@ -213,17 +197,17 @@ public class Functions {
     }
 
 
-    public static void fadingText(final Activity activity, final int viewID) {
+  /*  public static void fadingText(final Activity activity, final int viewID) {
         final Animation animationFadeIn = AnimationUtils.loadAnimation(activity, R.anim.fadein);
         TextView welcome_text = (TextView) activity.findViewById(viewID);
         SharedPreferences settings = activity.getSharedPreferences(PREFS_NAME, 0);
         boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
-      /*
+      *//*
         if (!isInstalled)
             welcome_text.setText("Hello " + getPrimaryEmail(activity.getApplicationContext()) + "\n I am Jon, your new friend");
         else
             welcome_text.setText("Welcome back " + getPrimaryEmail(activity.getApplicationContext()) + "!!");
-        */
+        *//*
         welcome_text.startAnimation(animationFadeIn);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -253,15 +237,14 @@ public class Functions {
             }
         }, 5000);
     }
-
+*/
     public static Bitmap getImageBitmap(String name) {
         try {
             File file = new File(name);
             if (file.exists()) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                Bitmap bitmap = BitmapFactory.decodeFile(name, options);
-                return bitmap;
+                return  BitmapFactory.decodeFile(name, options);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -336,12 +319,11 @@ public class Functions {
     }
 
     public static int getReceptionLevel(Context context) {
-        WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int numberOfLevels = 6;
         if (mWifiManager.isWifiEnabled()) {
             int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
-            int level = WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
-            return level;
+           return WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
         }
         int num = -1000;
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -389,8 +371,8 @@ public class Functions {
     }
 
     public static boolean copy(File src, File dst) {
-        InputStream in = null;
-        OutputStream out = null;
+        InputStream in ;
+        OutputStream out ;
 
         try {
             in = new FileInputStream(src);

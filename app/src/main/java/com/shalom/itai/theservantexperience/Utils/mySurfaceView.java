@@ -49,7 +49,8 @@ public class mySurfaceView extends SurfaceView implements
         super.onDraw(canvas);
         Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.angry);
         canvas.drawColor(Color.BLACK);
-        canvas.drawBitmap(_scratch, 10, 10, new Paint());
+        Paint paint = new Paint();
+        canvas.drawBitmap(_scratch, 10, 10, paint);
 
     }
 

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.shalom.itai.theservantexperience.Activities.SelfieV2"
+    tools:context="com.shalom.itai.theservantexperience.activities.SelfieV2"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">

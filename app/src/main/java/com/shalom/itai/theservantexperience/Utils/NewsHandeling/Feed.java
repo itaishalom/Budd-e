@@ -1,11 +1,14 @@
+/*
 package com.shalom.itai.theservantexperience.Utils.NewsHandeling;
 
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * Created by Itai on 01/05/2017.
- */
+ *//*
+
 
 public class Feed {
 
@@ -63,4 +66,4 @@ public class Feed {
                 + pubDate + ", title=" + title + "]";
     }
 
-}
+}*/

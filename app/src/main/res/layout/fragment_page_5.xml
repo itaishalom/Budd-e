@@ -68,6 +68,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:paddingStart="0dp"
+        android:paddingEnd="0dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/tutorial_mood"

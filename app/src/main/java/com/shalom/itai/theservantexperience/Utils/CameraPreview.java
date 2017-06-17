@@ -1,29 +1,14 @@
 package com.shalom.itai.theservantexperience.Utils;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.hardware.Camera;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.shalom.itai.theservantexperience.R;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
-
-import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
 
 /**
  * Created by Itai on 27/05/2017.
@@ -32,7 +17,6 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "CameraPreview";
-    private Context mContext;
     private SurfaceHolder mHolder;
     private SilentCamera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
@@ -60,7 +44,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void onStart(Context context) {
-        mContext = context;
+        Context mContext = context;
         //  getCamera();
         mCamera = new SilentCamera(mContext);
         // supported preview sizes

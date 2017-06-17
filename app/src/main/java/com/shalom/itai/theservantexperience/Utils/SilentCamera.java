@@ -7,18 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-
-import com.shalom.itai.theservantexperience.Services.BuggerService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -103,7 +97,7 @@ public class SilentCamera {
         takePicture();
     }
 
-    public void releaseCamera() {
+    private void releaseCamera() {
         if (camera != null) {
             camera.stopPreview();
             camera.release();
