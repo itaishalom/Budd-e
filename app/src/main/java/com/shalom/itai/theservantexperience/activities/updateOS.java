@@ -3,9 +3,11 @@ package com.shalom.itai.theservantexperience.activities;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -101,12 +103,13 @@ public class updateOS extends AppCompatActivity {
         }
     };
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_update_os);
-
         if(getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
 
             startService(new Intent(this, BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_MAIN,true));
@@ -115,6 +118,7 @@ public class updateOS extends AppCompatActivity {
 
             return;
         }
+
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);

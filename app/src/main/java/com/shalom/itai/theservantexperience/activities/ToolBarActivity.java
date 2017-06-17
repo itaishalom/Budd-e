@@ -32,7 +32,6 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     View[] arr;
     private int mBatteryVal;
 
-    private BroadcastReceiver mBatInfoReceiver;// = new BroadcastReceiver(){
 
 
     // --Commented out by Inspection (18/06/2017 00:18):private ConstraintLayout lLayout;
@@ -49,16 +48,6 @@ public abstract class ToolBarActivity extends AppCompatActivity {
         moodLayout = (ConstraintLayout) findViewById(R.id.mood_layout);
         moodLayout.bringToFront();
 
-
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            mBatInfoReceiver = new BroadcastReceiver(){
-                @Override
-                public void onReceive(Context ctxt, Intent intent) {
-                    BuggerService.gloablBattery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                    //   batteryTxt.setText(String.valueOf(level) + "%");
-                }
-            };
-        }
     }
 
     @Override
@@ -127,21 +116,6 @@ public abstract class ToolBarActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this)) + " / 5");
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        }
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            this.unregisterReceiver(mBatInfoReceiver);
-        }
-    }
 
     void invalidateRelationsData() {
         RelationsStatus status = BuggerService.getInstance().getRelationsStatus();
