@@ -2,7 +2,6 @@
     <string name="app_name">"Jon"</string>
 
     <string name="title_activity_update">updateActivity</string>
-    <string name="dummy_button"></string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_update_os">Android Update</string>

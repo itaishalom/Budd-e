@@ -20,7 +20,7 @@ public class mySurfaceView extends SurfaceView implements
         SurfaceHolder.Callback {
 
    // private TutorialThread _thread;
-    public boolean startFromOutside = false;
+//    public boolean startFromOutside = false;
     public mySurfaceView(Context context) {
         super(context);
         getHolder().addCallback(this);

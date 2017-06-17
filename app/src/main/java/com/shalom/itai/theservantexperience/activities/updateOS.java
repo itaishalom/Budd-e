@@ -107,11 +107,7 @@ public class updateOS extends AppCompatActivity {
 
         setContentView(R.layout.activity_update_os);
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-
-        boolean isInstalled = settings.getBoolean(IS_INSTALLED, false);
-
-        if(isInstalled) {
+        if(getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
 
             startService(new Intent(this, BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_MAIN,true));
             overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -244,6 +240,7 @@ public class updateOS extends AppCompatActivity {
 
     @SuppressLint("InlinedApi")
     private void show() {
+        Log.d("Non", "show: ");
         /*
         // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

@@ -22,7 +22,6 @@ public class MemoriesGalleryActivity extends ToolBarActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String TAG = "MemoriesGalleryActivity";
-     private LinearLayout myGallery;// = (LinearLayout) findViewById(R.id.mygallery);
     private Uri fileUri;
     private TextView memoData;
     @Override
@@ -31,7 +30,7 @@ public class MemoriesGalleryActivity extends ToolBarActivity {
       //  setContentView(R.layout.activity_memories_gallery);
         final ImageView diplayImage = (ImageView) findViewById(R.id.displayImage);
          memoData = (TextView) findViewById(R.id.data);
-          myGallery = (LinearLayout) findViewById(R.id.mygallery);
+        LinearLayout myGallery = (LinearLayout) findViewById(R.id.mygallery);
 
 /*slide_left_out
         String PACKAGE_NAME = getApplicationContext().getPackageName();

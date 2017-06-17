@@ -2,6 +2,7 @@ package com.shalom.itai.theservantexperience.Gallery;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,6 +93,7 @@ class MemoryPhoto implements Parcelable {
             try {
                 if (in != null) {
                     int size = in.read(bytes);
+                    Log.d("Memo", "readFile: " + size);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

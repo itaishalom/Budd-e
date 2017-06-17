@@ -64,7 +64,9 @@
         <service
             android:name=".services.BuggerService"
             android:icon="@drawable/icon"
-            android:label="@string/service_name" />
+            android:label="@string/service_name"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            />
 
         <receiver android:name=".ChatBot.MyScheduledReceiver" />
 
@@ -107,7 +109,7 @@
             android:launchMode="singleInstance"
             android:theme="@style/FullscreenTheme" />
 
-        <receiver android:name=".ServiceStarterOnBoot">
+        <receiver android:name=".ServiceStarterOnBoot" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -169,7 +171,7 @@
             android:name=".Introduction.TutorialActivity"
             android:launchMode="singleInstance"
             android:hardwareAccelerated="false"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

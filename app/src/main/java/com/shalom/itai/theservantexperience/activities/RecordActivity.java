@@ -14,10 +14,10 @@ import com.shalom.itai.theservantexperience.R;
 import java.io.IOException;
 
 public class RecordActivity extends AppCompatActivity {
-    private RecordButton mRecordButton = null;
+    // --Commented out by Inspection (18/06/2017 00:17):private RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
     private static String mFileName = null;
-    private PlayButton mPlayButton = null;
+    // --Commented out by Inspection (18/06/2017 00:17):private PlayButton mPlayButton = null;
     private MediaPlayer mPlayer = null;
     private static String LOG_TAG = "RecordActivity";
     @Override

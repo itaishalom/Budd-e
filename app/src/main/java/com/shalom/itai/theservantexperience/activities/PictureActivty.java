@@ -25,8 +25,8 @@ public class PictureActivty extends AppCompatActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri fileUri;
     private boolean toSave;
-    int width =0;
-    int height = 0;
+    // --Commented out by Inspection (18/06/2017 00:17):int width =0;
+    // --Commented out by Inspection (18/06/2017 00:17):int height = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

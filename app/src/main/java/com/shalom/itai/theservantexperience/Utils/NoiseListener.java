@@ -35,7 +35,7 @@ public class NoiseListener {
         double amplitudeDb =0;
         if(isListening) {
             double  amplitude = recorder.getMaxAmplitude();
-            amplitudeDb = 20 * Math.log10((double) Math.abs(amplitude));
+            amplitudeDb = 20 * Math.log10(Math.abs(amplitude));
             recorder.stop();
         }
         return amplitudeDb;

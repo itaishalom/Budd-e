@@ -34,7 +34,7 @@ class TimerTrip extends ContextTimerTask {
         ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
-        String activityOnTop=ar.topActivity.getClassName();
+      //  String activityOnTop=ar.topActivity.getClassName();
 
         if(!checkScreenAndLock(mContext))
             return;

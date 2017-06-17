@@ -1,5 +1,6 @@
 package com.shalom.itai.theservantexperience.Introduction;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
@@ -12,6 +13,7 @@ public class TutorialActivity extends FragmentActivity {
 
     public static SparseArray<ImageView> idToImage;
 
+    @SuppressWarnings("unused")
     public static final String TAG = "TutorialActivity";
 
     @Override
@@ -21,7 +23,9 @@ public class TutorialActivity extends FragmentActivity {
 
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        getWindow().setStatusBarColor(0xDF04967D);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(0xDF04967D);
+        }
         MyViewPager mViewPager = (MyViewPager) findViewById(R.id.view_pager);
         SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(swipeAdapter);

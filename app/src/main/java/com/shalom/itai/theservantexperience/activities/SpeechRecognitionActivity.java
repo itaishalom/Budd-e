@@ -52,16 +52,18 @@ public class SpeechRecognitionActivity extends AppCompatActivity  {
     }
 
 
-    public  boolean isConnected()
-    {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo net = cm.getActiveNetworkInfo();
-        if (net!=null && net.isAvailable() && net.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+// --Commented out by Inspection START (18/06/2017 00:18):
+//    public  boolean isConnected()
+//    {
+//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo net = cm.getActiveNetworkInfo();
+//        if (net!=null && net.isAvailable() && net.isConnected()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+// --Commented out by Inspection STOP (18/06/2017 00:18)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList arrayList = data

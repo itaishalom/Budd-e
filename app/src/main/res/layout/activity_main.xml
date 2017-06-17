@@ -103,7 +103,7 @@
             android:divider="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:dividerHeight="10.0sp"
-            tools:layout_editor_absoluteX="8dp"></ListView>
+            tools:layout_editor_absoluteX="8dp" />
     </LinearLayout>
 
     <ImageView

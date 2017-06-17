@@ -29,15 +29,9 @@ public class SmsSendActivity extends AppCompatActivity {
     private String namecsv="";
     private String phonecsv="";
 
-    private String[] namearray;
-    private String[] phonearray;
-    private String[] sArrFull;
-    int iSelectedNum;
-    public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
+    // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
+    // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
     private ListView lv1;
-    Switch myOnOffSwitch;
-    static boolean bIsOn;
-    private EditText inputSearch;
     private ArrayAdapter<String> adapter;
     private String selectContact;
 
@@ -75,14 +69,14 @@ public class SmsSendActivity extends AppCompatActivity {
         //==============================================
         // Convert csvstrimg into array
         //==============================================
-        namearray = namecsv.split(",");
-        phonearray = phonecsv.split(",");
+        String[] namearray = namecsv.split(",");
+        String[] phonearray = phonecsv.split(",");
         ArrayList<String> tempString = new ArrayList<>();
         // String[] sArrFull = new String[phonearray.length];
         String newString;
-        for (int i=0;i<phonearray.length;i++)
+        for (int i = 0; i< phonearray.length; i++)
         {
-            newString = namearray[i]+":"+phonearray[i];
+            newString = namearray[i]+":"+ phonearray[i];
             if(i>1)
             {
                 if(!tempString.contains(newString))
@@ -94,18 +88,18 @@ public class SmsSendActivity extends AppCompatActivity {
         }
         java.util.Collections.sort(tempString);
 
-        sArrFull = new String[tempString.size()];
-        for(int i=0;i<sArrFull.length;i++)
+        String[] sArrFull = new String[tempString.size()];
+        for(int i = 0; i< sArrFull.length; i++)
         {
             sArrFull[i] = tempString.get(i);
         }
 
         //Create Array Adapter and Pass ArrayOfValues to it.
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2,android.R.id.text1,sArrFull);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2,android.R.id.text1, sArrFull);
         java.util.Collections.sort(tempString);
         //BindAdpater with our Actual ListView
         lv1.setAdapter(adapter);
-        inputSearch = (EditText) findViewById(R.id.inputSearch);
+        EditText inputSearch = (EditText) findViewById(R.id.inputSearch);
         inputSearch.addTextChangedListener(new TextWatcher() {
 
             @Override

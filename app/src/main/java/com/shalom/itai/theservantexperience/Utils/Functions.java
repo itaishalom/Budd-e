@@ -18,6 +18,7 @@ import java.util.Calendar;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -191,8 +192,14 @@ public class Functions {
 
     public static boolean checkScreenAndLock(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (!pm.isInteractive() || isPassOrPinSet(context))
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            if (!pm.isInteractive() || isPassOrPinSet(context))
+                return false;
+        }else{
+            if (pm.isScreenOn() || isPassOrPinSet(context)){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -302,9 +309,14 @@ public class Functions {
     }
 
 
-    public static int getBatteryLevel(Context context) {
+    public static int getBatteryLevel(Context context,int onRecLevel) {
         BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
-        int num = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        int num ;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            num = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        }else{
+            num = onRecLevel;
+        }
         if (num >= 90)
             return 5;
         else if (num < 90 && num >= 75)

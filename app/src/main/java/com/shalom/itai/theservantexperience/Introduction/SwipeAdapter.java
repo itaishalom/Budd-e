@@ -10,10 +10,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 
 class SwipeAdapter extends FragmentStatePagerAdapter {
-    private FragmentManager mfm;
     public SwipeAdapter(FragmentManager fm) {
         super(fm);
-        mfm = fm;
     }
 
     @Override

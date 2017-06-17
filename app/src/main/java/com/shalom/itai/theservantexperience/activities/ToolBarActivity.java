@@ -1,5 +1,10 @@
 package com.shalom.itai.theservantexperience.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,15 +30,22 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     private ConstraintLayout relationsLayout;
     private ConstraintLayout moodLayout;
     View[] arr;
-    private Toolbar myToolbar;
-    private ConstraintLayout lLayout;
+    private int mBatteryVal;
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context ctxt, Intent intent) {
+            mBatteryVal = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+         //   batteryTxt.setText(String.valueOf(level) + "%");
+        }
+    };
+
+    // --Commented out by Inspection (18/06/2017 00:18):private ConstraintLayout lLayout;
     protected final void onCreate(Bundle savedInstanceState, int layoutId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
-         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //   getSupportActionBar().setDisplayShowTitleEnabled(false);
-         lLayout = (ConstraintLayout) findViewById(R.id.main_layout);
  //       lLayout.setBackgroundColor(Color.parseColor("#04967D"));
 
         relationsLayout = (ConstraintLayout) findViewById(R.id.relation_layout);
@@ -105,9 +117,20 @@ public abstract class ToolBarActivity extends AppCompatActivity {
 
     void invalidateStatusParam() {
         ((TextView) findViewById(R.id.reception_status_ind)).setText(String.valueOf(getReceptionLevel(this)) + " / 5");
-        ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this)) + " / 5");
+        ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this,mBatteryVal)) + " / 5");
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        this.unregisterReceiver(mBatInfoReceiver);
+    }
 
     void invalidateRelationsData() {
         RelationsStatus status = BuggerService.getInstance().getRelationsStatus();

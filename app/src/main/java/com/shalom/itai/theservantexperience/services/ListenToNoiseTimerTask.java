@@ -10,7 +10,6 @@ import com.shalom.itai.theservantexperience.Utils.NoiseListener;
  */
 
 class ListenToNoiseTimerTask extends ContextTimerTask {
-    private NoiseListener mNoiseListener;
     private double mNoiseLevel;
     private boolean shouldContinue;
 
@@ -33,7 +32,7 @@ class ListenToNoiseTimerTask extends ContextTimerTask {
     public void run() {
         if (!shouldContinue)
             return;
-        mNoiseListener = new NoiseListener();
+        NoiseListener mNoiseListener = new NoiseListener();
         mNoiseListener.start();
         try {
             Thread.sleep(3000);

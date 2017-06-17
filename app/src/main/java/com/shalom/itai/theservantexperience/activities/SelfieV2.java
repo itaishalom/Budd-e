@@ -37,7 +37,6 @@ import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory
 public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 
     private CameraPreview surfaceView;
-    private SurfaceHolder surfaceHolder;
     private SelfieV2 inst;
     private BroadcastReceiver mReceiver;
     private ImageView jonPng;
@@ -57,7 +56,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 
         surfaceView = (CameraPreview) findViewById(R.id.camerapreview);
 
-        surfaceHolder = surfaceView.getHolder();
+        SurfaceHolder surfaceHolder = surfaceView.getHolder();
         jonPng = ((ImageView) findViewById(R.id.jon_in_slefie));
 
         surfaceHolder.addCallback(surfaceView);

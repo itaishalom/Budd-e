@@ -24,6 +24,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
  */
 
 public class SilentCamera {
+    @SuppressWarnings("FieldCanBeLocal")
     private String TAG = "SilentCamera";
     private Context context;
 
@@ -61,9 +62,11 @@ public class SilentCamera {
             camera.stopPreview();
     }
 
-    public boolean hasCamera() {
-        return hasCamera;
-    }
+// --Commented out by Inspection START (18/06/2017 00:34):
+//    public boolean hasCamera() {
+//        return hasCamera;
+//    }
+// --Commented out by Inspection STOP (18/06/2017 00:34)
 
     public void getCameraInstanceSilentMode() {
 
@@ -92,10 +95,12 @@ public class SilentCamera {
         }
     }
 
-    public void takePicture(Context context) {
-        this.context = context;
-        takePicture();
-    }
+// --Commented out by Inspection START (18/06/2017 00:34):
+//    public void takePicture(Context context) {
+//        this.context = context;
+//        takePicture();
+//    }
+// --Commented out by Inspection STOP (18/06/2017 00:34)
 
     private void releaseCamera() {
         if (camera != null) {

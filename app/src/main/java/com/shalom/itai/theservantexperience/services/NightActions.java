@@ -19,7 +19,7 @@ import java.util.Timer;
 
 public class NightActions extends Actions {
     private static Timer SoundListenTimer = new Timer();
-    private static boolean isUp=false;
+    // --Commented out by Inspection (18/06/2017 00:17):private static boolean isUp=false;
     private static NightActions instance = null;
     private static double noiseLevel = 75.0;
 

@@ -113,7 +113,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
     }
 */
     private boolean sendChatMessage(boolean isLeft,boolean waitForRespond, String text) {
-        String tempText = "";
+        String tempText;
         if(!text.isEmpty())
         {
             tempText = text;
@@ -133,7 +133,6 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
         new AsyncTask<AIRequest, Void, AIResponse>() {
             @Override
             protected AIResponse doInBackground(AIRequest... requests) {
-                final AIRequest request = requests[0];
                 try {
                     final AIResponse response = aiDataService.request(aiRequest);
 
@@ -178,16 +177,16 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                             Fulfillment answer =result.getFulfillment();
 
                             List<ResponseMessage> resultList = answer.getMessages();
-                            String finalAnswer = "";
+                            String finalAnswer;
                             if(resultList.size()==1)
                             {
-                                finalAnswer = ((ResponseMessage.ResponseSpeech)resultList.get(0)).getSpeech().get(0).toString();
+                                finalAnswer = ((ResponseMessage.ResponseSpeech) resultList.get(0)).getSpeech().get(0);
                             }
                             else{
                                 String status  = BuggerService.getInstance().getRelationsStatus().getRelationStatus();
                                 Log.d(TAG, "run: " + status);
                                 finalAnswer =
-                                        ((ResponseMessage.ResponseSpeech)resultList.get(BuggerService.getInstance().getRelationsStatus().getResponseNumber())).getSpeech().get(0).toString();
+                                        ((ResponseMessage.ResponseSpeech) resultList.get(BuggerService.getInstance().getRelationsStatus().getResponseNumber())).getSpeech().get(0);
                             }
                             if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
                                 sendChatMessage(false,false,finalAnswer);

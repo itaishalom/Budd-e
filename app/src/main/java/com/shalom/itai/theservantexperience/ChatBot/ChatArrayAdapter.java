@@ -29,7 +29,6 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     public ChatArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
-        Context context1 = context;
     }
 
     public int getCount() {
@@ -42,7 +41,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatMessage chatMessageObj = getItem(position);
-        View row = convertView;
+        View row;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (chatMessageObj.left) {
             row = inflater.inflate(R.layout.right_msg, parent, false);

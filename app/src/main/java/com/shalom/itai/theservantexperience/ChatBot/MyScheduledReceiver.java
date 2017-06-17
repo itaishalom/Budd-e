@@ -16,6 +16,7 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_S
  * Created by Itai on 03/05/2017.
  */
 public class MyScheduledReceiver extends BroadcastReceiver {
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "MyScheduledReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
