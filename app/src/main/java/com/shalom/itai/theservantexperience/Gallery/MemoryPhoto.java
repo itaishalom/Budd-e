@@ -5,6 +5,9 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
@@ -13,16 +16,16 @@ import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
  * Created by Itai on 10/06/2017.
  */
 
-public class MemoryPhoto implements Parcelable {
+class MemoryPhoto implements Parcelable {
     private String mUrl;
     private String mTitle;
 
-    public MemoryPhoto(String url, String title) {
+    private MemoryPhoto(String url, String title) {
         mUrl = url;
         mTitle = title;
     }
 
-    protected MemoryPhoto(Parcel in) {
+    private MemoryPhoto(Parcel in) {
         mUrl = in.readString();
         mTitle = in.readString();
     }
@@ -39,7 +42,7 @@ public class MemoryPhoto implements Parcelable {
         }
     };
 
-    public String getUrl() {
+    String getUrl() {
         return mUrl;
     }
 
@@ -55,20 +58,59 @@ public class MemoryPhoto implements Parcelable {
         mTitle = title;
     }
 
-    public static  MemoryPhoto[] getSpacePhotos() {
+    static MemoryPhoto[] getSpacePhotos() {
 
         String galleryDirectoryName = Directory;
         File directory = new File(galleryDirectoryName);
         File[] files = directory.listFiles();
-        ArrayList<MemoryPhoto> mems = new ArrayList<>();
-        for (int i = 0; i < files.length; i++) {
-            if((files[i].getAbsolutePath().endsWith(".jpg"))||files[i].getAbsolutePath().endsWith(".jpeg")) {
-                mems.add(new MemoryPhoto(files[i].getAbsolutePath(), "check"));
+        ArrayList<MemoryPhoto> memories = new ArrayList<>();
+        for (File file : files) {
+            if ((file.getAbsolutePath().endsWith(".jpg")) || file.getAbsolutePath().endsWith(".jpeg")) {
+                memories.add(new MemoryPhoto(file.getAbsolutePath(), readFile(file.getAbsolutePath())));
             }
         }
-        MemoryPhoto[] allMems = new MemoryPhoto[mems.size()];
-        allMems = mems.toArray(allMems);
+        MemoryPhoto[] allMems = new MemoryPhoto[memories.size()];
+        allMems = memories.toArray(allMems);
         return allMems;
+    }
+
+
+    private static String readFile(String fileName) {
+        String imageNoExt = fileName.substring(0, fileName.lastIndexOf('.'));
+        String dataFile = imageNoExt + ".txt";
+        File f = new File(dataFile);
+        if (f.exists()) {
+            int length = (int) f.length();
+
+            byte[] bytes = new byte[length];
+
+            FileInputStream in = null;
+            try {
+                in = new FileInputStream(f);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (in != null) {
+                    int size = in.read(bytes);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
+            }
+
+            String text = new String(bytes);
+            return "On: " + imageNoExt.substring(imageNoExt.lastIndexOf('/') + 1, imageNoExt.length()) + "\n" + text;
+        }
+        return "";
     }
 
     @Override

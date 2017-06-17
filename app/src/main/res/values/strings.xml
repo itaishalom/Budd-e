@@ -39,9 +39,12 @@
     <string name="share_option">Share</string>
     <string name= "tutorial_heart">Check the heart at the top right,\n it represents our relationship</string>
     <string name= "tutorial_mood">Check the face icon at the top right,\n it represents my mood</string>
-    <string name= "tutorial_permissions">If you want us to have adventures\n Just approve the permissions</string>
+    <string name= "tutorial_permissions">If you want us to have adventures,\n just approve the permissions</string>
+    <string name= "game_rules">There are two heaps with 12 matches.\nEach turn we can take 1 to 4 matches from only one heap.\nThe player that pulls the last match from any heap loses! </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="understood_tutorial">Got it!</string>
+    <string name="response">Your response</string>
+    <string name="chat_message">Chat message...</string>
 </resources>
 
 

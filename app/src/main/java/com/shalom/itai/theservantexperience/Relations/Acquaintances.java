@@ -6,7 +6,7 @@ import com.shalom.itai.theservantexperience.R;
  * Created by Itai on 30/04/2017.
  */
 
-public class Acquaintances extends RelationsStatus {
+class Acquaintances extends RelationsStatus {
    private static Acquaintances instance;
     private Acquaintances(){
         iconId = R.drawable.rel_stranger;

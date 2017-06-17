@@ -61,8 +61,7 @@ public class RecordActivity extends AppCompatActivity {
         mPlayer = new MediaPlayer();
         try {
 
-            Toast.makeText(this, mFileName.toString(),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, mFileName, Toast.LENGTH_LONG).show();
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
             mPlayer.start();

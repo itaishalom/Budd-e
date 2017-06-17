@@ -46,7 +46,7 @@ dependencies {
     compile 'ai.api:libai:1.4.8'
     compile 'org.apache.logging.log4j:log4j:2.8.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
+   // compile 'com.github.amlcurran.showcaseview:library:5.4.3' // Alternative intro
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     testCompile 'junit:junit:4.12'
 }

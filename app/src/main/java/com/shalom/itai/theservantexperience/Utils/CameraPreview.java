@@ -59,7 +59,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // TODO Auto-generated constructor stub
     }
 
-    public void onStart(Context context) {
+    private void onStart(Context context) {
         mContext = context;
         //  getCamera();
         mCamera = new SilentCamera(mContext);

@@ -6,6 +6,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
+
+import static com.shalom.itai.theservantexperience.Introduction.TutorialActivity.idToImage;
 
 /**
  * Created by Itai on 16/06/2017.
@@ -13,50 +19,54 @@ import android.view.View;
 
 public class MyViewPager extends ViewPager {
     public static String TAG = "MyViewPager";
+    public ImageView mImgOfDots;
     public MyViewPager(Context context) {
         super(context);
-
-      //  this.addOnPageChangeListener(lis);
     }
 
     public MyViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-/*    @Override
-    public boolean onTouchEvent(MotionEvent ev)  {
-        boolean val = super.onTouchEvent(ev);
-        Log.d("S", "onTouchEvent: here" + ev.getAxisValue(0));
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-              //  this.requestDisallowInterceptTouchEvent(true);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-           //     this.requestDisallowInterceptTouchEvent(false);
-                break;
-        }
-        return val;
-    }*/
+    public void setImageOfDots(ImageView img){
+        mImgOfDots = img;
+    }
 
-    public static class SimpleOnPageChangeListener implements OnPageChangeListener {
+    static class SimpleOnPageChangeListener implements OnPageChangeListener {
+        private ImageView mImageOfDots;
+        private Context mContext;
+        private AlphaAnimation mBlinkanimation;
+
+        SimpleOnPageChangeListener(Context context, ImageView imageOfDots){
+            super();
+            mContext = context;
+            mImageOfDots = imageOfDots;
+
+            mBlinkanimation = new AlphaAnimation(0.0f, 1.0f); // Change alpha from fully visible to invisible
+            mBlinkanimation.setDuration(1000); // duration - half a second
+            mBlinkanimation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+            mBlinkanimation.setRepeatCount(2); // Repeat animation infinitely
+            mBlinkanimation.setFillAfter(false);//to keep it at 0 when animation ends
+            mBlinkanimation.setRepeatMode(Animation.REVERSE);
+        }
+
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        //    Log.d(TAG, "onPageScrolled: ");
-            // This space for rent
         }
 
         @Override
         public void onPageSelected(int position) {
-            // This space for rent
-            TutorialActivity.getInstance().setDots(position);
-     //       Log.d(TAG, "onPageSelected: ");
+            int loc = position + 1;
+            int imageResource = mContext.getResources().getIdentifier("@drawable/dots_" + loc, null, mContext.getPackageName());
+            mImageOfDots.setImageResource(imageResource);
+            ImageView img = idToImage.get(loc);
+            if (img != null) {
+                img.startAnimation(mBlinkanimation);
+            }
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-      //      Log.d(TAG, "onPageScrollStateChanged: ");
-            // This space for rent
         }
     }
 }

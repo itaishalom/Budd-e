@@ -59,6 +59,7 @@
         <EditText
             android:id="@+id/msg"
             android:layout_width="0dp"
+            android:hint="@string/chat_message"
             android:layout_height="fill_parent"
             android:layout_weight="2" />
 

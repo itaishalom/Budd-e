@@ -21,12 +21,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -40,15 +38,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
-import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
-import com.shalom.itai.theservantexperience.Utils.ShowCaseObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,15 +71,10 @@ import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreensho
 
 
 public class MainActivity extends ToolBarActivity implements DialogCaller {
-    private ArrayList<ShowCaseObject> mAllShowCases;
-    private ShowcaseView showcaseView;
-    private int showcaseViewCounter = 0;
+
     private boolean readyToInvalidate = false;
     public static final String TAG = "AudioRecordTest";
     private static final int REQUESTS = 100;
-    private RSSFeedParser feeder;
-    private boolean safeToTakePicture = false;
-    // NoiseListener sm;
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToCameraAccepted = false;
     private boolean permissionToConttactsAccepted = false;
@@ -119,34 +109,22 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
 
     private void initializeGui() {
-        mAllShowCases = new ArrayList<>();
-        //   setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = (ListView) findViewById(R.id.chat_list);
         gifImageView = (pl.droidsonroids.gif.GifImageView ) findViewById(R.id.GifImageView);
-        mAllShowCases.add(new ShowCaseObject(gifImageView, "Hello I am Jon"));
-
-
         chatImage = (ImageView) findViewById(R.id.chat_image);
-        mAllShowCases.add(new ShowCaseObject(chatImage, "Here we can chat"));
-
         gifImageView.setImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
-        mAllShowCases.add(new ShowCaseObject(memoriesImage, "Here I store my memories"));
-
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //          takeScreenshot(MainActivity.getInstance(),"Check install");
                 MainActivity.getInstance().startActivity(new Intent(MainActivity.getInstance(),
                         SplashActivity.class));
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             }
         });
-
     }
-
 
     private void changeLayoutAwake() {
         BuggerService.getInstance().wakeUpJon();
@@ -156,7 +134,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
         isSleeping = !isSleeping;
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -176,18 +153,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
             finish();
         readyToInvalidate = true;
-        //Functions.fadingText(this, R.id.jon_text);
-
-        //addCalendarMeeting(getApplicationContext());
-          Intent intt = new Intent(this,TutorialActivity.class);
-          startActivity(intt);
-
-        //     Functions.popUpMessage(this, "Hi! You woke me up!");
-
-
-// Commit the transaction
-
-
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
         if (!settings.getBoolean(IS_INSTALLED, false)) {
@@ -196,58 +161,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             addCalendarMeeting();
             BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
         }
-
         BuggerService.getInstance().wakeUpJon();
-        mAllShowCases.add(new ShowCaseObject(myToolbar.findViewById(R.id.action_favorite), "Here you can see our relationship status"));
-        mAllShowCases.add(new ShowCaseObject(myToolbar.findViewById(R.id.action_mood), "Here you can see how I feel"));
-      /*
-        showcaseViewCounter = 1;
-        showcaseView = new ShowcaseView.Builder(this)
-                .set
-                .setTarget(new ViewTarget(gifImageView))
-                .setContentTitle("Hello " + USER_NAME + " I am Jon!")
-                .setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if (showcaseViewCounter < mAllShowCases.size()) {
-                            showcaseView.setShowcase(new ViewTarget(mAllShowCases.get(showcaseViewCounter).mView), true);
-                            showcaseView.setContentTitle(mAllShowCases.get(showcaseViewCounter).mText);
-                            for(int i = 0; i< mAllShowCases.size()  ; i++ ){
-                                if(i != showcaseViewCounter)
-                                    setAlpha(0.4f, mAllShowCases.get(i));
-                                else
-                                    setAlpha(1.0f, mAllShowCases.get(i));
-                            }
-                        }else if(showcaseViewCounter == mAllShowCases.size()){
-                            showcaseView.setTarget(Target.NONE);
-                            showcaseView.setContentTitle("Always with you");
-                            showcaseView.setContentText("You can check with me later and I'll check with you too!");
-                            showcaseView.setButtonText("Got it!");
-                            setAlpha(0.4f, mAllShowCases);
-                        }else{
-                            showcaseView.hide();
-                            setAlpha(1.0f, mAllShowCases);
-                        }
-                        showcaseViewCounter++;
-                    }
-                })
-                .build();
-        showcaseView.setButtonText("Next");
-    */
-    }
-
-    private void setAlpha(float alpha, ArrayList<ShowCaseObject> showCases) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            for (ShowCaseObject showcase : showCases) {
-                showcase.mView.setAlpha(alpha);
-            }
-        }
-    }
-    private void setAlpha(float alpha, ShowCaseObject showCase) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-
-            showCase.mView.setAlpha(alpha);
-
-        }
     }
 
     private void setUserName() {
@@ -257,6 +171,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         Cursor c = null;
         try {
             c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+           if(c == null){
+               throw new Exception("cursor null");
+           }
             c.moveToFirst();
             String name = (c.getString(c.getColumnIndex("display_name")));
             if (name != null && !name.isEmpty()) {
@@ -426,15 +343,11 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             invalidateStatusParam();
             BuggerService.getInstance().onRefresh(gifImageView, mainLayout, chatImage);
         }
-
-        //   mSensorManager.registerListener(mShakeListener, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-   /*     Toast.makeText(MainActivity.this, "I am still here!",
-                Toast.LENGTH_LONG).show();*/
     }
 
 
@@ -449,8 +362,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //   String o = (String) parent.getItemAtPosition(position);
-                //   Toast.makeText(MainActivity.getInstance(), o, Toast.LENGTH_SHORT).show();
                 switch (position) {
                     case 0:
                         Toast.makeText(MainActivity.getInstance(), "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
@@ -480,7 +391,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     }
 
     private void cleanListOptions() {
-        chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
+       // chatListView.setAdapter(new ChatListViewAdapter(MainActivity.getInstance(), R.layout.layout_for_listview, new ArrayList<String>()));
+        chatListView.clearChoices();
     }
 
     private void talkAboutWakeUp() {
@@ -492,30 +404,30 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //   String o = (String) parent.getItemAtPosition(position);
-                //   Toast.makeText(MainActivity.getInstance(), o, Toast.LENGTH_SHORT).show();
                 switch (position) {
                     case 0:
                         Toast.makeText(MainActivity.getInstance(), "What happened? Checking Ynet..", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(1);
+                        cleanListOptions();
                         talkAboutNews();
                         break;
                     case 1:
                         Toast.makeText(MainActivity.getInstance(), BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                        cleanListOptions();
                         break;
                     case 2:
-                        if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
+                        if (BuggerService.getInstance().shouldIBeNice()) {
                             Toast.makeText(MainActivity.getInstance(), "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.getInstance(), BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(-1);
                             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                            cleanListOptions();
                         }
                         break;
                 }
-                cleanListOptions();
             }
         });
     }
@@ -532,7 +444,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
 
         List<RSSFeedParser.Entry> entries = feeder.vals;
-        List<String> newsList = new ArrayList<String>();
+        List<String> newsList = new ArrayList<>();
         for (int i = 0; i < entries.size(); i++) {
             newsList.add(entries.get(i).toString());
         }
@@ -540,16 +452,20 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //   String o = (String) parent.getItemAtPosition(position);
-                String toStartWith = chatListView.getItemAtPosition(position).toString() + ". What you think about it??";
-                Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
-                cleanListOptions();
-                startActivity(new Intent(MainActivity.getInstance(),
-                        ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
+                if (BuggerService.getInstance().shouldIBeNice()) {
+                    String toStartWith = chatListView.getItemAtPosition(position).toString() + ". What you think about it??";
+                    Toast.makeText(MainActivity.getInstance(), "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
+                    cleanListOptions();
+                    startActivity(new Intent(MainActivity.getInstance(),
+                            ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
+                } else {
+                    Toast.makeText(MainActivity.getInstance(), "I don't care, let me sleep.", Toast.LENGTH_SHORT).show();
+                    BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage);
+                    cleanListOptions();
+                }
             }
         });
     }
-
 
     @Override
     public void doPositive() {
@@ -561,7 +477,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     public void doNegative() {
         Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
     }
-
+/*
     private void checkSettingsPermissions() {
         if (!Settings.System.canWrite(getApplicationContext())) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -572,7 +488,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
     }
 
-/*
+
     public void callSpeech() {
         Intent intent = new Intent(this, SpeechRecognitionActivity.class);
 

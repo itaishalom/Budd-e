@@ -19,6 +19,14 @@ public class Constants {
     public static final int SECOND = 1000;
     public static final int MINUTE = 60000;
     public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
+
+    public static class JonIntents{
+        public static final String UPD_BUG_RUN_TUT = "runTutorial";
+        public static final String UPD_BUG_RUN_MAIN = "runMain";
+    }
+
+
+
     public static String USER_NAME ;// "imageByteArray";
     public static final String SAVE_IMAGE =  "toSaveImage";
     public static final String IMAGE_READY = "android.intent.action.ImageReady";
@@ -32,5 +40,5 @@ public class Constants {
     public static final String SETTINGS_INSULTS = "SETTINGS_INSULTS";
     public static final String SETTINGS_BLESSES = "SETTINGS_BLESSES";
     public static final String SETTING_USERNAME = "SETTING_USERNAME";
-    
+    public static final String SETTING_SHOW_EXPLAIN_GAME = "SETTING_SHOW_EXPLAIN_GAME";
 }

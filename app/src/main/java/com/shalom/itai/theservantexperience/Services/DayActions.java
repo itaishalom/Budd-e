@@ -44,7 +44,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allJokes;
     public static ArrayList<String> allFacts;
 
-    public static boolean stopBugger = false;
+    private static boolean stopBugger = false;
     public static  Class[] Activities= new Class[]{MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
@@ -138,7 +138,7 @@ public class DayActions extends Actions {
         }
     }
 
-    public void checkStatus(){
+    private void checkStatus(){
         moodTimer = new Timer();
         moodTimer.scheduleAtFixedRate(new MoodTimer(mContext), 0, MINUTE * throwRandom(30,15));
     }
@@ -147,7 +147,7 @@ public class DayActions extends Actions {
         this.checkStatus();
     }
 
-    public void unCheckStatus(){
+    private void unCheckStatus(){
         if(moodTimer != null) {
             moodTimer.cancel();
             moodTimer.purge();

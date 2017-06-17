@@ -19,11 +19,11 @@ import pl.droidsonroids.gif.GifImageView;
  * Created by Itai on 10/05/2017.
  */
 
-public abstract class Actions {
-    protected Context mContext;
-    protected int mNotification_id;
-    protected int mNotification_icon;
-    protected boolean IS_AWAKE;
+abstract class Actions {
+    Context mContext;
+    int mNotification_id;
+    int mNotification_icon;
+    boolean IS_AWAKE;
 
     public boolean getIsAwake()
     {
@@ -32,8 +32,8 @@ public abstract class Actions {
 
     public abstract void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage);
 
-    protected Actions(Context context){mContext = context;}
-    public void addNotification(String headLine, String info){
+    Actions(Context context){mContext = context;}
+    void addNotification(String headLine, String info){
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.icon)  //R.drawable.icon
@@ -71,7 +71,7 @@ public abstract class Actions {
     public void unLock(){}
     public void restartCheckStatus(){}
 
-    protected void removeNotification()
+    void removeNotification()
     {
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();

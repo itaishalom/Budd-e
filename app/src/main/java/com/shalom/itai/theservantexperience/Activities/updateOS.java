@@ -113,7 +113,7 @@ public class updateOS extends AppCompatActivity {
 
         if(isInstalled) {
 
-            startService(new Intent(this, BuggerService.class).putExtra("runMainActivity",true));
+            startService(new Intent(this, BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_MAIN,true));
             overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             finish();
 
@@ -183,7 +183,7 @@ public class updateOS extends AppCompatActivity {
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                startService(new Intent(getApplicationContext(), BuggerService.class).putExtra("runMainActivity",true));
+                startService(new Intent(getApplicationContext(), BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_TUT,true));
                 finish();
             }
 

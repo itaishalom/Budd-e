@@ -28,7 +28,7 @@ public class FaceOverlayView extends View {
 
     private Bitmap mBitmap;
     private SparseArray<Face> mFaces;
-    public double smilingProb;
+    private double smilingProb;
     FaceDetector detector;
 
     public double getSmilingProb() {

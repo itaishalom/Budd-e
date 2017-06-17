@@ -9,8 +9,10 @@ import android.support.constraint.ConstraintLayout;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.Activities.MainActivity;
+import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
+import com.shalom.itai.theservantexperience.Utils.Constants;
 import com.shalom.itai.theservantexperience.Utils.Functions;
 
 import java.util.ArrayList;
@@ -50,8 +52,7 @@ public class BuggerService extends Service {
     private static BuggerService mInstance;
     private static RelationsStatus currentStatus;
     private int mStartId = -1;
-    public Actions currentAction;
-    private SharedPreferences settings;
+    private Actions currentAction;
     private ArrayList<String> SYSTEM_Insults;
     private ArrayList<String> SYSTEM_Blesses;
 
@@ -100,12 +101,14 @@ public class BuggerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         isServiceUP = true;
-        if (intent.getBooleanExtra("runMainActivity", false)) {
+        if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
             Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(startMainActivity);
             mStartId = startId;
+        } else if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_TUT, false)){
+            startActivity(new Intent(this,TutorialActivity.class));
         } else if (settings.getBoolean(SETTINGS_IS_ASLEEP, false)) {
             sendJonToSleep();
         } else {
@@ -150,14 +153,14 @@ public class BuggerService extends Service {
         } else if (data instanceof Boolean) {
             editor.putBoolean(settingString, (Boolean) data);
         } else if (data instanceof Set) {
-        editor.putStringSet(settingString, (Set) data);
-    }
+            editor.putStringSet(settingString, (Set) data);
+        }
 
         editor.commit();
     }
 
 
-    public void loadPoints() {
+    private void loadPoints() {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SYSTEM_GlobalPoints = settings.getInt(SETTINGS_POINTS, INITIAL_POINTS);
     }
@@ -168,7 +171,7 @@ public class BuggerService extends Service {
     }
 
 
-    public void loadInsultsAndBless(){
+    private void loadInsultsAndBless(){
         SYSTEM_Insults = new ArrayList<>();
         Functions.createInsults(SYSTEM_Insults);
         SYSTEM_Blesses = new ArrayList<>();
@@ -202,7 +205,7 @@ public class BuggerService extends Service {
     }
 
     public void saveInsults(String insult){
-            save(SYSTEM_Insults,insult,SETTINGS_INSULTS);
+        save(SYSTEM_Insults,insult,SETTINGS_INSULTS);
     }
 
     public void saveBless(String bless){
@@ -300,5 +303,8 @@ public class BuggerService extends Service {
         return getRelationsStatus().getProbabilityNumber() +throwRandomProb();
     }
 
+    public boolean shouldIBeNice(){
+        return getRelationsStatus().getProbabilityNumber() +throwRandomProb()>=0.5;
+    }
 }
 

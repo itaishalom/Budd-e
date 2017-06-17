@@ -1,6 +1,8 @@
 package com.shalom.itai.theservantexperience.Activities;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +25,12 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.Services.BuggerService;
 
+import pl.droidsonroids.gif.GifImageView;
+
+import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.Utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
+import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
 
 public class MatchesGameActivity extends ToolBarActivity implements DialogCaller {
@@ -44,14 +53,15 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     private MediaPlayer mediaPlayer;
     private Button newGame;
     private boolean isJonPlay = true;
-
+    private GifImageView gifImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState, R.layout.activity_matches_game);
         // setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
-
+        gifImageView = (GifImageView ) findViewById(R.id.jon_in_game);
+        gifImageView.setImageResource(R.drawable.jon_blinks);
         heap1_text = (TextView) findViewById(R.id.heap1_data);
         heap2_text = (TextView) findViewById(R.id.heap2_data);
         newGame = (Button) findViewById(R.id.new_game);
@@ -135,6 +145,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     }
 
     private void setUserTurn() {
+        gifImageView.setAlpha(0.3f);
         isJonPlay = false;
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +172,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     private void setJonTurn() {
         isJonPlay = true;
+        gifImageView.setAlpha(1.0f);
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -383,8 +395,36 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     public void doPositive() {
 
         BuggerService.setSYSTEM_GlobalPoints(1);
-        setJonTurn();
-        firstStep();
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        if (settings.getBoolean(SETTING_SHOW_EXPLAIN_GAME, true)) {
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.custom_popup_msg);
+            dialog.setTitle("Game rules");
+            dialog.setCancelable(false);
+            // set the custom dialog components - text, image and button
+            //  TextView text = (TextView) dialog.findViewById(R.id.text);
+            //   text.setText("Android custom dialog example!");
+
+            Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+            // if button is clicked, close the custom dialog
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox checkBox = (CheckBox) dialog.findViewById(R.id.checkBox);
+                    if (checkBox.isChecked()) {
+                        BuggerService.getInstance().writeToSettings(SETTING_SHOW_EXPLAIN_GAME, false);
+                    }
+                    dialog.dismiss();
+                    setJonTurn();
+                    firstStep();
+                }
+            });
+            //    CheckBox checkBox = (CheckBox) dialog.findViewById(R.id.dont_show_again_check);
+            dialog.show();
+        }else{
+            setJonTurn();
+            firstStep();
+        }
     }
 
     @Override

@@ -23,12 +23,12 @@ import static android.view.View.INVISIBLE;
 
 public class DancingActivity extends AppCompatActivity {
 
-    Button ButtenNo;
-    Button ButtenYes;
-    TextView infoTest;
-    MediaPlayer mediaPlayer;
-    boolean isDoneDancing = false;
-    Vibrator viber;
+    private Button ButtenNo;
+    private Button ButtenYes;
+    private TextView infoTest;
+    private MediaPlayer mediaPlayer;
+    private boolean isDoneDancing = false;
+    private Vibrator viber;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeListener mShakeListener;
@@ -102,7 +102,7 @@ public class DancingActivity extends AppCompatActivity {
         }.start();
     }
 
-    public void handleShakeEvent(int count)
+    private void handleShakeEvent(int count)
     {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);

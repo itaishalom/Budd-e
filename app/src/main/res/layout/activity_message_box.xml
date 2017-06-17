@@ -37,6 +37,7 @@
             app:layout_constraintHorizontal_bias="0.493" />
 
         <EditText
+            android:hint="@string/response"
             android:id="@+id/user_response"
             android:layout_width="114dp"
             android:layout_height="24dp"
