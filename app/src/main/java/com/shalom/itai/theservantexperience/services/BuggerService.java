@@ -55,7 +55,7 @@ public class BuggerService extends Service {
     private Actions currentAction;
     private ArrayList<String> SYSTEM_Insults;
     private ArrayList<String> SYSTEM_Blesses;
-
+    public static int gloablBattery = 0;
 
 
     @Nullable

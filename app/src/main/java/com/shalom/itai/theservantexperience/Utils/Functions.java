@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
+import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -309,13 +310,13 @@ public class Functions {
     }
 
 
-    public static int getBatteryLevel(Context context,int onRecLevel) {
+    public static int getBatteryLevel(Context context) {
         BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
         int num ;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             num = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         }else{
-            num = onRecLevel;
+            num = BuggerService.gloablBattery;
         }
         if (num >= 90)
             return 5;

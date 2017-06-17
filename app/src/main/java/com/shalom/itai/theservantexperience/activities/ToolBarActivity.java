@@ -31,13 +31,9 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     private ConstraintLayout moodLayout;
     View[] arr;
     private int mBatteryVal;
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
-        @Override
-        public void onReceive(Context ctxt, Intent intent) {
-            mBatteryVal = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-         //   batteryTxt.setText(String.valueOf(level) + "%");
-        }
-    };
+
+    private BroadcastReceiver mBatInfoReceiver;// = new BroadcastReceiver(){
+
 
     // --Commented out by Inspection (18/06/2017 00:18):private ConstraintLayout lLayout;
     protected final void onCreate(Bundle savedInstanceState, int layoutId) {
@@ -52,6 +48,17 @@ public abstract class ToolBarActivity extends AppCompatActivity {
         relationsLayout.bringToFront();
         moodLayout = (ConstraintLayout) findViewById(R.id.mood_layout);
         moodLayout.bringToFront();
+
+
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            mBatInfoReceiver = new BroadcastReceiver(){
+                @Override
+                public void onReceive(Context ctxt, Intent intent) {
+                    BuggerService.gloablBattery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                    //   batteryTxt.setText(String.valueOf(level) + "%");
+                }
+            };
+        }
     }
 
     @Override
@@ -117,19 +124,23 @@ public abstract class ToolBarActivity extends AppCompatActivity {
 
     void invalidateStatusParam() {
         ((TextView) findViewById(R.id.reception_status_ind)).setText(String.valueOf(getReceptionLevel(this)) + " / 5");
-        ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this,mBatteryVal)) + " / 5");
+        ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this)) + " / 5");
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        }
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        this.unregisterReceiver(mBatInfoReceiver);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            this.unregisterReceiver(mBatInfoReceiver);
+        }
     }
 
     void invalidateRelationsData() {
