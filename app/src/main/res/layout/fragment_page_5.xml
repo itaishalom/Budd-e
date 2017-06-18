@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#04967D"
 
-    tools:context="com.shalom.itai.theservantexperience.Introduction.PageFragment"
+    tools:context="com.shalom.itai.theservantexperience.introduction.PageFragment"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="25dp">
 
@@ -58,7 +58,7 @@
 
 
     <!-- TODO: Update blank fragment layout -->
-    <com.shalom.itai.theservantexperience.Utils.FontTextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
         android:id="@+id/text_frag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

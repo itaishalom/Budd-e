@@ -13,18 +13,22 @@ import com.shalom.itai.theservantexperience.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_BYTE_ARRAY;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SAVE_IMAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_BYTE_ARRAY;
+import static com.shalom.itai.theservantexperience.utils.Constants.SAVE_IMAGE;
 
 public class PictureActivty extends AppCompatActivity {
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri fileUri;
     private boolean toSave;
+    private String mText;
+    String mTextPath;
+
     // --Commented out by Inspection (18/06/2017 00:17):int width =0;
     // --Commented out by Inspection (18/06/2017 00:17):int height = 0;
     @Override
@@ -32,15 +36,15 @@ public class PictureActivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture_activty);
         onCaptureImage();
-        toSave = getIntent().getBooleanExtra(SAVE_IMAGE,false);
-
+        toSave = getIntent().getBooleanExtra(SAVE_IMAGE, false);
+        mText = getIntent().getStringExtra("Text");
     }
 
 
     private void onCaptureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-            intent.putExtra( MediaStore.EXTRA_OUTPUT,  fileUri);
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
@@ -51,32 +55,37 @@ public class PictureActivty extends AppCompatActivity {
     private File getOutputMediaFile(int type) {
         // To be safe, you should check that the SDCard is mounted
 
-            // this works for Android 2.2 and above
-            Date now = new Date();
-            android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-            String mPath =Directory + "/" + now + ".jpg";
-            //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), NameActivity.programFolder+"\\Images");
-            // Create a media file name
+        // this works for Android 2.2 and above
+        Date now = new Date();
 
-            if (type == MEDIA_TYPE_IMAGE) {
-                File imageFile = new File(mPath);
-                return imageFile;
-            }
+
+
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+        String mPath = Directory + "/" + now + ".jpeg";
+        mTextPath = Directory + "/" + now + ".txt";
+        //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), NameActivity.programFolder+"\\Images");
+        // Create a media file name
+
+        if (type == MEDIA_TYPE_IMAGE) {
+            File imageFile = new File(mPath);
+            return imageFile;
+        }
         return null;
     }
 
-    private void finalize(int status){
+    private void finalize(int status) {
         Intent returnIntent = new Intent();
-        setResult(status,returnIntent);
+        setResult(status, returnIntent);
         finish();
     }
-    private void finalize(int status,byte[] image){
+/*
+    private void finalize(int status, byte[] image) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(IMAGE_BYTE_ARRAY,image);
-        setResult(status,returnIntent);
+        returnIntent.putExtra(IMAGE_BYTE_ARRAY, image);
+        setResult(status, returnIntent);
         finish();
     }
-
+*/
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -84,7 +93,7 @@ public class PictureActivty extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
 
-                if(fileUri != null) {
+                if (fileUri != null) {
                     try {
                         //   ImageView newImage =  (ImageView)findViewById(R.id.ResultImage);
 /*
@@ -100,20 +109,42 @@ public class PictureActivty extends AppCompatActivity {
                        // Bitmap bMap = BitmapFactory.decodeFile(fileUri.getPath());
 */
                         //newImage.setImageBitmap(bMap);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        if(mText !=null && !mText.isEmpty()){
+                            FileOutputStream fileData = null;
 
-                        Bitmap bmp = BitmapFactory.decodeFile(fileUri.getPath());
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+                            File file = new File(mTextPath);
+                            try {
+                                fileData = new FileOutputStream(file);
+                                fileData.write(mText.getBytes());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (fileData != null) {
+                                        fileData.close();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                       /*
+                        File f = new File(fileUri.getPath());
+                       ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                        Bitmap bmp = BitmapFactory.decodeFile(f.getAbsolutePath());
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 40, stream);
                         byte[] arr = stream.toByteArray();
 
-                            stream.flush();
-                            stream.close();
-                        if(!toSave){
-                            File f = new File(fileUri.getPath());
-                            f.delete();
+                        stream.flush();
+                        stream.close();
+                        if (!toSave) {
+                            File ff = new File(fileUri.getPath());
+                            ff.delete();
                         }
-                        finalize(Activity.RESULT_OK,arr);
-                    } catch (IOException e) {
+                        */
+                        finalize(Activity.RESULT_OK);
+                    } catch (Exception e) {
                         finalize(Activity.RESULT_CANCELED);
                         e.printStackTrace();
                     }

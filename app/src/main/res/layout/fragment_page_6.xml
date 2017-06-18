@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#04967D"
 
-    tools:context="com.shalom.itai.theservantexperience.Introduction.PageFragment"
+    tools:context="com.shalom.itai.theservantexperience.introduction.PageFragment"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="25dp">
 
@@ -30,7 +30,7 @@
         app:layout_constraintVertical_bias="0.294" />
 
 
-    <com.shalom.itai.theservantexperience.Utils.FontTextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
         android:id="@+id/text_frag_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

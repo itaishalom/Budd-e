@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
         android:id="@+id/msgr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="20dp"
         android:background="@drawable/textview_chat"

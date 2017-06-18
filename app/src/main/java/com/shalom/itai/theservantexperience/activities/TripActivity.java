@@ -1,17 +1,21 @@
 package com.shalom.itai.theservantexperience.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -42,6 +46,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,20 +60,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.SAVE_IMAGE;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getDistanceFromLatLonInKm;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
+import static com.shalom.itai.theservantexperience.utils.Constants.SAVE_IMAGE;
+import static com.shalom.itai.theservantexperience.utils.Functions.getDistanceFromLatLonInKm;
+import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
 
 public class TripActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DialogCaller {
     private int TAKE_IMAGE = 1;
     private GoogleMap mMap;
-    private double savedDistLat = 0;
-    private double savedDistLng = 0;
+    boolean isPlaced = false;
     private boolean isRestarted = false;
+    private String locationName;
     private static final String TAG = "TripActivity";
-
+    private String[] JonIs = new String[]{"Jon is looking around..", "Jon enjoys the breeze", "Jon collecting flowers"};
     /**
      * Provides the entry point to Google Play services.
      */
@@ -81,19 +86,14 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private Location mLastLocation;
 
-    protected String mLatitudeLabel;
-    protected String mLongitudeLabel;
+
     private static TripActivity act;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
-        Intent intent = getIntent();
-        if (intent.getBooleanExtra("restart", false)) {
-            isRestarted = true;
-            this.showDialog();
-        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -103,10 +103,11 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         buildGoogleApiClient();
     }
 
+
     public static TripActivity getInstance() {
         return act;
     }
-
+/*
     private void askForGPS() {
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -127,6 +128,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
             alertDialog.show();
         }
     }
+*/
 
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
@@ -161,7 +163,8 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         Log.d(TAG, "onResult: good");
-                        placeMe();
+                        if (!isPlaced)
+                            placeMe();
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
                         break;
@@ -190,8 +193,8 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     protected void onStart() {
-        mGoogleApiClient.connect();
         super.onStart();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -205,24 +208,17 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStop();
     }
 */
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1000) {
             if (resultCode == RESULT_OK) {
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                if (mLastLocation == null) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                            placeMe();
-                        }
 
-                    }, 2000);
-                } else {
-                    placeMe();
-                }
+
+                AsyncCaller asyncCaller = new AsyncCaller();
+                asyncCaller.execute((Void) null);
+
                 // Make sure the app is not already connected or attempting to connect
                /*
                 if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
@@ -236,11 +232,29 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         } else if (requestCode == TAKE_IMAGE) {
 
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(TripActivity.this, "Thanks!" +BuggerService.getInstance().getRandomBless(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TripActivity.this, "Thanks! " + BuggerService.getInstance().getRandomBless(), Toast.LENGTH_SHORT).show();
+                BuggerService.setSYSTEM_GlobalPoints(1);
                 finish();
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                askForPicure();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BuggerService.getInstance().bug();
+                    }
+                }, 10000);
+
+            }else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(TripActivity.this, "Pfffffff! " + BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
+                BuggerService.setSYSTEM_GlobalPoints(-1);
+                finish();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BuggerService.getInstance().bug();
+                    }
+                }, 10000);
+
                 //Write your code if there's no result
             }
         } else {
@@ -276,7 +290,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void askForPicure() {
-        Intent i = new Intent(this, PictureActivty.class).putExtra(SAVE_IMAGE, true);
+        Intent i = new Intent(this, PictureActivty.class).putExtra(SAVE_IMAGE, true).putExtra("Text","At the " + locationName);
         startActivityForResult(i, TAKE_IMAGE);
     }
 
@@ -303,6 +317,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void placeMe() {
         if (mLastLocation != null) {
+            isPlaced = true;
             LatLng whereAreWe = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(whereAreWe).title("Our position"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(whereAreWe));
@@ -439,8 +454,9 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     double distanceFromDestination = getDistanceFromLatLonInKm(lat, lng, mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     Toast.makeText(getInstance(), "Let's go to the " + name + "! It's only " + distanceFromDestination + " km from us!!", Toast.LENGTH_LONG).show();
                     BuggerService.getInstance().setDistanceToDest(lat, lng);
-
+                    locationName = name;
 //TODO SAVE IT!
+
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -460,6 +476,15 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("restart", false)) {
+            isRestarted = true;
+            this.showDialog();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
 
     }
@@ -469,16 +494,21 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
         String activityOnTop = ar.topActivity.getClassName();
-
-
-        if (!activityOnTop.contains("com.shalom.itai.theservantexperience.Activities.TripActivity")) {
+        String name;
+        String[] names = this.getClass().toString().split(" ");
+        if (names.length > 1) {
+            name = names[1];
+        } else {
+            name = "TripActivity";
+        }
+        if (!activityOnTop.equals(name)) {
 
             Intent intent = new Intent(this, TripActivity.class).putExtra("restart", true);
             this.startActivity(intent);
         } else {
             DialogFragment newFragment = MyAlertDialogFragment
-                    .newInstance(R.string.alert_dialog_Trip_buttons_title, "Yes", "No", getClass().getName());
-            newFragment.show(getSupportFragmentManager(), "dialog");
+                    .newInstance("Can we go to " + locationName + "?", "Yes", "No", getClass().getName());
+            newFragment.show(getSupportFragmentManager(), "");
         }
     }
 
@@ -514,5 +544,57 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private class AsyncCaller extends AsyncTask<Void, Void, Location> {
+        ProgressDialog pdLoading = new ProgressDialog(TripActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            int ind = Functions.throwRandom(JonIs.length, 0);
+            pdLoading.setMessage("\t" + JonIs[ind]);
+            pdLoading.setCancelable(false);
+            pdLoading.show();
+        }
+
+        @Override
+        public Location doInBackground(Void... params) {
+
+            //this method will be running on background thread so don't update UI frome here
+            //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
+
+            if (ActivityCompat.checkSelfPermission(TripActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(TripActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return null;
+            }
+            while (LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
+
+        @Override
+        protected void onPostExecute(Location result) {
+            super.onPostExecute(result);
+            mLastLocation = result;
+            //this method will be running on UI thread
+            pdLoading.dismiss();
+            if (!isPlaced)
+                placeMe();
+
+        }
+
+    }
 
 }

@@ -33,17 +33,19 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
-import com.shalom.itai.theservantexperience.ChatBot.ChatListViewAdapter;
-import com.shalom.itai.theservantexperience.ChatBot.MyScheduledReceiver;
+import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.chatBot.ChatListViewAdapter;
+import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.Utils.NewsHandeling.RSSFeedParser;
+import com.shalom.itai.theservantexperience.utils.Constants;
+import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,13 +65,13 @@ import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
-import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IS_INSTALLED;
-import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.createJonFolder;
-import static com.shalom.itai.theservantexperience.Utils.Functions.takeScreenshot;
+import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
+import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
 
 public class MainActivity extends ToolBarActivity implements DialogCaller {
@@ -90,14 +92,15 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
             ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK};
     private boolean isSleeping = false;
-//    public static MainActivity thisActivity;
-private TextView signalStrength;
+    //    public static MainActivity thisActivity;
+    private TextView signalStrength;
     private TextView batteryStrength;
     private ConstraintLayout mainLayout;
     private GifImageView gifImageView;
     private ImageView chatImage;
     private ListView chatListView;
     private ImageView memoriesImage;
+    private Button mCancelTrip;
 
 
     @SuppressLint("MissingSuperCall")
@@ -106,7 +109,7 @@ private TextView signalStrength;
         initializeGui();
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
 
-      //  thisActivity = this;
+        //  thisActivity = this;
     }
 
 
@@ -115,7 +118,7 @@ private TextView signalStrength;
         signalStrength = (TextView) findViewById(R.id.reception_status_ind);
         batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = (ListView) findViewById(R.id.chat_list);
-        gifImageView = (pl.droidsonroids.gif.GifImageView ) findViewById(R.id.GifImageView);
+        gifImageView = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.GifImageView);
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
@@ -124,6 +127,16 @@ private TextView signalStrength;
                 MainActivity.this.startActivity(new Intent(MainActivity.this,
                         SplashActivity.class));
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+            }
+        });
+        mCancelTrip = (Button) findViewById(R.id.cancel_trip);
+        mCancelTrip.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mCancelTrip.setVisibility(View.INVISIBLE);
+                BuggerService.getInstance().unTrip();
+                BuggerService.getInstance().bug();
+                Toast.makeText(MainActivity.this, "I dont like it! "+ BuggerService.getInstance().getRandomInsult(),
+                        Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -157,7 +170,7 @@ private TextView signalStrength;
         readyToInvalidate = true;
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
-      //  addCalendarMeeting();
+        //  addCalendarMeeting();
         if (!settings.getBoolean(IS_INSTALLED, false)) {
             setUserName();
             takeScreenshot(MainActivity.this, "I was born");
@@ -174,9 +187,9 @@ private TextView signalStrength;
         Cursor c = null;
         try {
             c = getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-           if(c == null){
-               throw new Exception("cursor null");
-           }
+            if (c == null) {
+                throw new Exception("cursor null");
+            }
             c.moveToFirst();
             String name = (c.getString(c.getColumnIndex("display_name")));
             if (name != null && !name.isEmpty()) {
@@ -272,7 +285,7 @@ private TextView signalStrength;
                 @Override
                 public void run() {
                     MainActivity.this.finish();
-                    Intent intent = new Intent(BuggerService.getInstance(), MainActivity.class).putExtra("shit",true);
+                    Intent intent = new Intent(BuggerService.getInstance(), MainActivity.class).putExtra("shit", true);
                     startActivity(intent);
                 }
             }, 4000);
@@ -307,11 +320,11 @@ private TextView signalStrength;
         super.onBackPressed();
     }
 
-/*
-    public static MainActivity getInstance() {
-        return thisActivity;
-    }
-*/
+    /*
+        public static MainActivity getInstance() {
+            return thisActivity;
+        }
+    */
     @Override
     protected void onPause() {
 
@@ -322,8 +335,9 @@ private TextView signalStrength;
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
-        if (intent.getBooleanExtra("wakeUpOptions", false)) {
+        if (intent.getBooleanExtra("FROM_NOTIF", false)) {
+            BuggerService.getInstance().setNotif();
+        } else if (intent.getBooleanExtra("wakeUpOptions", false)) {
             forceWakeUp();
         } else if (intent.getBooleanExtra("tutorial_done", false)) {
             SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
@@ -340,13 +354,19 @@ private TextView signalStrength;
     @Override
     protected void onResume() {
         super.onResume();
-
+        if(BuggerService.getInstance().getIsTrip()){
+            mCancelTrip.setVisibility(View.VISIBLE);
+        }
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
+            BuggerService.getInstance().setNotif();
+        }
         BuggerService.isMainActivityUp = true;
         invalidateOptionsMenu();
         if (readyToInvalidate && BuggerService.getIsServiceUP()) {
             invalidateRelationsData();
             invalidateStatusParam();
-            BuggerService.getInstance().onRefresh(gifImageView, mainLayout, chatImage,this);
+            BuggerService.getInstance().onRefresh(gifImageView, mainLayout, chatImage, this);
         }
     }
 
@@ -359,7 +379,7 @@ private TextView signalStrength;
     private void forceWakeUp() {
         BuggerService.getInstance().wakeUpJon();
         isSleeping = false;
-        List<String> legendList = new ArrayList<String>();
+        List<String> legendList = new ArrayList<>();
         legendList.add("Put hear plugs and go back to bad");
         legendList.add("Stay awake");
         legendList.add("Ohhh... Sorry");
@@ -371,7 +391,7 @@ private TextView signalStrength;
                     case 0:
                         Toast.makeText(MainActivity.this, "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-1);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         break;
                     case 1:
                         if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
@@ -379,14 +399,14 @@ private TextView signalStrength;
                             BuggerService.setSYSTEM_GlobalPoints(-1);
                         } else {
                             Toast.makeText(MainActivity.this, "Nope", Toast.LENGTH_LONG).show();
-                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         }
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.this, R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
                     case 2:
                         Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.this, R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
                 }
@@ -400,7 +420,7 @@ private TextView signalStrength;
     }
 
     private void talkAboutWakeUp() {
-        List<String> legendList = new ArrayList<String>();
+        List<String> legendList = new ArrayList<>();
         legendList.add("Sorry to wake you up, Did you hear the news?");
         legendList.add("Stop sleeping you piece of metal");
         legendList.add("Ohhh... oops");
@@ -418,7 +438,7 @@ private TextView signalStrength;
                     case 1:
                         Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2);
-                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                        BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         cleanListOptions();
                         break;
                     case 2:
@@ -427,7 +447,7 @@ private TextView signalStrength;
                         } else {
                             Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(-1);
-                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                             cleanListOptions();
                         }
                         break;
@@ -464,7 +484,7 @@ private TextView signalStrength;
                             ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
                 } else {
                     Toast.makeText(MainActivity.this, "I don't care, let me sleep.", Toast.LENGTH_SHORT).show();
-                    BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage,MainActivity.this);
+                    BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                     cleanListOptions();
                 }
             }

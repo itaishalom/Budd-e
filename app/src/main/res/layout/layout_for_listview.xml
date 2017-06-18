@@ -7,8 +7,9 @@
 
     android:padding="5dip" >
 
-    <TextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
         android:id="@+id/chat_option"
+        android:paddingLeft="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#040404"

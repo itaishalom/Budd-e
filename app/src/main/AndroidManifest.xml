@@ -68,7 +68,7 @@
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             />
 
-        <receiver android:name=".ChatBot.MyScheduledReceiver" />
+        <receiver android:name=".chatBot.MyScheduledReceiver" />
 
         <activity
             android:name=".activities.SpeechRecognitionActivity"
@@ -121,7 +121,7 @@
         <activity android:name=".activities.ImageActivity" />
         <activity android:name=".activities.RecordActivity" />
         <activity
-            android:name=".ChatBot.ChatActivity"
+            android:name=".chatBot.ChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
@@ -147,6 +147,8 @@
 
         <activity
             android:name=".activities.TripActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_trip" />
 
         <activity
@@ -162,13 +164,13 @@
         <activity android:name=".activities.MatchesGameActivity"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="false"/>
-        <activity android:name=".Gallery.GalleryActivity" />
+        <activity android:name=".gallery.GalleryActivity" />
         <activity android:name=".activities.SplashActivity" />
         <activity
-            android:name=".Gallery.FullScreenMemory"
+            android:name=".gallery.FullScreenMemory"
             android:label="@string/title_activity_full_screen_memory" />
         <activity
-            android:name=".Introduction.TutorialActivity"
+            android:name=".introduction.TutorialActivity"
             android:launchMode="singleInstance"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />

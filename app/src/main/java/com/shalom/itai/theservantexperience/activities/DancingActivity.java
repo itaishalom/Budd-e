@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.Utils.ShakeListener;
+import com.shalom.itai.theservantexperience.utils.ShakeListener;
 
 import static android.view.View.INVISIBLE;
 
@@ -77,7 +77,7 @@ public class DancingActivity extends AppCompatActivity {
 
             @Override
             public void onShake(int count) {
-                handleShakeEvent(count);
+                handleShakeEvent();
             }
         });
         startMusic();
@@ -102,7 +102,7 @@ public class DancingActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void handleShakeEvent(int count)
+    private void handleShakeEvent()
     {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);

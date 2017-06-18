@@ -25,14 +25,14 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.Utils.CameraPreview;
+import com.shalom.itai.theservantexperience.utils.CameraPreview;
 
 import java.io.File;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
-import static com.shalom.itai.theservantexperience.Utils.Functions.copy;
-import static com.shalom.itai.theservantexperience.Utils.SilentCamera.saveMemory;
+import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
+import static com.shalom.itai.theservantexperience.utils.Functions.copy;
+import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
 
 public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 

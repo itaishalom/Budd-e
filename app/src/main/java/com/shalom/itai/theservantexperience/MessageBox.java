@@ -8,11 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
-import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_QUICK_REPLY;
-import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.MESSAGE_BOX_START_ACTIVITY;
+import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_QUICK_REPLY;
+import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 
 public class MessageBox extends Activity {
     private static MessageBox  instance;

@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
 
 public class MemoriesGalleryActivity extends ToolBarActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -49,45 +49,42 @@ public class MemoriesGalleryActivity extends ToolBarActivity {
 
 
         FileInputStream fis = null;
-        try {
+
             String galleryDirectoryName = Directory;
             File directory = new File(galleryDirectoryName);
             File[] files = directory.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if(files[i].getAbsolutePath().endsWith(".jpg")) {
+            for (File file : files) {
+                if (file.getAbsolutePath().endsWith(".jpg")) {
                     final BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
                     options.inSampleSize = 2;
                     options.inJustDecodeBounds = false;
                     options.inTempStorage = new byte[16 * 1024];
 
-                    Bitmap bmp = BitmapFactory.decodeFile(files[i].getAbsolutePath(),options);
+                    Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
                     final Bitmap bitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
-                   // final Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                    // final Bitmap bitmap = BitmapFactory.decodeStream(fis);
                     String text = "";
                     ImageView imageView = new ImageView(getApplicationContext());
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     imageView.setImageBitmap(bitmap);
-                    String fileName =  files[i].getAbsolutePath();
-                    String imageNoExt =fileName.substring(0,fileName.lastIndexOf('.'));
-                    String dataFile = imageNoExt+".txt";
+                    String fileName = file.getAbsolutePath();
+                    String imageNoExt = fileName.substring(0, fileName.lastIndexOf('.'));
+                    String dataFile = imageNoExt + ".txt";
                     File f = new File(dataFile);
-                    if (f.exists()){
-                        int length = (int)f.length();
+                    if (f.exists()) {
+                        int length = (int) f.length();
 
                         byte[] bytes = new byte[length];
 
-                        FileInputStream in = new FileInputStream(f);
-                        try {
+                        try (FileInputStream in = new FileInputStream(f)) {
                             in.read(bytes);
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } finally {
-                            in.close();
                         }
 
                         text = new String(bytes);
-                        text = "On: " + imageNoExt.substring(imageNoExt.lastIndexOf('/')+1,imageNoExt.length())+ "\n" + text;
+                        text = "On: " + imageNoExt.substring(imageNoExt.lastIndexOf('/') + 1, imageNoExt.length()) + "\n" + text;
                     }
                     final String memoText = text;
                     imageView.setOnClickListener(new View.OnClickListener() {
@@ -103,10 +100,8 @@ public class MemoriesGalleryActivity extends ToolBarActivity {
                     myGallery.addView(imageView);
                 }
             }
-        } catch (IOException e1) {
-            e1.printStackTrace();
         }
-    }
+
 
     @Override
     public void onBackPressed() {

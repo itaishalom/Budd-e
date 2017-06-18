@@ -8,8 +8,8 @@ import com.shalom.itai.theservantexperience.activities.TripActivity;
 
 import java.util.List;
 
-import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getDistanceFromLatLonInKm;
+import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
+import static com.shalom.itai.theservantexperience.utils.Functions.getDistanceFromLatLonInKm;
 
 /**
  * Created by Itai on 09/04/2017.

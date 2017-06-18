@@ -10,35 +10,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
-import com.shalom.itai.theservantexperience.Introduction.TutorialActivity;
-import com.shalom.itai.theservantexperience.Relations.RelationsFactory;
-import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
-import com.shalom.itai.theservantexperience.Utils.Constants;
-import com.shalom.itai.theservantexperience.Utils.Functions;
+import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
+import com.shalom.itai.theservantexperience.relations.RelationsFactory;
+import com.shalom.itai.theservantexperience.relations.RelationsStatus;
+import com.shalom.itai.theservantexperience.utils.Constants;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import pl.droidsonroids.gif.GifImageView;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.INITIAL_POINTS;
-import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_BLESSES;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_INSULTS;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_IS_ASLEEP;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTINGS_POINTS;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTING_USERNAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.USER_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandomProb;
+import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_BLESSES;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSULTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_USERNAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.utils.Functions.throwRandomProb;
 
 /**
  * Created by Itai on 09/04/2017.
  */
 
 public class BuggerService extends Service {
-
+    private static boolean mIsTrip = false;
     private static boolean isServiceUP = false;
     public static boolean isMainActivityUp = false;
     public static boolean isFunActivityUp = false;
@@ -50,9 +49,9 @@ public class BuggerService extends Service {
     public static int indexActive = 0;
     private static int SYSTEM_GlobalPoints;
     private static BuggerService mInstance;
-    private static RelationsStatus currentStatus;
+    private static RelationsStatus currentRelationsStatus;
     private int mStartId = -1;
-    private Actions currentAction;
+    private Actions currentTimeAction;
     private ArrayList<String> SYSTEM_Insults;
     private ArrayList<String> SYSTEM_Blesses;
 
@@ -72,7 +71,7 @@ public class BuggerService extends Service {
         loadPoints();
         loadInsultsAndBless();
         loadUserName();
-        currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+        currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         mInstance = this;
     }
 
@@ -91,7 +90,7 @@ public class BuggerService extends Service {
     }
 
     public RelationsStatus getRelationsStatus() {
-        return currentStatus;
+        return currentRelationsStatus;
     }
 
     public static BuggerService getInstance() {
@@ -102,18 +101,21 @@ public class BuggerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         isServiceUP = true;
-        if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
-            Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(startMainActivity);
-            mStartId = startId;
-        } else if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_TUT, false)){
-            startActivity(new Intent(this,TutorialActivity.class));
-        } else if (settings.getBoolean(SETTINGS_IS_ASLEEP, false)) {
-            sendJonToSleep();
-        } else {
+        if(intent != null ) {
+            if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
+                Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(startMainActivity);
+                mStartId = startId;
+            } else if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_TUT, false)) {
+                startActivity(new Intent(this, TutorialActivity.class));
+            } else if (settings.getBoolean(SETTINGS_IS_ASLEEP, false)) {
+                sendJonToSleep();
+            } else {
+                wakeUpJon();
+            }
+        }else{
             wakeUpJon();
         }
-
         return Service.START_STICKY;
     }
 
@@ -125,7 +127,7 @@ public class BuggerService extends Service {
         SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
         // mInstance.savePoints();
         mInstance.writeToSettings(SETTINGS_POINTS, SYSTEM_GlobalPoints);
-        currentStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+        currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
     }
 
     public static int getSYSTEM_GlobalPoints() {
@@ -178,17 +180,15 @@ public class BuggerService extends Service {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         Set<String> insults = settings.getStringSet(SETTINGS_INSULTS, null);
         if(insults !=null ){
-            Iterator<String> itr = insults.iterator();
-            while (itr.hasNext()){
-                SYSTEM_Insults.add(itr.next());
+            for (String insult : insults) {
+                SYSTEM_Insults.add(insult);
             }
         }
 
         Set<String> bless = settings.getStringSet(SETTINGS_BLESSES, null);
         if(bless !=null ){
-            Iterator<String> itr = bless.iterator();
-            while (itr.hasNext()){
-                SYSTEM_Blesses.add(itr.next());
+            for (String bles : bless) {
+                SYSTEM_Blesses.add(bles);
             }
         }
 
@@ -227,7 +227,7 @@ public class BuggerService extends Service {
 
     @Override
     public boolean stopService(Intent name) {
-        currentAction.StopTimers(this);
+        currentTimeAction.StopTimers(this);
         stopSelf(mStartId);
         return super.stopService(name);
 
@@ -235,45 +235,54 @@ public class BuggerService extends Service {
 
 
     public void unLock() {
-        (currentAction).unLock();
+        (currentTimeAction).unLock();
     }
 
     public void lock() {
-        ((DayActions) currentAction).lock(this);
+        ((DayActions) currentTimeAction).lock(this);
     }
 
     public void bug() {
-        ((DayActions) currentAction).bug(this);
+        ((DayActions) currentTimeAction).bug(this);
     }
 
     public void unbug() {
-        ((DayActions) currentAction).unbug();
+        ((DayActions) currentTimeAction).unbug();
     }
 
     public void wakeUpJon() {
-        if (currentAction != null)
-            currentAction.StopTimers(this);
-        currentAction = DayActions.start(getApplicationContext(), 0);
+        if (currentTimeAction != null)
+            currentTimeAction.StopTimers(this);
+        currentTimeAction = DayActions.start(getApplicationContext(), 0);
         writeToSettings(SETTINGS_IS_ASLEEP, false);
     }
 
+    public void setNotif(){
+        currentTimeAction.addNotification();
+    }
+
     public void goToTrip() {
-        if (currentAction instanceof DayActions) {
-            ((DayActions) currentAction).goToTrip(latDistanceToDest, lngDistanceToDest,this);
+        mIsTrip = true;
+        if (currentTimeAction instanceof DayActions) {
+            ((DayActions) currentTimeAction).goToTrip(latDistanceToDest, lngDistanceToDest,this);
         }
     }
 
+    public boolean getIsTrip(){
+        return mIsTrip;
+    }
     public void unTrip() {
-        if (currentAction instanceof DayActions) {
-            ((DayActions) currentAction).unTrip(this);
+        mIsTrip = false;
+        if (currentTimeAction instanceof DayActions) {
+            ((DayActions) currentTimeAction).unTrip(this);
         }
     }
 
     public void sendJonToSleep() {
-        if (currentAction != null) {
-            currentAction.StopTimers(this);
+        if (currentTimeAction != null) {
+            currentTimeAction.StopTimers(this);
         }
-        currentAction = NightActions.start(getApplicationContext(), 0);
+        currentTimeAction = NightActions.start(getApplicationContext(), 0);
         writeToSettings(SETTINGS_IS_ASLEEP, true);
     }
 
@@ -283,16 +292,16 @@ public class BuggerService extends Service {
     }
 
     public void restartCheckStatus() {
-        currentAction.restartCheckStatus();
+        currentTimeAction.restartCheckStatus();
     }
 
 
     public void stopNoiseListener() {
-        currentAction.StopTimers(this);
+        currentTimeAction.StopTimers(this);
     }
 
     public void onRefresh(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity) {
-        currentAction.setCustomMainActivity(gifImageView, mainLayout, chatImage,activity);
+        currentTimeAction.setCustomMainActivity(gifImageView, mainLayout, chatImage,activity);
     }
 
     public double shouldIDoThis(){

@@ -16,9 +16,9 @@ import com.shalom.itai.theservantexperience.activities.SelfieV2;
 import com.shalom.itai.theservantexperience.activities.SmsSendActivity;
 import com.shalom.itai.theservantexperience.activities.SpeechRecognitionActivity;
 import com.shalom.itai.theservantexperience.activities.TripActivity;
-import com.shalom.itai.theservantexperience.ChatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Utils.Functions;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,14 +26,14 @@ import java.util.Timer;
 
 import pl.droidsonroids.gif.GifImageView;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.BUG_WAIT_TIME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.CHAT_START_MESSAGE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IS_LOCKED;
-import static com.shalom.itai.theservantexperience.Utils.Constants.LOCATION_DISTNCE_CHECK;
-import static com.shalom.itai.theservantexperience.Utils.Constants.LOCK_WAIT_TIME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.MINUTE;
-import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
+import static com.shalom.itai.theservantexperience.utils.Constants.BUG_WAIT_TIME;
+import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.IS_LOCKED;
+import static com.shalom.itai.theservantexperience.utils.Constants.LOCATION_DISTNCE_CHECK;
+import static com.shalom.itai.theservantexperience.utils.Constants.LOCK_WAIT_TIME;
+import static com.shalom.itai.theservantexperience.utils.Constants.MINUTE;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
 /**
  * Created by Itai on 10/05/2017.
@@ -45,7 +45,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     private static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{ MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
@@ -105,7 +105,7 @@ public class DayActions extends Actions {
             timerTrip.cancel();
             timerTrip.purge();
         }
-        this.bug(context);
+      //  this.bug(context);
     }
 
     public void lock(Context context) {

@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.Utils.SilentCamera;
+import com.shalom.itai.theservantexperience.utils.SilentCamera;
 
 import java.util.Random;
 import java.util.Timer;
@@ -30,8 +30,8 @@ import static android.view.View.VISIBLE;
 
 import static com.shalom.itai.theservantexperience.services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.services.DayActions.allJokes;
-import static com.shalom.itai.theservantexperience.Utils.Constants.IMAGE_READY;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SHOW_IMSULT_TIME;
+import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
+import static com.shalom.itai.theservantexperience.utils.Constants.SHOW_IMSULT_TIME;
 
 
 //TODO more interaction

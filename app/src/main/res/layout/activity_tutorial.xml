@@ -7,10 +7,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#04967D"
-    tools:context="com.shalom.itai.theservantexperience.Introduction.TutorialActivity">
+    tools:context="com.shalom.itai.theservantexperience.introduction.TutorialActivity">
 
 
-    <com.shalom.itai.theservantexperience.Introduction.MyViewPager
+    <com.shalom.itai.theservantexperience.introduction.MyViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

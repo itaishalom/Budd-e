@@ -24,9 +24,9 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import pl.droidsonroids.gif.GifImageView;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.Utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
+import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
 public class MatchesGameActivity extends ToolBarActivity implements DialogCaller {
     private MatchesGameActivity act;
@@ -57,7 +57,6 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         heap1_text = (TextView) findViewById(R.id.heap1_data);
         heap2_text = (TextView) findViewById(R.id.heap2_data);
         Button newGame = (Button) findViewById(R.id.new_game);
-        setBrightness(0.1f);
         newGame.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -339,8 +338,8 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     private void restoreMatches() {
         int[] ids = new int[]{R.id.heap1, R.id.heap2};
-        for (int j = 0; j < ids.length; j++) {
-            ConstraintLayout ll = (ConstraintLayout) findViewById(ids[j]);
+        for (int id : ids) {
+            ConstraintLayout ll = (ConstraintLayout) findViewById(id);
             final int childCount = ll.getChildCount();
             for (int i = 0; i < childCount; i++) {
 
@@ -353,7 +352,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
                     }
                 }
             }
-            changeMatchesVisibility(ids[j], R.drawable.match, View.VISIBLE);
+            changeMatchesVisibility(id, R.drawable.match, View.VISIBLE);
         }
     }
 

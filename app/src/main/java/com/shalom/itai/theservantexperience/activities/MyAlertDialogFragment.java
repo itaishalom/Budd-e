@@ -13,27 +13,45 @@ import com.shalom.itai.theservantexperience.R;
  */
 
 public class MyAlertDialogFragment extends DialogFragment {
-    public static MyAlertDialogFragment newInstance(int title, String posButton, String negButton, String name ) {
+    public static MyAlertDialogFragment newInstance(int title, String posButton, String negButton, String name) {
         MyAlertDialogFragment frag = new MyAlertDialogFragment();
         Bundle args = new Bundle();
         args.putInt("title", title);
-        args.putString("posButton",posButton);
-        args.putString("negButton",negButton);
-        args.putString("name",name);
+        args.putString("posButton", posButton);
+        args.putString("negButton", negButton);
+        args.putString("name", name);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static MyAlertDialogFragment newInstance(String title, String posButton, String negButton, String name) {
+        MyAlertDialogFragment frag = new MyAlertDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        args.putString("posButton", posButton);
+        args.putString("negButton", negButton);
+        args.putString("name", name);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        int title = getArguments().getInt("title");
-        String posButton= getArguments().getString("posButton");
-        String negButton= getArguments().getString("negButton");
-        final String name= getArguments().getString("name");
+        Object myTitle = getArguments().get("title");
+        AlertDialog.Builder ab;
+        if (myTitle instanceof Integer) {
+            int title = Integer.parseInt(myTitle.toString());
+            ab = new AlertDialog.Builder(getActivity()).setTitle(title);
+        } else {
+            String title = (myTitle.toString());
+            ab = new AlertDialog.Builder(getActivity()).setTitle(title);
+        }
+
+        //  int title = getArguments().getInt("title");
+        String posButton = getArguments().getString("posButton");
+        String negButton = getArguments().getString("negButton");
         setCancelable(false);
-        return new AlertDialog.Builder(getActivity())
-                .setIcon(R.drawable.rel_friend)
-                .setTitle(title)
+        return ab.setIcon(R.drawable.rel_friend)
                 .setPositiveButton(posButton,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -43,9 +61,10 @@ public class MyAlertDialogFragment extends DialogFragment {
                 .setNegativeButton(negButton,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((DialogCaller) getActivity()).doNegative();
-                                }
+                                ((DialogCaller) getActivity()).doNegative();
+                            }
                         }).create();
+
     }
 }
 

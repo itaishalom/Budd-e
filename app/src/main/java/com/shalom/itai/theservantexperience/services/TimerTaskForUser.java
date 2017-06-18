@@ -9,7 +9,7 @@ import java.util.List;
 import static com.shalom.itai.theservantexperience.services.BuggerService.indexActive;
 import static com.shalom.itai.theservantexperience.services.BuggerService.stopBugger;
 import static com.shalom.itai.theservantexperience.services.DayActions.Activities;
-import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
+import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 
 /**
  * Created by Itai on 09/04/2017.

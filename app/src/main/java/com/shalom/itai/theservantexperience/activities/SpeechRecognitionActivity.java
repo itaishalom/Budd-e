@@ -1,9 +1,6 @@
 package com.shalom.itai.theservantexperience.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.CountDownTimer;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;

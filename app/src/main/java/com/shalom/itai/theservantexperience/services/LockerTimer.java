@@ -9,7 +9,7 @@ import com.shalom.itai.theservantexperience.activities.LoginActivity;
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.services.BuggerService.isLoginUp;
-import static com.shalom.itai.theservantexperience.Utils.Functions.checkScreenAndLock;
+import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 
 /**
  * Created by Itai on 13/04/2017.

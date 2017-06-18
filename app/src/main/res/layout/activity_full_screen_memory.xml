@@ -6,16 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.shalom.itai.theservantexperience.Gallery.FullScreenMemory">
+    android:animateLayoutChanges="true"
+    tools:context="com.shalom.itai.theservantexperience.gallery.FullScreenMemory">
 
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1">
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
@@ -32,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/activity_character"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,13 +43,26 @@
                     <ImageView
                         android:id="@+id/image"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="0dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter" />
 
-                </LinearLayout>
+                </FrameLayout>
             </ScrollView>
         </LinearLayout>
+
+        <com.shalom.itai.theservantexperience.utils.FontTextView
+            android:id="@+id/text_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="#39000000"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:theme="@style/normalText" />
 
     </FrameLayout>
 
@@ -60,6 +74,8 @@
         android:background="?android:attr/windowBackground"
         app:menu="@menu/navigation"
         app:itemIconTint="@android:color/darker_gray"
-        app:itemTextColor="@android:color/darker_gray"/>
+        app:itemTextColor="@android:color/darker_gray">
+
+    </android.support.design.widget.BottomNavigationView>
 
 </LinearLayout>

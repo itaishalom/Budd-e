@@ -2,8 +2,8 @@ package com.shalom.itai.theservantexperience.services;
 
 import android.content.Context;
 
-import com.shalom.itai.theservantexperience.Utils.Functions;
-import com.shalom.itai.theservantexperience.Utils.NoiseListener;
+import com.shalom.itai.theservantexperience.utils.Functions;
+import com.shalom.itai.theservantexperience.utils.NoiseListener;
 
 /**
  * Created by Itai on 09/04/2017.

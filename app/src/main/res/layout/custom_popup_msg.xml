@@ -16,7 +16,7 @@
 
         app:layout_constraintLeft_toLeftOf="parent" />
 
-    <com.shalom.itai.theservantexperience.Utils.FontTextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
         android:id="@+id/text"
         android:layout_width="300dp"
         android:layout_height="142dp"

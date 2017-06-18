@@ -3,11 +3,8 @@ package com.shalom.itai.theservantexperience.activities;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
-import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import static com.shalom.itai.theservantexperience.utils.Constants.*;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
@@ -217,7 +214,7 @@ public class updateOS extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        delayedHide();
     }
 
     private void toggle() {
@@ -261,7 +258,7 @@ public class updateOS extends AppCompatActivity {
      * Schedules a call to hide() in [delay] milliseconds, canceling any
      * previously scheduled calls.
      */
-    private void delayedHide(int delayMillis) {
+    private void delayedHide() {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, 1);
     }

@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
@@ -95,7 +94,7 @@ public class SmsSendActivity extends AppCompatActivity {
         }
 
         //Create Array Adapter and Pass ArrayOfValues to it.
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2,android.R.id.text1, sArrFull);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_2, android.R.id.text1, sArrFull);
         java.util.Collections.sort(tempString);
         //BindAdpater with our Actual ListView
         lv1.setAdapter(adapter);
@@ -187,11 +186,12 @@ public class SmsSendActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "I send \""+msg+"\" to "+name+"!!",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
+            Toast.makeText(getApplicationContext(), ex.getMessage(),
                     Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
     }
+    /*
     public void sendWhatsAppMsg(String phoneNo, String msg, String name){
         boolean isWhatsappInstalled = whatsappInstalledOrNot("com.whatsapp");
         if (isWhatsappInstalled) {
@@ -205,25 +205,6 @@ public class SmsSendActivity extends AppCompatActivity {
             // Do not forget to add this to open whatsApp App specifically
             sendIntent.setPackage("com.whatsapp");
             startActivity(sendIntent);
-
-            /*
-            Intent sendIntent = new Intent("android.intent.action.MAIN");
-            sendIntent.setAction(Intent.ACTION_SENDTO);
-            sendIntent.setComponent(new ComponentName("com.whatsapp","com.whatsapp.Conversation"));
-            sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-            sendIntent.putExtra("jid", PhoneNumberUtils.stripSeparators("972543223702")+"@s.whatsapp.net");//phone number without "+" prefix
-
-            startActivity(sendIntent);
-            */
-/*
-            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-            sendIntent.setData(Uri.parse("smsto:"+phoneNo));
-        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-        sendIntent.setType("text/plain");
-        sendIntent.setPackage("com.whatsapp");
-            sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(sendIntent);
-  */
         Toast.makeText(getApplicationContext(), "I decided to send "+msg+" to "+name+", I hope it's ok",
                 Toast.LENGTH_LONG).show();
     } else {
@@ -235,8 +216,9 @@ public class SmsSendActivity extends AppCompatActivity {
 
     }
 
-
     }
+    */
+
 
     private boolean whatsappInstalledOrNot(String uri) {
         PackageManager pm = getPackageManager();

@@ -34,7 +34,7 @@ import java.util.List;
 
 import static com.shalom.itai.theservantexperience.services.BuggerService.isLoginUp;
 
-import static com.shalom.itai.theservantexperience.Utils.Constants.*;
+import static com.shalom.itai.theservantexperience.utils.Constants.*;
 
 /**
  * A login screen that offers login via email/password.
@@ -193,12 +193,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask.execute((Void) null);
         }
     }
-
+/*
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return true;//email.contains("@");
     }
-
+*/
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() >= 4;

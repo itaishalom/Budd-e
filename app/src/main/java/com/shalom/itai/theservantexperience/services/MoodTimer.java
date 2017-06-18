@@ -2,9 +2,9 @@ package com.shalom.itai.theservantexperience.services;
 
 import android.content.Context;
 
-import static com.shalom.itai.theservantexperience.Utils.Functions.getBatteryLevel;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getReceptionLevel;
-import static com.shalom.itai.theservantexperience.Utils.Functions.throwRandom;
+import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
 /**
  * Created by Itai on 09/04/2017.

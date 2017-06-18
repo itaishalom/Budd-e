@@ -1,10 +1,5 @@
 package com.shalom.itai.theservantexperience.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +11,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.Relations.RelationsStatus;
+import com.shalom.itai.theservantexperience.relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 
-import static com.shalom.itai.theservantexperience.Utils.Functions.getBatteryLevel;
-import static com.shalom.itai.theservantexperience.Utils.Functions.getReceptionLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
 
 /**
  * Created by Itai on 09/06/2017.
@@ -30,7 +25,6 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     private ConstraintLayout relationsLayout;
     private ConstraintLayout moodLayout;
     View[] arr;
-    private int mBatteryVal;
 
 
 
@@ -99,13 +93,13 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     private void verification(){
         if(arr !=null){
             if(relationsLayout.getVisibility() == View.VISIBLE || moodLayout.getVisibility() == View.VISIBLE ) {
-                for (int i = 0; i < arr.length; i++) {
-                    arr[i].setVisibility(View.INVISIBLE);
+                for (View anArr : arr) {
+                    anArr.setVisibility(View.INVISIBLE);
                 }
             }
             else{
-                for(int i = 0;i<arr.length;i++) {
-                    arr[i].setVisibility(View.VISIBLE);
+                for (View anArr : arr) {
+                    anArr.setVisibility(View.VISIBLE);
                 }
             }
         }
