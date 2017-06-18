@@ -44,7 +44,7 @@ class ListenToNoiseTimerTask extends ContextTimerTask {
         if (noise > NightActions.getNoiseLevel()) {
             shouldContinue = false;
             mNoiseListener.dispose();
-            Functions.popUpMessage(mContext, "Hi! You woke me up!");
+            Functions.popUpMessage(mContext, "Hi! You woke me up!","MainActivity");
             return;
         }
 /*

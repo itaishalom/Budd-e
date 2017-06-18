@@ -10,6 +10,7 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -22,7 +23,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -101,6 +104,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private ListView chatListView;
     private ImageView memoriesImage;
     private Button mCancelTrip;
+    private Vibrator mViber;
 
 
     @SuppressLint("MissingSuperCall")
@@ -108,9 +112,27 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         super.onCreate(icicle, R.layout.activity_main);
         initializeGui();
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
-
         //  thisActivity = this;
     }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        startService(new Intent(this, BuggerService.class));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
 
 
     private void initializeGui() {
@@ -126,7 +148,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             public void onClick(View v) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this,
                         SplashActivity.class));
-                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+               // overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                overridePendingTransition(R.anim.slide_top_in, R.anim.slide_bottom_out);
             }
         });
         mCancelTrip = (Button) findViewById(R.id.cancel_trip);
@@ -137,6 +160,23 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 BuggerService.getInstance().bug();
                 Toast.makeText(MainActivity.this, "I dont like it! "+ BuggerService.getInstance().getRandomInsult(),
                         Toast.LENGTH_LONG).show();
+            }
+        });
+         mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        Button hurtButton = (Button) findViewById(R.id.button_hurt);
+        hurtButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mainLayout.setBackgroundColor(Color.parseColor("#890606"));
+                mViber.vibrate(1000);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BuggerService.setSYSTEM_GlobalPoints(-1);
+                        Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
+                        mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+                    }
+                }, 1000);
             }
         });
     }
@@ -280,7 +320,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
             startActivity(LaunchIntent);
             final Handler handler = new Handler();
-            final Context con = this;
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -353,7 +392,11 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     @Override
     protected void onResume() {
+
         super.onResume();
+        if(!isMyServiceRunning(BuggerService.class)){
+
+        }
         if(BuggerService.getInstance().getIsTrip()){
             mCancelTrip.setVisibility(View.VISIBLE);
         }

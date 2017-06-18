@@ -90,7 +90,13 @@ public class BuggerService extends Service {
     }
 
     public RelationsStatus getRelationsStatus() {
-        return currentRelationsStatus;
+        if (currentRelationsStatus == null) {
+            loadPoints();
+            RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+            return currentRelationsStatus;
+        } else {
+            return currentRelationsStatus;
+        }
     }
 
     public static BuggerService getInstance() {
@@ -101,7 +107,7 @@ public class BuggerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         isServiceUP = true;
-        if(intent != null ) {
+        if (intent != null) {
             if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
                 Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(startMainActivity);
@@ -113,7 +119,7 @@ public class BuggerService extends Service {
             } else {
                 wakeUpJon();
             }
-        }else{
+        } else {
             wakeUpJon();
         }
         return Service.START_STICKY;
@@ -166,27 +172,27 @@ public class BuggerService extends Service {
         SYSTEM_GlobalPoints = settings.getInt(SETTINGS_POINTS, INITIAL_POINTS);
     }
 
-    private void loadUserName(){
+    private void loadUserName() {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         USER_NAME = settings.getString(SETTING_USERNAME, "");
     }
 
 
-    private void loadInsultsAndBless(){
+    private void loadInsultsAndBless() {
         SYSTEM_Insults = new ArrayList<>();
         Functions.createInsults(SYSTEM_Insults);
         SYSTEM_Blesses = new ArrayList<>();
         Functions.createBlesses(SYSTEM_Blesses);
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         Set<String> insults = settings.getStringSet(SETTINGS_INSULTS, null);
-        if(insults !=null ){
+        if (insults != null) {
             for (String insult : insults) {
                 SYSTEM_Insults.add(insult);
             }
         }
 
         Set<String> bless = settings.getStringSet(SETTINGS_BLESSES, null);
-        if(bless !=null ){
+        if (bless != null) {
             for (String bles : bless) {
                 SYSTEM_Blesses.add(bles);
             }
@@ -194,33 +200,33 @@ public class BuggerService extends Service {
 
     }
 
-    private void save(ArrayList<String> arr, String query,String SETTING){
+    private void save(ArrayList<String> arr, String query, String SETTING) {
         query = query.replaceAll("(?i)jon", USER_NAME);
-        if(!arr.contains(query)){
+        if (!arr.contains(query)) {
             arr.add(query);
         }
         Set s = new HashSet(arr);
-        writeToSettings(SETTING,s);
+        writeToSettings(SETTING, s);
     }
 
-    public void saveInsults(String insult){
-        save(SYSTEM_Insults,insult,SETTINGS_INSULTS);
+    public void saveInsults(String insult) {
+        save(SYSTEM_Insults, insult, SETTINGS_INSULTS);
     }
 
-    public void saveBless(String bless){
-        save(SYSTEM_Blesses,bless,SETTINGS_BLESSES);
+    public void saveBless(String bless) {
+        save(SYSTEM_Blesses, bless, SETTINGS_BLESSES);
     }
 
 
-    public String getRandomInsult(){
-        if(SYSTEM_Insults !=null && !SYSTEM_Insults.isEmpty())
-            return SYSTEM_Insults.get(Functions.throwRandom(SYSTEM_Insults.size(),0));
+    public String getRandomInsult() {
+        if (SYSTEM_Insults != null && !SYSTEM_Insults.isEmpty())
+            return SYSTEM_Insults.get(Functions.throwRandom(SYSTEM_Insults.size(), 0));
         return "";
     }
 
-    public String getRandomBless(){
-        if(SYSTEM_Blesses !=null && !SYSTEM_Blesses.isEmpty())
-            return SYSTEM_Blesses.get(Functions.throwRandom(SYSTEM_Blesses.size(),0));
+    public String getRandomBless() {
+        if (SYSTEM_Blesses != null && !SYSTEM_Blesses.isEmpty())
+            return SYSTEM_Blesses.get(Functions.throwRandom(SYSTEM_Blesses.size(), 0));
         return "";
     }
 
@@ -257,20 +263,21 @@ public class BuggerService extends Service {
         writeToSettings(SETTINGS_IS_ASLEEP, false);
     }
 
-    public void setNotif(){
+    public void setNotif() {
         currentTimeAction.addNotification();
     }
 
     public void goToTrip() {
         mIsTrip = true;
         if (currentTimeAction instanceof DayActions) {
-            ((DayActions) currentTimeAction).goToTrip(latDistanceToDest, lngDistanceToDest,this);
+            ((DayActions) currentTimeAction).goToTrip(latDistanceToDest, lngDistanceToDest, this);
         }
     }
 
-    public boolean getIsTrip(){
+    public boolean getIsTrip() {
         return mIsTrip;
     }
+
     public void unTrip() {
         mIsTrip = false;
         if (currentTimeAction instanceof DayActions) {
@@ -286,7 +293,7 @@ public class BuggerService extends Service {
         writeToSettings(SETTINGS_IS_ASLEEP, true);
     }
 
-    public void sendJonToSleep(pl.droidsonroids.gif.GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage,AppCompatActivity activity) {
+    public void sendJonToSleep(pl.droidsonroids.gif.GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity) {
         this.sendJonToSleep();
         this.onRefresh(gifImageView, mainLayout, chatImage, activity);
     }
@@ -301,15 +308,15 @@ public class BuggerService extends Service {
     }
 
     public void onRefresh(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity) {
-        currentTimeAction.setCustomMainActivity(gifImageView, mainLayout, chatImage,activity);
+        currentTimeAction.setCustomMainActivity(gifImageView, mainLayout, chatImage, activity);
     }
 
-    public double shouldIDoThis(){
-        return getRelationsStatus().getProbabilityNumber() +throwRandomProb();
+    public double shouldIDoThis() {
+        return getRelationsStatus().getProbabilityNumber() + throwRandomProb();
     }
 
-    public boolean shouldIBeNice(){
-        return getRelationsStatus().getProbabilityNumber() +throwRandomProb()>=0.5;
+    public boolean shouldIBeNice() {
+        return getRelationsStatus().getProbabilityNumber() + throwRandomProb() >= 0.5;
     }
 }
 

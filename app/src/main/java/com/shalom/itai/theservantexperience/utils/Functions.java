@@ -270,16 +270,16 @@ public class Functions {
         return rand.nextDouble();
     }
 
-    public static void popUpMessage(Context context, String text) {
+    public static void popUpMessage(Context context, String text, String startActivity) {
         int x = 1; //Mins
         Intent intent = new Intent(context, MyScheduledReceiver.class);
-        intent.putExtra(MESSAGE_BOX_START_ACTIVITY, "MainActivity");
+        intent.putExtra(MESSAGE_BOX_START_ACTIVITY, startActivity);
         intent.putExtra("START_TEXT", text);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(), 234324243, intent, 0);
         AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarm.set(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (x * 1000),
+                System.currentTimeMillis() + (x * 500),
                 pendingIntent);
 
     }

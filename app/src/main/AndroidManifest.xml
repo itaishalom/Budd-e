@@ -44,7 +44,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
- <!--   <uses-library android:name="org.apache.logging.log4j" /> -->
+    <!-- <uses-library android:name="org.apache.logging.log4j" /> -->
+
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -65,8 +66,7 @@
             android:name=".services.BuggerService"
             android:icon="@drawable/icon"
             android:label="@string/service_name"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-            />
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" />
 
         <receiver android:name=".chatBot.MyScheduledReceiver" />
 
@@ -109,7 +109,7 @@
             android:launchMode="singleInstance"
             android:theme="@style/FullscreenTheme" />
 
-        <receiver android:name=".ServiceStarterOnBoot" >
+        <receiver android:name=".ServiceStarterOnBoot">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -147,10 +147,9 @@
 
         <activity
             android:name=".activities.TripActivity"
+            android:label="@string/title_activity_trip"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_trip" />
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.MemoriesGalleryActivity"
             android:launchMode="singleInstance" />
@@ -161,9 +160,10 @@
             android:label="@string/title_activity_selfie"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".activities.MatchesGameActivity"
-            android:screenOrientation="portrait"
-            android:hardwareAccelerated="false"/>
+        <activity
+            android:name=".activities.MatchesGameActivity"
+            android:hardwareAccelerated="false"
+            android:screenOrientation="portrait" />
         <activity android:name=".gallery.GalleryActivity" />
         <activity android:name=".activities.SplashActivity" />
         <activity
@@ -171,9 +171,10 @@
             android:label="@string/title_activity_full_screen_memory" />
         <activity
             android:name=".introduction.TutorialActivity"
-            android:launchMode="singleInstance"
             android:hardwareAccelerated="false"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.BoardActivity"></activity>
     </application>
 
 </manifest>

@@ -102,8 +102,7 @@ public class DancingActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void handleShakeEvent()
-    {
+    private void handleShakeEvent() {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);
         BuggerService.setSYSTEM_GlobalPoints(1);

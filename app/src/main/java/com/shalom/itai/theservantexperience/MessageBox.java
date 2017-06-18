@@ -29,6 +29,8 @@ public class MessageBox extends Activity {
         if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("MainActivity")) {
             ((TextView) findViewById(R.id.jons_text_message_box)).setText(getIntent().getStringExtra("START_TEXT"));
             findViewById(R.id.user_response).setVisibility(View.INVISIBLE);
+        }else if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("ChatActivity")) {
+            ((TextView) findViewById(R.id.jons_text_message_box)).setText(getIntent().getStringExtra("START_TEXT"));
         }
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -41,9 +43,9 @@ public class MessageBox extends Activity {
                 if(startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("ChatActivity")) {
                     chatIntent = new Intent(MessageBox.this, ChatActivity.class);
                     chatIntent.putExtra(CHAT_START_MESSAGE,textView.getText());
-                    chatIntent.putExtra(CHAT_QUICK_REPLY,textResponse.getText());
-                    TextView tx = (TextView) findViewById(R.id.jon_text) ;
-                    tx.setText("");
+                    chatIntent.putExtra(CHAT_QUICK_REPLY,textResponse.getText().toString());
+                  //  TextView tx = (TextView) findViewById(R.id.jon_text) ;  //TODO ??
+                   // tx.setText("");
                 }
                 else{
                     chatIntent = new Intent(MessageBox.this, MainActivity.class);

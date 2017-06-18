@@ -67,6 +67,12 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
         if(startCov !=null && !startCov.isEmpty()){
             sendChatMessage(false,false,startCov);
         }
+        final AIConfiguration config = new AIConfiguration("7f164d5c270e4014aa878dd674c6bccf",
+                AIConfiguration.SupportedLanguages.English,
+                AIConfiguration.RecognitionEngine.System);
+
+        aiDataService = new AIDataService(config);
+
         String chatReply = startIntent.getStringExtra(CHAT_QUICK_REPLY);
         if(chatReply !=null && !chatReply.isEmpty()){
             sendChatMessage(true,true,chatReply);
@@ -96,11 +102,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                 listView.setSelection(chatArrayAdapter.getCount() - 1);
             }
         });
-        final AIConfiguration config = new AIConfiguration("7f164d5c270e4014aa878dd674c6bccf",
-                AIConfiguration.SupportedLanguages.English,
-                AIConfiguration.RecognitionEngine.System);
 
-        aiDataService = new AIDataService(config);
    //     instance = this;
     }
    /*

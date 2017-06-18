@@ -179,6 +179,7 @@ public class GalleryActivity extends ToolBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+    //    overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
     }
 }
