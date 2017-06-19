@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.shalom.itai.theservantexperience.activities.BoardActivity;
 import com.shalom.itai.theservantexperience.activities.DancingActivity;
 import com.shalom.itai.theservantexperience.activities.FunActivity;
+import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.activities.MatchesGameActivity;
 import com.shalom.itai.theservantexperience.activities.SelfieV2;
 import com.shalom.itai.theservantexperience.activities.SmsSendActivity;
@@ -164,6 +165,7 @@ public class DayActions extends Actions {
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, final AppCompatActivity activity) {
         gifImageView.setImageResource(R.drawable.jon_blinks);
+        ((MainActivity)activity).mHurtButton.setVisibility(View.VISIBLE);
         /*Toast.makeText(mContext.getApplicationContext(), "Morning!",
                 Toast.LENGTH_SHORT).show();*/
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));

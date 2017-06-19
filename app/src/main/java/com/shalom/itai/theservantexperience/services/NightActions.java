@@ -42,6 +42,7 @@ public class NightActions extends Actions {
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, final AppCompatActivity activity) {
         gifImageView.setImageResource(R.drawable.jon_sleeping);
+        ((MainActivity)activity).mHurtButton.setVisibility(View.INVISIBLE);
         mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

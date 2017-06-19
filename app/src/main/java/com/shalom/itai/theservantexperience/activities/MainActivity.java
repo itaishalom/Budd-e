@@ -105,7 +105,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private ImageView memoriesImage;
     private Button mCancelTrip;
     private Vibrator mViber;
-
+    public Button mHurtButton;
 
     @SuppressLint("MissingSuperCall")
     protected final void onCreate(Bundle icicle) {
@@ -163,8 +163,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             }
         });
          mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        Button hurtButton = (Button) findViewById(R.id.button_hurt);
-        hurtButton.setOnClickListener(new View.OnClickListener() {
+        mHurtButton = (Button) findViewById(R.id.button_hurt);
+        mHurtButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mainLayout.setBackgroundColor(Color.parseColor("#890606"));
                 mViber.vibrate(1000);
@@ -374,6 +374,11 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent.getBooleanExtra("sendJonToSleep", true)) {
+            BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
+
+        }
+
         if (intent.getBooleanExtra("FROM_NOTIF", false)) {
             BuggerService.getInstance().setNotif();
         } else if (intent.getBooleanExtra("wakeUpOptions", false)) {

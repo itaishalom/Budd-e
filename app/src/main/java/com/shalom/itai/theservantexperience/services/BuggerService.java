@@ -46,7 +46,7 @@ public class BuggerService extends Service {
     private double lngDistanceToDest = 0;
     public static boolean stopBugger = false;
     //  public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
-    public static int indexActive = 0;
+    public static int indexActive = -2;
     private static int SYSTEM_GlobalPoints;
     private static BuggerService mInstance;
     private static RelationsStatus currentRelationsStatus;
@@ -293,7 +293,7 @@ public class BuggerService extends Service {
         writeToSettings(SETTINGS_IS_ASLEEP, true);
     }
 
-    public void sendJonToSleep(pl.droidsonroids.gif.GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity) {
+    public void sendJonToSleep(pl.droidsonroids.gif.GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, MainActivity activity) {
         this.sendJonToSleep();
         this.onRefresh(gifImageView, mainLayout, chatImage, activity);
     }
