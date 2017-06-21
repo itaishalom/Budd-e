@@ -41,6 +41,7 @@ class TimerTaskForUser extends ContextTimerTask {
                 && !activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())
                 && !activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())) { //"com.google.android.location.settings.LocationSettingsCheckerActivity"
             if (!stopBugger) {
+                /*
                 if (indexActive == -1) {
                     Functions.popUpMessage(mContext, "I am board!", "ChatActivity");
                 } else if (indexActive == -2) {
@@ -48,13 +49,14 @@ class TimerTaskForUser extends ContextTimerTask {
                     Intent intent = new Intent(this.mContext, MainActivity.class).putExtra("sendJonToSleep",true);
                     this.mContext.startActivity(intent);
                 } else {
+                */
                     Intent intent = new Intent(this.mContext, Activities[indexActive]);
                     this.mContext.startActivity(intent);
                 }
                 indexActive++;
                 if (indexActive == Activities.length)
-                    indexActive = -2;
+                    indexActive = 0;
             }
         }
     }
-}
+

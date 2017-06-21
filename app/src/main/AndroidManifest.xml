@@ -174,7 +174,12 @@
             android:hardwareAccelerated="false"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.BoardActivity"></activity>
+        <activity android:name=".activities.BoardActivity" />
+        <activity
+            android:name=".activities.IncomingCallActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_incoming_call"
+            android:theme="@style/FullscreenThemeTransparent"></activity>
     </application>
 
 </manifest>
