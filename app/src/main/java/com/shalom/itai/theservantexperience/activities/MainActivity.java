@@ -374,7 +374,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getBooleanExtra("sendJonToSleep", true)) {
+        if (intent.getBooleanExtra("sendJonToSleep", false)) {
             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
 
         }
