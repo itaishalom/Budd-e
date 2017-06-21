@@ -126,6 +126,7 @@ public class IncomingCallActivity extends AppCompatActivity {
                 mRingtone.stop();
                 mViber.cancel();
                 startActivity(new Intent(IncomingCallActivity.this,MainActivity.class));
+                finish();
             }
         });
 
