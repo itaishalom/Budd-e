@@ -179,7 +179,22 @@
             android:name=".activities.IncomingCallActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_incoming_call"
-            android:theme="@style/FullscreenThemeTransparent"></activity>
+            android:theme="@style/FullscreenThemeTransparent" />
+        <activity android:name=".activities.ShareActivity"> <intent-filter>
+            <action android:name="android.intent.action.SEND" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="image/*" />
+        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter></activity>
     </application>
 
 </manifest>

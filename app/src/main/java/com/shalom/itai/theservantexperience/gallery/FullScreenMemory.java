@@ -2,6 +2,7 @@ package com.shalom.itai.theservantexperience.gallery;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -22,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +43,7 @@ public class FullScreenMemory extends AppCompatActivity {
     private BottomNavigationView navigation;
     private boolean mVisible;
     private double deleteProb ;
-    private LinearLayout container;
+    private RelativeLayout container;
     private String mImagePath;
     private TextView mImageData;
     public static final String EXTRA_SPACE_PHOTO = "SpacePhotoActivity.SPACE_PHOTO";
@@ -87,7 +90,7 @@ public class FullScreenMemory extends AppCompatActivity {
         mVisible  = true;
 
         setContentView(R.layout.activity_full_screen_memory);
-        container = (LinearLayout) findViewById(R.id.container);
+        container = (RelativeLayout) findViewById(R.id.container);
 
 
 
@@ -99,6 +102,8 @@ public class FullScreenMemory extends AppCompatActivity {
         caller = getIntent().getStringExtra(CALLING_ACTIVITY);
         mImagePath = memoryPhoto.getUrl();
         mImageData.setText(memoryPhoto.getTitle());
+        if(memoryPhoto.isUri())
+            mImagePath= getPath(Uri.parse(mImagePath));
         Bitmap bmp = BitmapFactory.decodeFile(mImagePath);
         imageView.setImageBitmap(bmp);
     //    Drawable drawable = new BitmapDrawable(this.getResources(), bmp);
@@ -115,6 +120,33 @@ public class FullScreenMemory extends AppCompatActivity {
             }
         });
     }
+
+
+    /**
+     * helper to retrieve the path of an image URI
+     */
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if( uri == null ) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getApplication().getContentResolver().query(uri, projection, null, null, null);
+        if( cursor != null ){
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
 
     private void toggle() {
         if (mVisible) {

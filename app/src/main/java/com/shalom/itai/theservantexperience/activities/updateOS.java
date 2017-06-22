@@ -140,7 +140,7 @@ public class updateOS extends AppCompatActivity {
         // create a progress bar while the video file is loading
         progressDialog = new ProgressDialog(this);
         // set a title for the progress bar
-        progressDialog.setTitle("JavaCodeGeeks Android Video View Example");
+        progressDialog.setTitle("Update Android Operation System");
         // set a message for the progress bar
         progressDialog.setMessage("Loading...");
         //set the progress bar not cancelable on users' touch

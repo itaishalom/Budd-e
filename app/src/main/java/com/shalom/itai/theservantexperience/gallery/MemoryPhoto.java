@@ -16,18 +16,28 @@ import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
  * Created by Itai on 10/06/2017.
  */
 
-class MemoryPhoto implements Parcelable {
+public class MemoryPhoto implements Parcelable {
     private String mUrl;
     private String mTitle;
-
-    private MemoryPhoto(String url, String title) {
+    private String mIsUriTemp;
+    public MemoryPhoto(String url, String title,boolean isUri) {
         mUrl = url;
         mTitle = title;
+        if(isUri){
+            mIsUriTemp = "yes";
+        }else{
+            mIsUriTemp = "no";
+        }
+    }
+
+    public boolean isUri(){
+        return mIsUriTemp.equals("yes");
     }
 
     private MemoryPhoto(Parcel in) {
         mUrl = in.readString();
         mTitle = in.readString();
+        mIsUriTemp = in.readString();
     }
 
     public static final Parcelable.Creator<MemoryPhoto> CREATOR = new Creator<MemoryPhoto>() {
@@ -66,7 +76,7 @@ class MemoryPhoto implements Parcelable {
         ArrayList<MemoryPhoto> memories = new ArrayList<>();
         for (File file : files) {
             if ((file.getAbsolutePath().endsWith(".jpg")) || file.getAbsolutePath().endsWith(".jpeg")) {
-                memories.add(new MemoryPhoto(file.getAbsolutePath(), readFile(file.getAbsolutePath())));
+                memories.add(new MemoryPhoto(file.getAbsolutePath(), readFile(file.getAbsolutePath()),false));
             }
         }
         MemoryPhoto[] allMems = new MemoryPhoto[memories.size()];
@@ -123,5 +133,6 @@ class MemoryPhoto implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mUrl);
         parcel.writeString(mTitle);
+        parcel.writeString(mIsUriTemp);
     }
 }

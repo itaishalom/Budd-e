@@ -18,7 +18,7 @@
         android:textColor="#33b5e5"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:background="@color/black_overlay"/>
+        android:background="#000000"/>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -27,12 +27,6 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <VideoView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="606dp"
-            android:layout_gravity="center"
-            tools:background="@color/black_overlay" />
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -44,6 +38,13 @@
             tools:ignore="UselessParent">
 
         </LinearLayout>
+
+        <VideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            tools:background="@color/black_overlay" />
     </FrameLayout>
 
 </FrameLayout>
