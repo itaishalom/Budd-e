@@ -47,6 +47,7 @@ import com.shalom.itai.theservantexperience.chatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.ClientActivity;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
 
@@ -166,6 +167,8 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         mHurtButton = (Button) findViewById(R.id.button_hurt);
         mHurtButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ClientActivity.class));
+                /*
                 mainLayout.setBackgroundColor(Color.parseColor("#890606"));
                 mViber.vibrate(1000);
                 final Handler handler = new Handler();
@@ -177,6 +180,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
                     }
                 }, 1000);
+            */
             }
         });
     }

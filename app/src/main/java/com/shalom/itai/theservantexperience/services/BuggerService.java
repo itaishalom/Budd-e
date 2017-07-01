@@ -54,6 +54,7 @@ public class BuggerService extends Service {
     private Actions currentTimeAction;
     private ArrayList<String> SYSTEM_Insults;
     private ArrayList<String> SYSTEM_Blesses;
+    public static String sessionId;
 
 
     @Nullable

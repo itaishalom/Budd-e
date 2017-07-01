@@ -21,6 +21,7 @@ import com.shalom.itai.theservantexperience.activities.SpeechRecognitionActivity
 import com.shalom.itai.theservantexperience.activities.TripActivity;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.utils.ClientActivity;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     private static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{IncomingCallActivity.class, BoardActivity.class ,MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{ClientActivity.class,IncomingCallActivity.class, BoardActivity.class ,MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
