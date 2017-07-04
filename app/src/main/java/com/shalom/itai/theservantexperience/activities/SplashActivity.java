@@ -1,13 +1,14 @@
 package com.shalom.itai.theservantexperience.activities;
 
-import com.shalom.itai.theservantexperience.gallery.GalleryActivity;
-import com.shalom.itai.theservantexperience.R;
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.gallery.GalleryActivity;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -15,10 +16,10 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        Intent intent = getIntent();
+        final String className = intent.getStringExtra(INPUT_TO_SPLASH_CLASS_NAME);
 
-
-
-        Thread welcomeThread = new Thread() {
+        final Thread welcomeThread = new Thread() {
 
             @Override
             public void run() {
@@ -29,9 +30,13 @@ public class SplashActivity extends AppCompatActivity {
                     final String TAG = "SplashActivity";
                     Log.d(TAG, "SplashActivity: Error!");
                 } finally {
-
-                    Intent i = new Intent(SplashActivity.this,
-                            GalleryActivity.class);
+                    Intent i = null;
+                    if (className.equals("GalleryActivity")) {
+                         i = new Intent(SplashActivity.this,
+                                GalleryActivity.class);
+                    }else if(className.equals("MainActivity"))
+                         i = new Intent(SplashActivity.this,
+                                MainActivity.class);
                     startActivity(i);
                     finish();
                 }

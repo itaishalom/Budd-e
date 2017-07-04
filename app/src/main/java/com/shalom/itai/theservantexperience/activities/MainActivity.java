@@ -22,12 +22,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -46,7 +48,9 @@ import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.chatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.gallery.GalleryActivity;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.services.OverlyService;
 import com.shalom.itai.theservantexperience.utils.ClientActivity;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
@@ -65,12 +69,14 @@ import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
+import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
 import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
@@ -94,7 +100,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
             Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
             VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
-            ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK};
+            ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK,SYSTEM_ALERT_WINDOW};
     private boolean isSleeping = false;
     //    public static MainActivity thisActivity;
     private TextView signalStrength;
@@ -107,7 +113,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private Button mCancelTrip;
     private Vibrator mViber;
     public Button mHurtButton;
-
+    private boolean startOverly = false;
     @SuppressLint("MissingSuperCall")
     protected final void onCreate(Bundle icicle) {
         super.onCreate(icicle, R.layout.activity_main);
@@ -148,7 +154,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this,
-                        SplashActivity.class));
+                        SplashActivity.class).putExtra(INPUT_TO_SPLASH_CLASS_NAME,GalleryActivity.class.getSimpleName()));
                // overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 overridePendingTransition(R.anim.slide_top_in, R.anim.slide_bottom_out);
             }
@@ -211,6 +217,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         }
         if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
             finish();
+        checkDrawOverlayPermission();
         readyToInvalidate = true;
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
@@ -221,6 +228,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             addCalendarMeeting();
             BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
         }
+
         BuggerService.getInstance().wakeUpJon();
     }
 
@@ -370,14 +378,21 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     */
     @Override
     protected void onPause() {
-
         super.onPause();
+        if(startOverly){
+        Intent svc = new Intent(this, OverlyService.class);
+        startService(svc);}
         BuggerService.isMainActivityUp = false;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+        if(intent.getBooleanExtra("STOP_OVERLAY", false)) {
+            Intent myService = new Intent(MainActivity.this, OverlyService.class);
+            stopService(myService);
+        }
         if (intent.getBooleanExtra("sendJonToSleep", false)) {
             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
 
@@ -553,6 +568,40 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     public void doNegative() {
         Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
     }
+
+
+    public final static int REQUEST_CODE = 1231;
+
+    public void checkDrawOverlayPermission() {
+        /** check if we already  have permission to draw over other apps */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                /** if not construct intent to request permission */
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                /** request permission via start activity for result */
+                startActivityForResult(intent, REQUEST_CODE);
+            }else{
+                startOverly = true;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        /** check if received result code
+         is equal our requested code for draw permission  */
+        if (requestCode == REQUEST_CODE) {
+       /* if so check once again if we have permission */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    startOverly = true;
+                    // continue here - permission was granted
+                }
+            }
+        }
+    }
+
 /*
     private void checkSettingsPermissions() {
         if (!Settings.System.canWrite(getApplicationContext())) {
