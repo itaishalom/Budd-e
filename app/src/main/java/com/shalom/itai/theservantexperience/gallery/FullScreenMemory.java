@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,7 +21,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +32,6 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import java.io.File;
 
-import static android.R.attr.bitmap;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static com.shalom.itai.theservantexperience.utils.Functions.copy;
 
