@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.activities.BoardActivity;
@@ -166,17 +167,35 @@ public class DayActions extends Actions {
 
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, final AppCompatActivity activity) {
-        gifImageView.setImageResource(R.drawable.jon_blinks);
-        ((MainActivity)activity).mHurtButton.setVisibility(View.VISIBLE);
+   //     gifImageView.setImageResource(R.drawable.jon_blinks);
+  //      ((MainActivity)activity).mHurtButton.setVisibility(View.VISIBLE);
         /*Toast.makeText(mContext.getApplicationContext(), "Morning!",
                 Toast.LENGTH_SHORT).show();*/
-        mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+     //   mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 activity.startActivity(new Intent(activity,
                         ChatActivity.class).putExtra(CHAT_START_MESSAGE,
                         "Jon is here"));
                // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
+                activity.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
+            }
+        });
+
+    }
+    @Override
+    public void setCustomMainActivity2(GifImageView gifImageView, ConstraintLayout mainLayout, ImageButton chatImage, final AppCompatActivity activity) {
+            gifImageView.setImageResource(R.drawable.jon_blinks);
+              ((MainActivity)activity).mHurtButton.setVisibility(View.VISIBLE);
+        /*Toast.makeText(mContext.getApplicationContext(), "Morning!",
+                Toast.LENGTH_SHORT).show();*/
+           mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
+        chatImage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                activity.startActivity(new Intent(activity,
+                        ChatActivity.class).putExtra(CHAT_START_MESSAGE,
+                        "Jon is here"));
+                // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                 activity.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
             }
         });

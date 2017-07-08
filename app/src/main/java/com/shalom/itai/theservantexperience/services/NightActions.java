@@ -5,8 +5,10 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import pl.droidsonroids.gif.GifImageView;
 import com.shalom.itai.theservantexperience.R;
@@ -41,12 +43,21 @@ public class NightActions extends Actions {
 
     @Override
     public void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, final AppCompatActivity activity) {
-        gifImageView.setImageResource(R.drawable.jon_sleeping);
+       gifImageView.setImageResource(R.drawable.jon_sleeping);
         ((MainActivity)activity).mHurtButton.setVisibility(View.INVISIBLE);
         mainLayout.setBackgroundColor(Color.parseColor("#234D6E"));
         chatImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ((MainActivity)activity).showDialog();
+            }
+        });
+    }
+
+    @Override
+    public void setCustomMainActivity2(GifImageView gifImageView, ConstraintLayout mainLayout, ImageButton chatImage, final AppCompatActivity activity) {
+        chatImage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+         //       ((Main2Activity)activity).showDialog();
             }
         });
     }

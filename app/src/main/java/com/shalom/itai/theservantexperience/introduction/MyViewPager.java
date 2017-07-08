@@ -42,6 +42,7 @@ public class MyViewPager extends ViewPager {
             mBlinkanimation.setRepeatCount(2); // Repeat animation infinitely
             mBlinkanimation.setFillAfter(false);//to keep it at 0 when animation ends
             mBlinkanimation.setRepeatMode(Animation.REVERSE);
+
         }
 
         @Override

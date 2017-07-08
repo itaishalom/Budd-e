@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
@@ -32,7 +33,7 @@ abstract class Actions {
     }
 
     public abstract void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity);
-
+    public abstract void setCustomMainActivity2(GifImageView gifImageView, ConstraintLayout mainLayout, ImageButton chatImage, AppCompatActivity activity);
     Actions(Context context, String headLine, String info) {
         addNotification(headLine, info, context);
     }

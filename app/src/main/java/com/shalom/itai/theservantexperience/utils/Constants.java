@@ -28,6 +28,7 @@ public class Constants {
         public static final String ACTION_MAIN_SET_NOTIFICATION = "ACTION_MAIN_SET_NOTIFICATION";
         public static final String INPUT_TO_SPLASH_CLASS_NAME = "CLASS_NAME";
         public static final String DONE_CALENDAR = "DONE_CALENDAR";
+        public static final String ASK_TO_PLAY = "ASK_TO_PLAY";
     }
 
     public enum Status {

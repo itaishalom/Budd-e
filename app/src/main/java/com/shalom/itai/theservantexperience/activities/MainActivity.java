@@ -118,7 +118,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         if (!settings.getBoolean(IS_INSTALLED, false)) {
             setUserName();
             addCalendarMeeting();
-            BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
+
         }
             BuggerService.getInstance().wakeUpJon();
 
@@ -162,8 +162,12 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             @Override
             public void onGlobalLayout() {
                 mainLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                takeScreenshot(MainActivity.this, "I was born");
+                if (! getApplicationContext().getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
+                    takeScreenshot(MainActivity.this, "I was born");
+                    BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
+                }
 
+            //TODO CHANGE THIS
             }
         });
      //   signalStrength = (TextView) findViewById(R.id.reception_status_ind);
@@ -172,8 +176,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         Mood mood = BuggerService.getInstance().getMood();
         Log.d(TAG, "initializeGui: " + mood);
         gifImageView = (GifImageView) findViewById(R.id.GifImageView);
-        chatImage = (ImageView) findViewById(R.id.chat_image);
+
         gifImageView.setImageResource(R.drawable.jon_blinks);
+        chatImage = (ImageView) findViewById(R.id.chat_image);
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -197,8 +202,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         mHurtButton = (Button) findViewById(R.id.button_hurt);
         mHurtButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               // startActivity(new Intent(MainActivity.this, ClientActivity.class));
-               BuggerService.getInstance().setSYSTEM_GlobalPoints(1,null);
+               startActivity(new Intent(MainActivity.this,Main2Activity.class));
+                // startActivity(new Intent(MainActivity.this, ClientActivity.class));
+               //BuggerService.getInstance().setSYSTEM_GlobalPoints(1,null);
 
                 /*
                 mainLayout.setBackgroundColor(Color.parseColor("#890606"));

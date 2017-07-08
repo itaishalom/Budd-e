@@ -53,6 +53,8 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="permission_denied_contacts">denied</string>
     <string name="permission_requested_message">Please allow the permission at the following page</string>
+    <string name="mems">mems_title</string>
+    <string name="action_title">title_toolBar</string>
 </resources>
 
 

@@ -2,6 +2,7 @@ package com.shalom.itai.theservantexperience.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -24,6 +25,7 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
@@ -69,7 +71,16 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         fire = (Button) findViewById(R.id.fire);
         arr = new View[]{fire, newGame};
         act = this;
-        showDialog();
+        Intent intent = getIntent();
+        if(intent ==null){
+            showDialog();
+        }
+        else if(intent.getBooleanExtra(ASK_TO_PLAY,true)){
+            showDialog();
+        }else {
+
+            doPositive();
+        }
         //  firstStep();
     }
 

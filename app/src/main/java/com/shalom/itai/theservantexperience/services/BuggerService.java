@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -189,21 +190,7 @@ public class BuggerService extends Service {
 
 
     public void writeToSettings(String settingString, Object data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        if (data instanceof Integer) {
-            editor.putInt(settingString, (int) data);
-        } else if (data instanceof Float) {
-            editor.putFloat(settingString, (float) data);
-        } else if (data instanceof String) {
-            editor.putString(settingString, (String) data);
-        } else if (data instanceof Boolean) {
-            editor.putBoolean(settingString, (Boolean) data);
-        } else if (data instanceof Set) {
-            editor.putStringSet(settingString, (Set) data);
-        }
-
-        editor.commit();
+        Functions.writeToSettings(settingString,data,this);
     }
 
 
@@ -361,6 +348,10 @@ public class BuggerService extends Service {
 
     public void onRefresh(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity) {
         currentTimeAction.setCustomMainActivity(gifImageView, mainLayout, chatImage, activity);
+    }
+
+    public void onRefresh2(GifImageView gifImageView, ConstraintLayout mainLayout, ImageButton chatImage, AppCompatActivity activity) {
+        currentTimeAction.setCustomMainActivity2(gifImageView, mainLayout, chatImage, activity);
     }
 
     public double shouldIDoThis() {
