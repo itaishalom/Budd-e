@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.shalom.itai.theservantexperience.R;
-import com.shalom.itai.theservantexperience.utils.Functions;
 
 public class BoardActivity extends AppCompatActivity {
 

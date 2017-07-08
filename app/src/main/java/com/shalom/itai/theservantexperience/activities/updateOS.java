@@ -3,6 +3,7 @@ package com.shalom.itai.theservantexperience.activities;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
@@ -14,10 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
+
 import static com.shalom.itai.theservantexperience.utils.Constants.*;
+import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 
 /**
@@ -94,28 +99,29 @@ public class updateOS extends AppCompatActivity {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (AUTO_HIDE) {
-             //   delayedHide(AUTO_HIDE_DELAY_MILLIS);
+                //   delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
             return false;
         }
     };
 
-
-
+    //        if (preferences.getBoolean(IS_INSTALLED, false)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         setContentView(R.layout.activity_update_os);
-        if(getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
-
-            startService(new Intent(this, BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_MAIN,true));
-            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+        if (preferences.getBoolean(SETTINGS_IS_OPEN_VIDEO_DONE, false)) {
+            Intent intent;
+            if (preferences.getBoolean(SETTINGS_IS_TUTORIAL_DONE, false)) {
+                intent = new Intent(this, PermissionActivity.class);
+            } else {
+                intent = new Intent(this, TutorialActivity.class);
+            }
+            startActivity(intent);
             finish();
-
             return;
         }
-
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -171,6 +177,8 @@ public class updateOS extends AppCompatActivity {
                 myVideoView.seekTo(position);
                 if (position == 0) {
                     myVideoView.start();
+                    //      takeScreenshot(updateOS.this, "I was born");
+
                 } else {
                     //if we come from a resumed activity, video playback will be paused
                     myVideoView.pause();
@@ -179,16 +187,16 @@ public class updateOS extends AppCompatActivity {
         });
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
+                Functions.writeToSettings(SETTINGS_IS_OPEN_VIDEO_DONE, true, getApplicationContext());//(String settingString, Object data,Context context)
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                startService(new Intent(getApplicationContext(), BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_TUT,true));
+                startActivity(new Intent(getApplicationContext(), TutorialActivity.class));
+                //   startService(new Intent(getApplicationContext(), BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_TUT,true));
                 finish();
             }
 
         });
 
     }
-
-
 
 
     @Override

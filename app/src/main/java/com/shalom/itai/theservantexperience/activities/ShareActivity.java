@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.shalom.itai.theservantexperience.MessageBox;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.gallery.FullScreenMemory;
@@ -14,7 +13,6 @@ import com.shalom.itai.theservantexperience.gallery.MemoryPhoto;
 import java.util.ArrayList;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_QUICK_REPLY;
-import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 
 public class ShareActivity extends AppCompatActivity {
 
@@ -53,7 +51,7 @@ public class ShareActivity extends AppCompatActivity {
     }
 
     void handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             String text = intent.getStringExtra(Intent.EXTRA_TEXT);
             MemoryPhoto memoryPhoto =new MemoryPhoto(imageUri.toString(), "",true);

@@ -5,20 +5,17 @@ package com.shalom.itai.theservantexperience.relations;
  */
 
 public class RelationsFactory {
-    public static RelationsStatus getRelationStatus(int points)
-    {
-        if(points<10){
+    public static RelationsStatus getRelationStatus(int points) {
+        if (points <= Haters.getInstance().getMaxValProgress()) {
             return Haters.getInstance();
         }
-        if(10<= points && points<20) {
+        if (Acquaintances.getInstance().getMinValProgress() <= points && points <= Acquaintances.getInstance().getMaxValProgress()) {
             return Acquaintances.getInstance();
         }
-        if(20<= points ) {//  if(10<= points && points<20) {
+        if (Friends.getInstance().getMinValProgress() <= points) {//  if(10<= points && points<20) {
             return Friends.getInstance();
         }
- /*       if(20<=points) {
-            return BestFriends.getInstance();
-        }*/
+
         return null;
     }
 }

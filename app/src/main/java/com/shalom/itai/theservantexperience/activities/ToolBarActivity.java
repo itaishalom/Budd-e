@@ -1,5 +1,9 @@
 package com.shalom.itai.theservantexperience.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +18,12 @@ import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryTemperature;
 import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.startOverlay;
+import static com.shalom.itai.theservantexperience.utils.Functions.stopOverlay;
 
 /**
  * Created by Itai on 09/06/2017.
@@ -25,7 +33,7 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     private ConstraintLayout relationsLayout;
     private ConstraintLayout moodLayout;
     View[] arr;
-
+    protected BroadcastReceiver mReceiver;
 
 
     // --Commented out by Inspection (18/06/2017 00:18):private ConstraintLayout lLayout;
@@ -43,6 +51,32 @@ public abstract class ToolBarActivity extends AppCompatActivity {
         moodLayout.bringToFront();
 
     }
+/*
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.mReceiver);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(
+                IMAGE_READY);
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //extract our message from intent
+                Bitmap imageBitmap = mCamera.getImageBitmap();
+                putResponseButtons(imageBitmap);
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
+    }
+ */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,17 +140,43 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     }
 
     void invalidateStatusParam() {
-        ((TextView) findViewById(R.id.reception_status_ind)).setText(String.valueOf(getReceptionLevel(this)) + " / 5");
-        ((TextView) findViewById(R.id.battery_status_ind)).setText(String.valueOf(getBatteryLevel(this)) + " / 5");
+        ((TextView) findViewById(R.id.reception_status_ind)).setText((getReceptionLevel(this).name()) );
+        ((TextView) findViewById(R.id.battery_status_ind)).setText((getBatteryLevel(this).name()) );
+        ((TextView) findViewById(R.id.temperature_status_ind)).setText((getBatteryTemperature(this).name()) );
     }
 
 
     void invalidateRelationsData() {
         RelationsStatus status = BuggerService.getInstance().getRelationsStatus();
         ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarRelations);
-        pb.setMax(status.getMaxValProgress());
-        pb.setProgress(BuggerService.getSYSTEM_GlobalPoints());
+        pb.setMax(status.getMaxValProgress()- status.getMinValProgress());
+        pb.setProgress(BuggerService.getSYSTEM_GlobalPoints() - status.getMinValProgress());
         TextView friendshipLevel = (TextView) findViewById(R.id.friendship_level_ind);
         friendshipLevel.setText(status.getRelationStatus());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stopOverlay(this);
+        IntentFilter intentFilter = new IntentFilter(
+                STATUS_CHANGE_BROADCAST);
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              ToolBarActivity.this.invalidateOptionsMenu();
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        startOverlay(this);
+        this.unregisterReceiver(this.mReceiver);
     }
 }

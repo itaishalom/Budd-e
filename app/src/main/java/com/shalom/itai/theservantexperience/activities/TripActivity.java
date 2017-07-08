@@ -3,17 +3,13 @@ package com.shalom.itai.theservantexperience.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -38,7 +34,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.shalom.itai.theservantexperience.R;
 
 import android.location.Location;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -200,7 +195,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
-        BuggerService.getInstance().unbug();
+     //   BuggerService.getInstance().unbug();
     }
 /*
     protected void onStop() {
@@ -233,7 +228,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(TripActivity.this, "Thanks! " + BuggerService.getInstance().getRandomBless(), Toast.LENGTH_SHORT).show();
-                BuggerService.setSYSTEM_GlobalPoints(1);
+                BuggerService.setSYSTEM_GlobalPoints(1,"You showed me a image of our trip!");
                 finish();
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -245,7 +240,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
             }else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(TripActivity.this, "Pfffffff! " + BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
-                BuggerService.setSYSTEM_GlobalPoints(-1);
+                BuggerService.setSYSTEM_GlobalPoints(-1,"You refused to show me a image of our trip!");
                 finish();
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -514,16 +509,17 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void doPositive() {
-        BuggerService.setSYSTEM_GlobalPoints(1);
+        BuggerService.setSYSTEM_GlobalPoints(1,"You agreed to go on a trip");
         Toast.makeText(this, "YeY!!! A Trip! " + BuggerService.getInstance().getRandomBless(), Toast.LENGTH_LONG).show();
         BuggerService.getInstance().goToTrip();
+        BuggerService.getInstance().unbug();
         Log.i("FragmentAlertDialog", "Positive click!");
     }
 
     @Override
     public void doNegative() {
         Toast.makeText(this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_LONG).show();
-        BuggerService.setSYSTEM_GlobalPoints(-1);
+        BuggerService.setSYSTEM_GlobalPoints(-1,"You refused to go on a trip");
         finish();
         Log.i("FragmentAlertDialog", "Negative click!");
     }

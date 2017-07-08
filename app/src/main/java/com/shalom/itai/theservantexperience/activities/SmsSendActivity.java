@@ -2,14 +2,11 @@ package com.shalom.itai.theservantexperience.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;

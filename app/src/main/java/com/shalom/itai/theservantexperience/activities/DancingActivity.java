@@ -105,7 +105,7 @@ public class DancingActivity extends AppCompatActivity {
     private void handleShakeEvent() {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);
-        BuggerService.setSYSTEM_GlobalPoints(1);
+        BuggerService.setSYSTEM_GlobalPoints(1,null);
         Toast.makeText(this, "I like it!!", Toast.LENGTH_SHORT).show();
     }
 
@@ -119,7 +119,7 @@ public class DancingActivity extends AppCompatActivity {
             mediaPlayer.start();
             Toast.makeText(this, "Demit you!!", Toast.LENGTH_SHORT).show();
             viber.vibrate(5500);
-            BuggerService.setSYSTEM_GlobalPoints(-5);
+            BuggerService.setSYSTEM_GlobalPoints(-5,"You stopped our dance");
             mSensorManager.unregisterListener(mShakeListener);
         }
         finish();

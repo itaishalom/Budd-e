@@ -2,8 +2,6 @@ package com.shalom.itai.theservantexperience.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -11,14 +9,12 @@ import android.os.Bundle;
 
 import com.shalom.itai.theservantexperience.R;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
-import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_BYTE_ARRAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.SAVE_IMAGE;
 
 public class PictureActivty extends AppCompatActivity {
@@ -67,8 +63,7 @@ public class PictureActivty extends AppCompatActivity {
         // Create a media file name
 
         if (type == MEDIA_TYPE_IMAGE) {
-            File imageFile = new File(mPath);
-            return imageFile;
+            return new File(mPath);
         }
         return null;
     }

@@ -182,8 +182,8 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 
     @Override
     public void doNegative() {
-        Toast.makeText(inst ,"I hate you!", Toast.LENGTH_LONG).show();
-        BuggerService.setSYSTEM_GlobalPoints(-2);
+        Toast.makeText(inst ,BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_LONG).show();
+        BuggerService.setSYSTEM_GlobalPoints(-2, "You refused doing a selfi with me");
         finish();
     }
 

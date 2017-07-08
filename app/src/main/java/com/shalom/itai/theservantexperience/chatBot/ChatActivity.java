@@ -160,18 +160,21 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
                                 sendChatMessage(false,false,"I hope it helped you");
                                 return;
                             }
+                            String whatHappend = "";
                             int point = 0;
                             if (result.getAction().equals("lowerPoints")) {
                                 BuggerService.getInstance().saveInsults(query);
+                                whatHappend = "You said mean things";
                                 point = -1;
                             } else if (result.getAction().equals("incPoints")) {
                                 BuggerService.getInstance().saveBless(query);
+                                whatHappend = "You said nice things";
                                 point = 1;
                             }
 
 
                             if((Functions.allowToChangeFromChat()) && (point != 0)){
-                                BuggerService.setSYSTEM_GlobalPoints(point);
+                                BuggerService.setSYSTEM_GlobalPoints(point,whatHappend);
                             }
                             Fulfillment answer =result.getFulfillment();
 

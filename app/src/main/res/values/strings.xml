@@ -23,11 +23,12 @@
     <string name="action_settings">settings</string>
     <string name="action_favorite">favorite</string>
     <string name="alert_dialog_Wake_up_buttons_title">Wake up Jon?</string>
+    <string name="alert_dialog_Permission_Request">Permission required</string>
     <string name="alert_dialog_Confirm">Are you sure?</string>
     <string name="alert_dialog_Game">Want to play a game?</string>
     <string name="alert_dialog_Trip_buttons_title">Can we go to </string>
     <string name="alert_dialog_Selfie_buttons_title">Can we do selfie?</string>
-    <string name="alert_dialog_cancel">Shhhh...</string>
+    <string name="alert_dialog_cancel">Shhhh…</string>
     <string name="alert_dialog_ok">Wake up Jon!</string>
     <string name="title_activity_trip">Map</string>
     <string name="title_activity_selfie">SelfieActivity</string>
@@ -43,13 +44,15 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="understood_tutorial">Got it!</string>
     <string name="response">Your response</string>
-    <string name="chat_message">Chat message...</string>
+    <string name="chat_message">Chat message…</string>
     <string name="ok">OK</string>
     <string name="friendship_level">Friendship level</string>
     <string name="hello_i_m_jon">Hello, I\'m Jon!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
     <string name="this_is_how_we_can_chat">This is how we can chat</string>
     <string name="title_activity_incoming_call">IncomingCallActivity</string>
     <string name="dummy_button">Dummy Button</string>
+    <string name="permission_denied_contacts">denied</string>
+    <string name="permission_requested_message">Please allow the permission at the following page</string>
 </resources>
 
 

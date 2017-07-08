@@ -11,7 +11,9 @@ class Acquaintances extends RelationsStatus {
     private Acquaintances(){
         iconId = R.drawable.rel_stranger;
         RESPONSE_NUMBER = 0;
-        maxValProgress = 20;
+        maxValProgress = 39;
+        minValProgress = 20;
+        mGradeFactor = 2;
         this.relationStatus = "Acquaintances";
     }
 

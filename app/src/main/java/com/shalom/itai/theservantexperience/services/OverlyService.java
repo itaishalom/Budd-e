@@ -4,7 +4,6 @@ package com.shalom.itai.theservantexperience.services;
  * Created by Itai on 03/07/2017.
  */
 
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -50,10 +49,10 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
         overlayedButton = new ImageButton(this);
-      //  overlayedButton.setText("Aios");
+        //  overlayedButton.setText("Aios");
         overlayedButton.setOnTouchListener(this);
         overlayedButton.setAlpha(1.0f);
-     //   overlayedButton.setLayoutParams(wm.updateViewLayout().LayoutParams(10, 10));
+        //   overlayedButton.setLayoutParams(wm.updateViewLayout().LayoutParams(10, 10));
 
         //overlayedButton.setImageResource(R.drawable.jon_png);
         //ResourcesCompat.getDrawable(getResources(), R.drawable.name, null);
@@ -68,7 +67,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
   */
         overlayedButton.setBackground(drawable);
         //overlayedButton.setTextColor(Color.BLACK);
-       // overlayedButton.setBackgroundColor(Color.GRAY);
+        // overlayedButton.setBackgroundColor(Color.GRAY);
         overlayedButton.setOnClickListener(this);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_SYSTEM_ALERT, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
@@ -80,7 +79,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         params.width = 200;
         params.height = 100;
         wm.addView(overlayedButton, params);
-    //    wm.updateViewLayout(overlayedButton,new LayoutParams(10,10));
+        //    wm.updateViewLayout(overlayedButton,new LayoutParams(10,10));
         topLeftView = new View(this);
         WindowManager.LayoutParams topLeftParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_SYSTEM_ALERT, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
         topLeftParams.gravity =  Gravity.LEFT | Gravity.TOP;;
@@ -97,11 +96,15 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         super.onDestroy();
         if (overlayedButton != null) {
             wm.removeView(overlayedButton);
-            wm.removeView(mProgress);
-            wm.removeView(topLeftView);
-            overlayedButton = null;
-            topLeftView = null;
         }
+        if (mProgress != null){
+            wm.removeView(mProgress);
+        }
+        if (mProgress != null){
+            wm.removeView(topLeftView);
+        }
+        overlayedButton = null;
+        topLeftView = null;
     }
 
     @Override
@@ -162,8 +165,8 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
 
 
         //overlayedButton.setVisibility(View.INVISIBLE);
-     //   wm.removeViewImmediate(overlayedButton);
-       overlayedButton.setVisibility(View.INVISIBLE);
+        //   wm.removeViewImmediate(overlayedButton);
+        overlayedButton.setVisibility(View.INVISIBLE);
         mProgress = new ProgressBar(this);
 
 
@@ -176,7 +179,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         params.width = 200;
         params.height = 100;
         wm.addView(mProgress, params);
-       /*
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -184,7 +187,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
                 stopSelf();
             }
         },2000);
-*/
+
 //        ProgressDialog pdLoading = new ProgressDialog(this);
 
         // Toast.makeText(this, "Coming right up!", Toast.LENGTH_SHORT).show();

@@ -76,7 +76,7 @@ public class GalleryActivity extends ToolBarActivity {
 */
 
 
-            Picasso.with(context).load(new File(memoryPhoto.getUrl())).resize(400, 400).centerCrop().into(imageView, new com.squareup.picasso.Callback() {
+            Picasso.with(context).load(new File(memoryPhoto.getUrl())).resize(300, 300).centerCrop().into(imageView, new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {
                     if (progressBar != null) {

@@ -1,3 +1,4 @@
+/*
 package com.shalom.itai.theservantexperience.activities;
 
 import android.content.Intent;
@@ -75,3 +76,4 @@ public class ImageActivity extends AppCompatActivity {
         }
     }
 }
+*/

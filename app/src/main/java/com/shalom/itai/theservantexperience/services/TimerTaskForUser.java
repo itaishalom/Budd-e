@@ -4,9 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 
-import com.shalom.itai.theservantexperience.activities.MainActivity;
-import com.shalom.itai.theservantexperience.utils.Functions;
-
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.services.BuggerService.indexActive;

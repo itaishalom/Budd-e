@@ -24,7 +24,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.CalendarContract;
@@ -37,6 +36,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,14 +44,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.chatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
-import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.gallery.GalleryActivity;
+import com.shalom.itai.theservantexperience.moods.Mood;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.services.OverlyService;
-import com.shalom.itai.theservantexperience.utils.ClientActivity;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
 
@@ -76,6 +75,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
@@ -87,24 +87,11 @@ import static com.shalom.itai.theservantexperience.utils.Functions.takeScreensho
 public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     private boolean readyToInvalidate = false;
-    private static final String TAG = "AudioRecordTest";
+    private static final String TAG = "MainActivity";
     private static final int REQUESTS = 100;
-    private boolean permissionToRecordAccepted = false;
-    private boolean permissionToCameraAccepted = false;
-    private boolean permissionToConttactsAccepted = false;
-    private boolean permissionToAccounts = false;
-    private boolean permissionToCalendarRead = false;
-    private boolean permissionToCalendarWrite = false;
-    private boolean permissionToSettings = false;
-    private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
-            Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS, GET_ACCOUNTS,
-            Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR, RECEIVE_BOOT_COMPLETED,
-            VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
-            ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK,SYSTEM_ALERT_WINDOW};
+
     private boolean isSleeping = false;
     //    public static MainActivity thisActivity;
-    private TextView signalStrength;
-    private TextView batteryStrength;
     private ConstraintLayout mainLayout;
     private GifImageView gifImageView;
     private ImageView chatImage;
@@ -113,14 +100,43 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private Button mCancelTrip;
     private Vibrator mViber;
     public Button mHurtButton;
-    private boolean startOverly = false;
+
+    // private boolean startOverly = false;
     @SuppressLint("MissingSuperCall")
     protected final void onCreate(Bundle icicle) {
+
         super.onCreate(icicle, R.layout.activity_main);
         initializeGui();
-        ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+      //  int a = batteryTemperature(this);
+      //  Log.d(TAG, "onCreate: " + a);
+      //  ActivityCompat.requestPermissions(this, permissions, REQUESTS);
         //  thisActivity = this;
-    }
+        readyToInvalidate = true;
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        createJonFolder();
+        //  addCalendarMeeting();
+        if (!settings.getBoolean(IS_INSTALLED, false)) {
+            setUserName();
+            addCalendarMeeting();
+            BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
+        }
+            BuggerService.getInstance().wakeUpJon();
+
+
+
+
+         //   takeScreenshot(MainActivity.this, "I was born");
+            /*SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+            if (!settings.getBoolean(IS_INSTALLED, false)) {
+                takeScreenshot(MainActivity.this, "I was born");
+                addCalendarMeeting();
+                BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
+            }*/
+        }
+
+
+
+
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -139,23 +155,31 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     }
 
 
-
-
-
     private void initializeGui() {
         mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
-        signalStrength = (TextView) findViewById(R.id.reception_status_ind);
-        batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
+        ViewTreeObserver vto = mainLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mainLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                takeScreenshot(MainActivity.this, "I was born");
+
+            }
+        });
+     //   signalStrength = (TextView) findViewById(R.id.reception_status_ind);
+       // batteryStrength = (TextView) findViewById(R.id.battery_status_ind);
         chatListView = (ListView) findViewById(R.id.chat_list);
-        gifImageView = (pl.droidsonroids.gif.GifImageView) findViewById(R.id.GifImageView);
+        Mood mood = BuggerService.getInstance().getMood();
+        Log.d(TAG, "initializeGui: " + mood);
+        gifImageView = (GifImageView) findViewById(R.id.GifImageView);
         chatImage = (ImageView) findViewById(R.id.chat_image);
         gifImageView.setImageResource(R.drawable.jon_blinks);
         memoriesImage = (ImageView) findViewById(R.id.memories);
         memoriesImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 MainActivity.this.startActivity(new Intent(MainActivity.this,
-                        SplashActivity.class).putExtra(INPUT_TO_SPLASH_CLASS_NAME,GalleryActivity.class.getSimpleName()));
-               // overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                        SplashActivity.class).putExtra(INPUT_TO_SPLASH_CLASS_NAME, GalleryActivity.class.getSimpleName()));
+                // overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 overridePendingTransition(R.anim.slide_top_in, R.anim.slide_bottom_out);
             }
         });
@@ -165,15 +189,17 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 mCancelTrip.setVisibility(View.INVISIBLE);
                 BuggerService.getInstance().unTrip();
                 BuggerService.getInstance().bug();
-                Toast.makeText(MainActivity.this, "I dont like it! "+ BuggerService.getInstance().getRandomInsult(),
+                Toast.makeText(MainActivity.this, "I don't like it! " + BuggerService.getInstance().getRandomInsult(),
                         Toast.LENGTH_LONG).show();
             }
         });
-         mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         mHurtButton = (Button) findViewById(R.id.button_hurt);
         mHurtButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ClientActivity.class));
+               // startActivity(new Intent(MainActivity.this, ClientActivity.class));
+               BuggerService.getInstance().setSYSTEM_GlobalPoints(1,null);
+
                 /*
                 mainLayout.setBackgroundColor(Color.parseColor("#890606"));
                 mViber.vibrate(1000);
@@ -200,37 +226,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         isSleeping = !isSleeping;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUESTS:
-                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                permissionToCameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                permissionToConttactsAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                permissionToAccounts = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                permissionToCalendarRead = grantResults[5] == PackageManager.PERMISSION_GRANTED;
-                permissionToCalendarWrite = grantResults[6] == PackageManager.PERMISSION_GRANTED;
-                break;
-            case REQUESTS + 1:
-                permissionToSettings = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        }
-        if (!permissionToRecordAccepted || !permissionToCameraAccepted || !permissionToConttactsAccepted || !permissionToCalendarWrite || !permissionToCalendarRead)
-            finish();
-        checkDrawOverlayPermission();
-        readyToInvalidate = true;
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        createJonFolder();
-        //  addCalendarMeeting();
-        if (!settings.getBoolean(IS_INSTALLED, false)) {
-            setUserName();
-            takeScreenshot(MainActivity.this, "I was born");
-            addCalendarMeeting();
-            BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
-        }
-
-        BuggerService.getInstance().wakeUpJon();
-    }
 
     private void setUserName() {
         if (!USER_NAME.isEmpty()) {
@@ -320,7 +315,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             values.put(CalendarContract.Events.DURATION, "+P1H");
             values.put(CalendarContract.Events.HAS_ALARM, 1);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+             //   ActivityCompat.requestPermissions(this, permissions, REQUESTS);
                 return;
             }
             Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
@@ -336,7 +331,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 @Override
                 public void run() {
                     MainActivity.this.finish();
-                    Intent intent = new Intent(BuggerService.getInstance(), MainActivity.class).putExtra("shit", true);
+                    Intent intent = new Intent(BuggerService.getInstance(), MainActivity.class).putExtra(DONE_CALENDAR, true);
                     startActivity(intent);
                 }
             }, 4000);
@@ -379,20 +374,20 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     @Override
     protected void onPause() {
         super.onPause();
-        if(startOverly){
-        Intent svc = new Intent(this, OverlyService.class);
-        startService(svc);}
+       // startOverlay(this);
+
         BuggerService.isMainActivityUp = false;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
-        if(intent.getBooleanExtra("STOP_OVERLAY", false)) {
-            Intent myService = new Intent(MainActivity.this, OverlyService.class);
+/*
+        if (intent.getBooleanExtra("STOP_OVERLAY", false)) {
+            Intent myService = new Intent(this, OverlyService.class);
             stopService(myService);
         }
+  */
         if (intent.getBooleanExtra("sendJonToSleep", false)) {
             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
 
@@ -407,6 +402,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             createJonFolder();
             if (!settings.getBoolean(IS_INSTALLED, false)) {
                 setUserName();
+        //        BuggerService.getInstance().createLogger();
                 takeScreenshot(MainActivity.this, "I was born");
                 addCalendarMeeting();
                 BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
@@ -418,10 +414,15 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     protected void onResume() {
 
         super.onResume();
-        if(!isMyServiceRunning(BuggerService.class)){
+
+
+
+     //   stopOverlay(this);
+
+        if (!isMyServiceRunning(BuggerService.class)) {
 
         }
-        if(BuggerService.getInstance().getIsTrip()){
+        if (BuggerService.getInstance().getIsTrip()) {
             mCancelTrip.setVisibility(View.VISIBLE);
         }
         Intent intent = getIntent();
@@ -457,13 +458,13 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 switch (position) {
                     case 0:
                         Toast.makeText(MainActivity.this, "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-1);
+                        BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         break;
                     case 1:
                         if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
                             Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(-1);
+                            BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
                         } else {
                             Toast.makeText(MainActivity.this, "Nope", Toast.LENGTH_LONG).show();
                             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
@@ -472,7 +473,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         break;
                     case 2:
                         Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-2);
+                        BuggerService.setSYSTEM_GlobalPoints(-2,"You woke me up by making noise");
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.this, R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
@@ -498,13 +499,13 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                 switch (position) {
                     case 0:
                         Toast.makeText(MainActivity.this, "What happened? Checking Ynet..", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(1);
+                        BuggerService.setSYSTEM_GlobalPoints(1, "Woke me up to tell me something important");
                         cleanListOptions();
                         talkAboutNews();
                         break;
                     case 1:
                         Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-2);
+                        BuggerService.setSYSTEM_GlobalPoints(-2, "You woke me up for nothing");
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         cleanListOptions();
                         break;
@@ -513,7 +514,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                             Toast.makeText(MainActivity.this, "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(-1);
+                            BuggerService.setSYSTEM_GlobalPoints(-1, "You woke me up for nothing");
                             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                             cleanListOptions();
                         }
@@ -569,38 +570,50 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         Toast.makeText(MainActivity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();
     }
 
+/*
 
     public final static int REQUEST_CODE = 1231;
 
     public void checkDrawOverlayPermission() {
-        /** check if we already  have permission to draw over other apps */
+        */
+/** check if we already  have permission to draw over other apps *//*
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
-                /** if not construct intent to request permission */
+                */
+/** if not construct intent to request permission *//*
+
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
-                /** request permission via start activity for result */
+                */
+/** request permission via start activity for result *//*
+
                 startActivityForResult(intent, REQUEST_CODE);
-            }else{
-                startOverly = true;
+            } else {
+                BuggerService.startOverly = true;
             }
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
-        /** check if received result code
-         is equal our requested code for draw permission  */
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        */
+/** check if received result code
+         is equal our requested code for draw permission  *//*
+
         if (requestCode == REQUEST_CODE) {
-       /* if so check once again if we have permission */
+       */
+/* if so check once again if we have permission *//*
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(this)) {
-                    startOverly = true;
+                    BuggerService.startOverly = true;
                     // continue here - permission was granted
                 }
             }
         }
     }
+*/
 
 /*
     private void checkSettingsPermissions() {

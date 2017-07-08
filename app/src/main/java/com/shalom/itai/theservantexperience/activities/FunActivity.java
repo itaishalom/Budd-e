@@ -103,7 +103,7 @@ public class FunActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                BuggerService.setSYSTEM_GlobalPoints(1);
+                                BuggerService.setSYSTEM_GlobalPoints(1,"You liked my joke");
                                 text.setText("");
                                 mCamera.clearRam();
                                 finish();
@@ -126,7 +126,7 @@ public class FunActivity extends AppCompatActivity {
                 imageViewLaugh.setVisibility(INVISIBLE);
                 ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
                 imageViewAngry.setVisibility(VISIBLE);
-                BuggerService.setSYSTEM_GlobalPoints(-1);
+                BuggerService.setSYSTEM_GlobalPoints(-1, "You didn't like my joke");
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -183,12 +183,12 @@ public class FunActivity extends AppCompatActivity {
                                 mFaceOverlayView.invalidateThis();
                                 Toast.makeText(FunActivity.this, "you don't smile, you lied to me!",
                                         Toast.LENGTH_LONG).show();
-                                BuggerService.setSYSTEM_GlobalPoints(-1);
+                                BuggerService.setSYSTEM_GlobalPoints(-1,"You told me my joke was funny but you lied");
                               data = "You told me I'm funny but you lied";
                             } else {
                                 Toast.makeText(FunActivity.this, "you  smile!",
                                         Toast.LENGTH_LONG).show();
-                                BuggerService.setSYSTEM_GlobalPoints(1);
+                                BuggerService.setSYSTEM_GlobalPoints(1,"You laughed at my joke");
                                 data = "Your beautiful smile!";
                             }
                             SilentCamera.saveMemory(bitmapImage,data);

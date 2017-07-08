@@ -49,7 +49,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     private static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{ClientActivity.class,IncomingCallActivity.class, BoardActivity.class ,MatchesGameActivity.class,SelfieV2.class,FunActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{MatchesGameActivity.class,IncomingCallActivity.class, BoardActivity.class ,FunActivity.class,SelfieV2.class,ClientActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
@@ -104,7 +104,7 @@ public class DayActions extends Actions {
         timerTrip.scheduleAtFixedRate(new TimerTrip(context,lat,lng), 0, LOCATION_DISTNCE_CHECK);
     }
 
-    public void unTrip(Context context){
+    public void unTrip( ){
         if(timerTrip != null) {
             timerTrip.cancel();
             timerTrip.purge();
@@ -113,10 +113,10 @@ public class DayActions extends Actions {
     }
 
     public void lock(Context context) {
-        if(timerLock != null) {
+
             timerLock = new Timer();
             timerLock.scheduleAtFixedRate(new LockerTimer(context), 0, LOCK_WAIT_TIME);
-        }
+
     }
 
     public void unLock() {

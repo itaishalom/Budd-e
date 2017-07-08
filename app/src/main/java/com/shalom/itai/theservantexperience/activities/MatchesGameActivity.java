@@ -386,7 +386,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     @Override
     public void doPositive() {
 
-        BuggerService.setSYSTEM_GlobalPoints(1);
+        BuggerService.setSYSTEM_GlobalPoints(1,"We played a game together!");
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         if (settings.getBoolean(SETTING_SHOW_EXPLAIN_GAME, true)) {
             final Dialog dialog = new Dialog(this);
@@ -421,7 +421,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     @Override
     public void doNegative() {
-        BuggerService.setSYSTEM_GlobalPoints(-1);
+        BuggerService.setSYSTEM_GlobalPoints(-1,"You dont wanted to play a game with me");
         toastThis("Demit you!");
         finish();
     }

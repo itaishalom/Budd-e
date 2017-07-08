@@ -7,29 +7,42 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
+import com.shalom.itai.theservantexperience.moods.Mood;
+import com.shalom.itai.theservantexperience.moods.MoodFactory;
 import com.shalom.itai.theservantexperience.relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
 import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.LOG_SEPARATOR;
+import static com.shalom.itai.theservantexperience.utils.Constants.MOOD_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_BLESSES;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSULTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_LOG;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_USERNAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryTemperature;
+import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandomProb;
 
 /**
@@ -37,6 +50,7 @@ import static com.shalom.itai.theservantexperience.utils.Functions.throwRandomPr
  */
 
 public class BuggerService extends Service {
+    private static final String TAG = BuggerService.class.getSimpleName();
     private static boolean mIsTrip = false;
     private static boolean isServiceUP = false;
     public static boolean isMainActivityUp = false;
@@ -52,9 +66,12 @@ public class BuggerService extends Service {
     private static RelationsStatus currentRelationsStatus;
     private int mStartId = -1;
     private Actions currentTimeAction;
-    private ArrayList<String> SYSTEM_Insults;
-    private ArrayList<String> SYSTEM_Blesses;
+    private ArrayList<String> Arr_Insults_Sys;
+    private ArrayList<String> Arr_Blesses_Sys;
+    private ArrayList<String> Arr_Logger_Sys;
     public static String sessionId;
+    //public static boolean startOverly = false;
+    private static Mood currentMood = null;
 
 
     @Nullable
@@ -72,8 +89,10 @@ public class BuggerService extends Service {
         loadPoints();
         loadInsultsAndBless();
         loadUserName();
-        currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         mInstance = this;
+
+        currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+        currentMood = changeMood();
     }
 
 
@@ -130,27 +149,47 @@ public class BuggerService extends Service {
         return isServiceUP;
     }
 
-    public static void setSYSTEM_GlobalPoints(int pts) {
-        SYSTEM_GlobalPoints = SYSTEM_GlobalPoints + pts;
-        // mInstance.savePoints();
-        mInstance.writeToSettings(SETTINGS_POINTS, SYSTEM_GlobalPoints);
-        currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+    public static void setSYSTEM_GlobalPoints(int pts, String logMessage) {
+        if (logMessage != null)
+            getInstance().pushEventToLogger(logMessage + LOG_SEPARATOR + Integer.signum(pts));
+        int oldNumOfPoints = SYSTEM_GlobalPoints;
+        if (oldNumOfPoints + pts <= 0) {
+            SYSTEM_GlobalPoints = 0;
+        } else {
+            SYSTEM_GlobalPoints += pts;
+        }
+        Log.d(TAG, "setSYSTEM_GlobalPoints: " + SYSTEM_GlobalPoints);
+        //    Toast.makeText(getInstance(),"points "+SYSTEM_GlobalPoints,Toast.LENGTH_LONG);
+        if (oldNumOfPoints != SYSTEM_GlobalPoints) {
+            mInstance.writeToSettings(SETTINGS_POINTS, SYSTEM_GlobalPoints);
+            RelationsStatus oldStatus = currentRelationsStatus;
+            Mood oldMood = currentMood;
+            currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+
+            currentMood= getInstance().changeMood();
+
+            if (oldStatus != currentRelationsStatus) {
+                Log.d(TAG, "setSYSTEM_GlobalPoints: Changed status");
+                Intent i = new Intent(STATUS_CHANGE_BROADCAST);//.putExtra("path", pathToImage);
+                getInstance().sendBroadcast(i);
+                //     Toast.makeText(getInstance(),"Changed status",Toast.LENGTH_LONG);
+            }
+            if (oldMood != currentMood) {
+                Log.d(TAG, "setSYSTEM_GlobalPoints: Changed status");
+                Intent i = new Intent(MOOD_CHANGE_BROADCAST);//.putExtra("path", pathToImage);
+                getInstance().sendBroadcast(i);
+                //     Toast.makeText(getInstance(),"Changed status",Toast.LENGTH_LONG);
+            }
+        }
     }
 
     public static int getSYSTEM_GlobalPoints() {
         return SYSTEM_GlobalPoints;
     }
 
-    /*
-        private  void savePoints(){
-            SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putInt(SETTINGS_POINTS, SYSTEM_GlobalPoints);
-            editor.commit();
-        }
-    */
+
     public void writeToSettings(String settingString, Object data) {
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         if (data instanceof Integer) {
             editor.putInt(settingString, (int) data);
@@ -171,6 +210,7 @@ public class BuggerService extends Service {
     private void loadPoints() {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         SYSTEM_GlobalPoints = settings.getInt(SETTINGS_POINTS, INITIAL_POINTS);
+        //   SYSTEM_GlobalPoints -=7;
     }
 
     private void loadUserName() {
@@ -180,22 +220,33 @@ public class BuggerService extends Service {
 
 
     private void loadInsultsAndBless() {
-        SYSTEM_Insults = new ArrayList<>();
-        Functions.createInsults(SYSTEM_Insults);
-        SYSTEM_Blesses = new ArrayList<>();
-        Functions.createBlesses(SYSTEM_Blesses);
+        Arr_Insults_Sys = new ArrayList<>();
+        Arr_Logger_Sys = new ArrayList<>();
+        Arr_Blesses_Sys = new ArrayList<>();
+
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         Set<String> insults = settings.getStringSet(SETTINGS_INSULTS, null);
-        if (insults != null) {
+        if (insults != null && !insults.isEmpty()) {
             for (String insult : insults) {
-                SYSTEM_Insults.add(insult);
+                Arr_Insults_Sys.add(insult);
             }
+        } else {
+            Functions.createInsults(Arr_Insults_Sys);
         }
 
         Set<String> bless = settings.getStringSet(SETTINGS_BLESSES, null);
-        if (bless != null) {
+        if (bless != null && !bless.isEmpty()) {
             for (String bles : bless) {
-                SYSTEM_Blesses.add(bles);
+                Arr_Blesses_Sys.add(bles);
+            }
+        } else {
+            Functions.createBlesses(Arr_Blesses_Sys);
+        }
+
+        Set<String> logs = settings.getStringSet(SETTING_LOG, null);
+        if (logs != null && !logs.isEmpty()) {
+            for (String log : logs) {
+                Arr_Logger_Sys.add(log);
             }
         }
 
@@ -211,23 +262,23 @@ public class BuggerService extends Service {
     }
 
     public void saveInsults(String insult) {
-        save(SYSTEM_Insults, insult, SETTINGS_INSULTS);
+        save(Arr_Insults_Sys, insult, SETTINGS_INSULTS);
     }
 
     public void saveBless(String bless) {
-        save(SYSTEM_Blesses, bless, SETTINGS_BLESSES);
+        save(Arr_Blesses_Sys, bless, SETTINGS_BLESSES);
     }
 
 
     public String getRandomInsult() {
-        if (SYSTEM_Insults != null && !SYSTEM_Insults.isEmpty())
-            return SYSTEM_Insults.get(Functions.throwRandom(SYSTEM_Insults.size(), 0));
+        if (Arr_Insults_Sys != null && !Arr_Insults_Sys.isEmpty())
+            return Arr_Insults_Sys.get(Functions.throwRandom(Arr_Insults_Sys.size(), 0));
         return "";
     }
 
     public String getRandomBless() {
-        if (SYSTEM_Blesses != null && !SYSTEM_Blesses.isEmpty())
-            return SYSTEM_Blesses.get(Functions.throwRandom(SYSTEM_Blesses.size(), 0));
+        if (Arr_Blesses_Sys != null && !Arr_Blesses_Sys.isEmpty())
+            return Arr_Blesses_Sys.get(Functions.throwRandom(Arr_Blesses_Sys.size(), 0));
         return "";
     }
 
@@ -282,7 +333,7 @@ public class BuggerService extends Service {
     public void unTrip() {
         mIsTrip = false;
         if (currentTimeAction instanceof DayActions) {
-            ((DayActions) currentTimeAction).unTrip(this);
+            ((DayActions) currentTimeAction).unTrip();
         }
     }
 
@@ -319,5 +370,47 @@ public class BuggerService extends Service {
     public boolean shouldIBeNice() {
         return getRelationsStatus().getProbabilityNumber() + throwRandomProb() >= 0.5;
     }
+/*
+    public void createLogger() {
+        Arr_Logger_Sys = new ArrayList<>();
+        pushEventToLogger("I was born" + LOG_SEPARATOR + "+");
+    }
+*/
+    private void pushEventToLogger(String event) {
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+        save(Arr_Logger_Sys, now + LOG_SEPARATOR + event, SETTING_LOG);
+    }
+
+    public int getLastActionsGrade() {
+        int iters =0;
+        int counter = 0;
+        for (int i = Arr_Logger_Sys.size()-1; i >= 0; i--) {
+            String[] event = Arr_Logger_Sys.get(i).split(LOG_SEPARATOR);
+            counter += Integer.parseInt(event[2]);
+            iters++;
+            if(iters == 3){
+                break;
+            }
+        }
+        return counter;
+    }
+
+    public Mood changeMood(){
+        int lastActions = BuggerService.getInstance().getLastActionsGrade();
+        int total = getBatteryLevel(this).getValue()  + getBatteryTemperature(this).getValue()
+                + BuggerService.getInstance().getRelationsStatus().getGradeFactor() + lastActions;
+
+            total +=getReceptionLevel(this).getValue();
+
+//        int total = getBatteryLevel(this).getValue() + getReceptionLevel(this).getValue() + getBatteryTemperature(this).getValue()
+  //              + BuggerService.getInstance().getRelationsStatus().getGradeFactor() + lastActions;
+        return MoodFactory.getMoodStatus(total,lastActions);
+    }
+
+    public Mood getMood(){
+        return currentMood;
+    }
+
 }
 

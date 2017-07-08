@@ -10,12 +10,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-//import android.icu.util.Calendar;
-import java.util.Calendar;
-
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -37,6 +35,8 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
+import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.services.OverlyService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,9 +44,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Random;
-
+import java.util.Set;
 
 import static android.content.Context.BATTERY_SERVICE;
 import static com.shalom.itai.theservantexperience.services.DayActions.SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
@@ -57,7 +58,10 @@ import static com.shalom.itai.theservantexperience.services.DayActions.allInsult
 import static com.shalom.itai.theservantexperience.services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
 import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
+
+//import android.icu.util.Calendar;
 
 /**
  * Created by Itai on 11/04/2017.
@@ -309,6 +313,25 @@ public class Functions {
         return true;
     }
 
+
+    public static void writeToSettings(String settingString, Object data,Context context) {
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        if (data instanceof Integer) {
+            editor.putInt(settingString, (int) data);
+        } else if (data instanceof Float) {
+            editor.putFloat(settingString, (float) data);
+        } else if (data instanceof String) {
+            editor.putString(settingString, (String) data);
+        } else if (data instanceof Boolean) {
+            editor.putBoolean(settingString, (Boolean) data);
+        } else if (data instanceof Set) {
+            editor.putStringSet(settingString, (Set) data);
+        }
+
+        editor.commit();
+    }
+
     private static float getBatteryLevelLowerSdk(Context context) {
         Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
@@ -322,7 +345,41 @@ public class Functions {
         return ((float)level / (float)scale) * 100.0f;
     }
 
-    public static int getBatteryLevel(Context context) {
+    public static Constants.Status getBatteryTemperature(Context context) {
+        Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        float  num   = ((float) intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0)) / 10;
+
+        if (num < 10)
+            return Constants.Status.Bad;
+        else if (num < 15 && num >= 10)
+            return Constants.Status.OK;
+        else if (num < 25 && num >= 15)
+            return Constants.Status.Good;
+        else if (num < 35 && num >= 25)
+            return Constants.Status.Excellent;
+        else if (num < 45 && num >= 35)
+            return Constants.Status.Fine;
+        else if (num < 55 && num >= 45)
+            return Constants.Status.OK;
+        return Constants.Status.Bad; //(num >= 55)
+    }
+
+    public static void startOverlay(Context context){
+      //  if ( BuggerService.startOverly ){
+            Intent svc = new Intent(context, OverlyService.class);
+            context.startService(svc);
+      //  }
+    }
+
+    public static void stopOverlay(Context context){
+       // if ( BuggerService.startOverly ){
+            Intent myService = new Intent(context, OverlyService.class);
+            context.stopService(myService);
+       // }
+    }
+
+
+    public static Constants.Status getBatteryLevel(Context context) {
         BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
         int num ;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -331,24 +388,25 @@ public class Functions {
             num = (int)getBatteryLevelLowerSdk(context);
         }
         if (num >= 90)
-            return 5;
+            return Constants.Status.Excellent;
         else if (num < 90 && num >= 75)
-            return 4;
+            return Constants.Status.Awesome;
         else if (num < 75 && num >= 50)
-            return 3;
+            return Constants.Status.Good;
         else if (num < 50 && num >= 25)
-            return 2;
+            return Constants.Status.Fine;
         else if (num < 25 && num >= 10)
-            return 1;
-        return 0; //num < 10
+            return Constants.Status.OK;
+        return Constants.Status.Bad;
     }
 
-    public static int getReceptionLevel(Context context) {
+    public static Constants.Status getReceptionLevel(Context context) {
         WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int numberOfLevels = 6;
         if (mWifiManager.isWifiEnabled()) {
             int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
-           return WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
+            return Constants.Status.values()[WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels)];
+       //    return WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
         }
         int num = -1000;
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -368,16 +426,16 @@ public class Functions {
             num = cellSignalStrengthCDMA.getDbm();
         }
         if (num >= -70)
-            return 5;
+            return Constants.Status.Excellent;
         else if (num < -70 && num >= -85)
-            return 4;
+            return Constants.Status.Awesome;
         else if (num < -86 && num >= -100)
-            return 3;
+            return Constants.Status.Good;
         else if (num < -100 && num >= -110)
-            return 2;
+            return Constants.Status.Fine;
         else if (num < -100 && num >= -110)
-            return 1;
-        return 0; //num < -110
+            return Constants.Status.OK;
+        return Constants.Status.Bad; //num < -110
     }
 
     public static boolean allowToChangeFromChat() {

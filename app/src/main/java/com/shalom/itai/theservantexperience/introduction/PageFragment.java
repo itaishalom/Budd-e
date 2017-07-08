@@ -13,8 +13,12 @@ import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.activities.PermissionActivity;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import pl.droidsonroids.gif.GifImageView;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_TUTORIAL_DONE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -111,7 +115,8 @@ public class PageFragment extends android.support.v4.app.Fragment {
         Button button = (Button) view.findViewById(R.id.ok_got_it);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent returnIntent = new Intent(activity, MainActivity.class);
+                Functions.writeToSettings(SETTINGS_IS_TUTORIAL_DONE,true,getContext());//(String settingString, Object data,Context context)
+                Intent returnIntent = new Intent(activity, PermissionActivity.class);
                 returnIntent.putExtra("tutorial_done", true);
                 startActivity(returnIntent);
                 activity.finish();

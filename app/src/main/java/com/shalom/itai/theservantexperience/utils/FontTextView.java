@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 /**
  * Created by Itai on 16/06/2017.
+ * This is a FontTextView for my introduction App
  */
-
 public class FontTextView extends TextView {
     public FontTextView(Context context) {
         super(context);
@@ -26,13 +26,16 @@ public class FontTextView extends TextView {
         setFont();
     }
 
-    public FontTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FontTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
+                        int defStyleRes) {
         super( context,  attrs, defStyleAttr);
         setFont();
     }
     private void setFont(){
-        Typeface face= Typeface.createFromAsset(getContext().getAssets(), "fonts/Oswald-Regular.ttf");
+        Typeface face= Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/Oswald-Regular.ttf");
         this.setTypeface(face);
     }
-
 }
+
+

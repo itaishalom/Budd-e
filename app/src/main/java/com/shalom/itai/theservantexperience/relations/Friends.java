@@ -10,14 +10,15 @@ class Friends extends RelationsStatus {
     private static Friends instance;
     private Friends(){
         probabilityNumber = 0.2;
-        maxValProgress = 30;
+        maxValProgress = 60;
+        minValProgress = 40;
         RESPONSE_NUMBER = 2;
+        mGradeFactor = 4;
         iconId = R.drawable.rel_friend;
         this.relationStatus ="Friends";
     }
     public static RelationsStatus getInstance(){
-        if(instance==null)
-        {
+        if(instance==null) {
             instance= new Friends();
         }
         return instance;
