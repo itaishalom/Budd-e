@@ -236,7 +236,6 @@ public class FunActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        BuggerService.isMainActivityUp = false;
     }
 
     public void onBackPressed() {

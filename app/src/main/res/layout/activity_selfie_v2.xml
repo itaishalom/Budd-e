@@ -34,8 +34,7 @@
             android:id="@+id/jon_in_slefie"
             android:layout_width="192dp"
             android:visibility="invisible"
-            android:layout_height="313dp"
-            app:srcCompat="@drawable/jon_png" />
+            android:layout_height="313dp" />
 
     </FrameLayout>
 </LinearLayout>

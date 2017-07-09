@@ -22,7 +22,9 @@ import com.shalom.itai.theservantexperience.activities.SpeechRecognitionActivity
 import com.shalom.itai.theservantexperience.activities.TripActivity;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.moods.Mood;
 import com.shalom.itai.theservantexperience.utils.ClientActivity;
+import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     private static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{FunActivity.class,BoardActivity.class ,MatchesGameActivity.class,IncomingCallActivity.class ,FunActivity.class,SelfieV2.class,ClientActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{IncomingCallActivity.class, FunActivity.class,BoardActivity.class ,MatchesGameActivity.class, FunActivity.class,SelfieV2.class,ClientActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;
@@ -61,10 +63,11 @@ public class DayActions extends Actions {
     private static Timer timerTrip;
     private static Timer moodTimer;
 
+
     private static DayActions instance = null;
 
     private DayActions(Context context,int icon_id){
-        super(context,"Jon is here","Thinking about something..");
+        super(context, Constants.ENTITY_NAME+" is here","Thinking about something..");
         Calendar c = Calendar.getInstance();
         SYSTEM_CURRENT_NUM_OF_CHATS_POINTS=0;
         SYSTEM_oldDay = c.get(Calendar.DAY_OF_YEAR);
@@ -74,6 +77,8 @@ public class DayActions extends Actions {
         mNotification_icon = icon_id;
         IS_AWAKE = false;
     }
+
+
 
     public static Actions start(Context context, int icon_id) {
         if(instance==null){
@@ -176,7 +181,7 @@ public class DayActions extends Actions {
             public void onClick(View v) {
                 activity.startActivity(new Intent(activity,
                         ChatActivity.class).putExtra(CHAT_START_MESSAGE,
-                        "Jon is here"));
+                        Constants.ENTITY_NAME+" is here"));
                // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                 activity.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
             }
@@ -194,7 +199,7 @@ public class DayActions extends Actions {
             public void onClick(View v) {
                 activity.startActivity(new Intent(activity,
                         ChatActivity.class).putExtra(CHAT_START_MESSAGE,
-                        "Jon is here"));
+                        Constants.ENTITY_NAME+" is here"));
                 // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                 activity.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
             }

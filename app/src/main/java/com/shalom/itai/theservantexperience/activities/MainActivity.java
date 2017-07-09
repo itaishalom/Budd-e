@@ -90,7 +90,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private static final String TAG = "MainActivity";
     private static final int REQUESTS = 100;
 
-    private boolean isSleeping = false;
     //    public static MainActivity thisActivity;
     private ConstraintLayout mainLayout;
     private GifImageView gifImageView;
@@ -166,8 +165,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                     takeScreenshot(MainActivity.this, "I was born");
                     BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
                 }
-
-            //TODO CHANGE THIS
             }
         });
      //   signalStrength = (TextView) findViewById(R.id.reception_status_ind);
@@ -229,7 +226,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         Toast.makeText(MainActivity.this, "Morning!",
                 Toast.LENGTH_SHORT).show();
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
-        isSleeping = !isSleeping;
     }
 
 
@@ -310,7 +306,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             ContentValues values = new ContentValues();
             Calendar cal = Calendar.getInstance();
             values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
-            values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
+            values.put(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
             values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
             //  TimeZone timeZone = TimeZone.getDefault();
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC/GMT +2:00");
@@ -353,7 +349,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis() + 60 * 60 * 1000);
         intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
-        intent.putExtra(CalendarContract.Events.TITLE, "Jon's birthday!");
+        intent.putExtra(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
         Toast.makeText(getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
         setAlarm();
         startActivity(intent);
@@ -381,8 +377,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     protected void onPause() {
         super.onPause();
        // startOverlay(this);
-
-        BuggerService.isMainActivityUp = false;
     }
 
     @Override
@@ -438,7 +432,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         if (intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
             BuggerService.getInstance().setNotif();
         }
-        BuggerService.isMainActivityUp = true;
         invalidateOptionsMenu();
         if (readyToInvalidate && BuggerService.getIsServiceUP()) {
             invalidateRelationsData();
@@ -455,7 +448,6 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     private void forceWakeUp() {
         BuggerService.getInstance().wakeUpJon();
-        isSleeping = false;
         List<String> legendList = new ArrayList<>();
         legendList.add("Put hear plugs and go back to bad");
         legendList.add("Stay awake");

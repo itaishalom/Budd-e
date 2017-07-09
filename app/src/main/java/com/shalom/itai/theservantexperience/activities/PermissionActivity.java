@@ -127,9 +127,9 @@ public class PermissionActivity extends AppCompatActivity {
     public void createShortcut() {
         Intent intentShortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
         intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-        Parcelable appicon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.drawable.jon_png);
+        Parcelable appicon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.drawable.budde_face);
         intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, appicon);
-        intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), MainActivity.class));
+        intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), Main2Activity.class));
         intentShortcut.putExtra("duplicate", false);
         sendBroadcast(intentShortcut);
     }

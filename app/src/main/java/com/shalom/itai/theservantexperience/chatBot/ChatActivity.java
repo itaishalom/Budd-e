@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toolbar;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
@@ -251,7 +252,7 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                             }
                             if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
                                 sendChatMessage(false,false,finalAnswer);
-                                Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+                                Intent intent = new Intent(ChatActivity.this, Main2Activity.class);
                                 //intent.putExtra("sleep",true); //TODO change sleep call to bugger
                                 BuggerService.getInstance().sendJonToSleep();
                                 startActivity(intent);

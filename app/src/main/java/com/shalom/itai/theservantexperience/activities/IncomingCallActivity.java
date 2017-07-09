@@ -3,6 +3,8 @@ package com.shalom.itai.theservantexperience.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Vibrator;
@@ -16,8 +18,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import pl.droidsonroids.gif.GifImageView;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_WINS;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -25,7 +30,7 @@ import pl.droidsonroids.gif.GifImageView;
  */
 public class IncomingCallActivity extends AppCompatActivity {
 
-    private Ringtone mRingtone;
+   private MediaPlayer mMediaPlayer;
     private Vibrator mViber;
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -111,8 +116,16 @@ public class IncomingCallActivity extends AppCompatActivity {
         GifImageView image = (GifImageView) findViewById(R.id.fullscreen_content);
         image.setImageResource(R.drawable.jon_blinks);
 
-        mRingtone = RingtoneManager.getRingtone(this, Settings.System.DEFAULT_RINGTONE_URI);
-        mRingtone.play();
+
+        mMediaPlayer = MediaPlayer.create(this, R.raw.ring_ready);
+        mMediaPlayer.setLooping(true);
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+        mMediaPlayer.start();
+
+
+   //     mMediaPlayer = RingtoneManager.getRingtone(this, Settings.System.DEFAULT_RINGTONE_URI);
+     //   mMediaPlayer.play();
         mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {0, 100, 1000, 300, 200, 100, 500, 200, 100};
 
@@ -123,7 +136,7 @@ public class IncomingCallActivity extends AppCompatActivity {
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRingtone.stop();
+                mMediaPlayer.stop();
                 mViber.cancel();
                 startActivity(new Intent(IncomingCallActivity.this,MainActivity.class));
                 finish();
@@ -133,7 +146,7 @@ public class IncomingCallActivity extends AppCompatActivity {
         deny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRingtone.stop();
+                mMediaPlayer.stop();
                 mViber.cancel();
                 finish();
             }

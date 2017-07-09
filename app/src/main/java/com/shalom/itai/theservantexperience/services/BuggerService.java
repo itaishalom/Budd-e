@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.moods.Mood;
@@ -54,7 +55,6 @@ public class BuggerService extends Service {
     private static final String TAG = BuggerService.class.getSimpleName();
     private static boolean mIsTrip = false;
     private static boolean isServiceUP = false;
-    public static boolean isMainActivityUp = false;
     public static boolean isFunActivityUp = false;
     public static boolean isLoginUp = false;
     private double latDistanceToDest = 0;
@@ -130,7 +130,7 @@ public class BuggerService extends Service {
         isServiceUP = true;
         if (intent != null) {
             if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
-                Intent startMainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                Intent startMainActivity = new Intent(getApplicationContext(), Main2Activity.class);
                 startActivity(startMainActivity);
                 mStartId = startId;
             } else if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_TUT, false)) {
@@ -167,7 +167,7 @@ public class BuggerService extends Service {
             Mood oldMood = currentMood;
             currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
 
-            currentMood= getInstance().changeMood();
+            currentMood = getInstance().changeMood();
 
             if (oldStatus != currentRelationsStatus) {
                 Log.d(TAG, "setSYSTEM_GlobalPoints: Changed status");
@@ -190,7 +190,7 @@ public class BuggerService extends Service {
 
 
     public void writeToSettings(String settingString, Object data) {
-        Functions.writeToSettings(settingString,data,this);
+        Functions.writeToSettings(settingString, data, this);
     }
 
 
@@ -240,7 +240,7 @@ public class BuggerService extends Service {
     }
 
     private void save(ArrayList<String> arr, String query, String SETTING) {
-        query = query.replaceAll("(?i)jon", USER_NAME);
+        query = query.replaceAll("(?i)" + Constants.ENTITY_NAME, USER_NAME);
         if (!arr.contains(query)) {
             arr.add(query);
         }
@@ -272,6 +272,7 @@ public class BuggerService extends Service {
 
     @Override
     public boolean stopService(Intent name) {
+        isServiceUP = false;
         currentTimeAction.StopTimers(this);
         stopSelf(mStartId);
         return super.stopService(name);
@@ -361,12 +362,13 @@ public class BuggerService extends Service {
     public boolean shouldIBeNice() {
         return getRelationsStatus().getProbabilityNumber() + throwRandomProb() >= 0.5;
     }
-/*
-    public void createLogger() {
-        Arr_Logger_Sys = new ArrayList<>();
-        pushEventToLogger("I was born" + LOG_SEPARATOR + "+");
-    }
-*/
+
+    /*
+        public void createLogger() {
+            Arr_Logger_Sys = new ArrayList<>();
+            pushEventToLogger("I was born" + LOG_SEPARATOR + "+");
+        }
+    */
     private void pushEventToLogger(String event) {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
@@ -374,32 +376,34 @@ public class BuggerService extends Service {
     }
 
     public int getLastActionsGrade() {
-        int iters =0;
+        int iters = 0;
         int counter = 0;
-        for (int i = Arr_Logger_Sys.size()-1; i >= 0; i--) {
+        for (int i = Arr_Logger_Sys.size() - 1; i >= 0; i--) {
             String[] event = Arr_Logger_Sys.get(i).split(LOG_SEPARATOR);
             counter += Integer.parseInt(event[2]);
             iters++;
-            if(iters == 3){
+            if (iters == 3) {
                 break;
             }
         }
         return counter;
     }
 
-    public Mood changeMood(){
+    public Mood changeMood() {
         int lastActions = BuggerService.getInstance().getLastActionsGrade();
-        int total = getBatteryLevel(this).getValue()  + getBatteryTemperature(this).getValue()
+        int total = getBatteryLevel(this).getValue() + getBatteryTemperature(this).getValue()
                 + BuggerService.getInstance().getRelationsStatus().getGradeFactor() + lastActions;
-
-            total +=getReceptionLevel(this).getValue();
-
+        try {
+            total += getReceptionLevel(this).getValue();
+        } catch (Exception e) {
+            return MoodFactory.getMoodStatus(total, lastActions);
+        }
 //        int total = getBatteryLevel(this).getValue() + getReceptionLevel(this).getValue() + getBatteryTemperature(this).getValue()
-  //              + BuggerService.getInstance().getRelationsStatus().getGradeFactor() + lastActions;
-        return MoodFactory.getMoodStatus(total,lastActions);
+        //              + BuggerService.getInstance().getRelationsStatus().getGradeFactor() + lastActions;
+        return MoodFactory.getMoodStatus(total, lastActions);
     }
 
-    public Mood getMood(){
+    public Mood getMood() {
         return currentMood;
     }
 

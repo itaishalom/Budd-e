@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Constants;
 
 /**
  * Created by Itai on 13/04/2017.
@@ -14,7 +15,7 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 public class ServiceStarterOnBoot extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "JON WAKE UP!", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, Constants.ENTITY_NAME+" WAKE UP!", Toast.LENGTH_LONG).show();
         Intent service = new Intent(context, BuggerService.class);
         context.startService(service);
     }

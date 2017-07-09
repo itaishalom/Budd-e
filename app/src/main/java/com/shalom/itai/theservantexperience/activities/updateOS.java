@@ -187,6 +187,7 @@ public class updateOS extends AppCompatActivity {
         });
         myVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
+                Functions.writeToSettings(SETTINGS_IS_ASLEEP, false,getApplicationContext());
                 Functions.writeToSettings(SETTINGS_IS_OPEN_VIDEO_DONE, true, getApplicationContext());//(String settingString, Object data,Context context)
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 startActivity(new Intent(getApplicationContext(), TutorialActivity.class));

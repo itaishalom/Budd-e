@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -31,8 +32,11 @@ import org.apache.logging.log4j.core.config.plugins.validation.Constraint;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.FULL_INT_ALPHA;
+import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_OPEN_VIDEO_DONE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_LOOSE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_WINS;
@@ -51,6 +55,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     private ConstraintLayout relationsLayout;
     private ConstraintLayout moodLayout;
     private ConstraintLayout gameWinsLayout;
+    protected ConstraintLayout mainLayout;
     View[] arr;
     Window mWindow;
     protected BroadcastReceiver mReceiver;
@@ -68,6 +73,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         //   RL.setBackgroundColor(Color.parseColor("#01ff90"));
         refreshLayout();
         mOptionsId = optionsId;
+        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
         //    layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);//0xf6b478);
@@ -128,7 +134,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(mOptionsId, menu);
         for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).getIcon().setAlpha(128);
+            menu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
         }
         barMenu = menu;
         // MenuItem te = menu.findItem(R.id.action_favorite);
@@ -150,16 +156,16 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean isTurnedOn;// = false;
 
-        if (item.getIcon().getAlpha() == 255) {
-            item.getIcon().setAlpha(128);
+        if (item.getIcon().getAlpha() == FULL_INT_ALPHA) {
+            item.getIcon().setAlpha(HALF_INT_ALPHA);
             isTurnedOn = false;
         } else {
-            item.getIcon().setAlpha(255);
+            item.getIcon().setAlpha(FULL_INT_ALPHA);
             isTurnedOn = true;
         }
         for (int i = 0; i < barMenu.size(); i++) {
             if(item != barMenu.getItem(i))
-                barMenu.getItem(i).getIcon().setAlpha(128);
+                barMenu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
         }
         switch (item.getItemId()) {
             case R.id.action_mood:
@@ -255,72 +261,6 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
 
     protected void invalidateGameStatus(int wins, int loose) {}
 
-    /*
-        private void verification(){
-            if(arr !=null){
-                if(relationsLayout.getVisibility() == View.VISIBLE || moodLayout.getVisibility() == View.VISIBLE ) {
-                    for (View anArr : arr) {
-                        anArr.setVisibility(View.INVISIBLE);
-                    }
-                }
-                else{
-                    for (View anArr : arr) {
-                        anArr.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        }
-    */
-/*
-    void invalidateStatusParam() {
-        ((TextView) findViewById(R.id.reception_status_ind)).setText((getReceptionLevel(this).name()) );
-        ((TextView) findViewById(R.id.battery_status_ind)).setText((getBatteryLevel(this).name()) );
-        ((TextView) findViewById(R.id.temperature_status_ind)).setText((getBatteryTemperature(this).name()) );
-    }
-
-
-    void invalidateRelationsData() {
-        RelationsStatus status = BuggerService.getInstance().getRelationsStatus();
-        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBarRelations);
-        pb.setMax(status.getMaxValProgress()- status.getMinValProgress());
-        pb.setProgress(BuggerService.getSYSTEM_GlobalPoints() - status.getMinValProgress());
-        TextView friendshipLevel = (TextView) findViewById(R.id.friendship_level_ind);
-        friendshipLevel.setText(status.getRelationStatus());
-    }
-*/
-
-    public void refreshLayout2() {
-
-
-        if (layout == null) {
-            layout = (ConstraintLayout) findViewById(R.id.main_layout);
-            mWindow = getWindow();
-        }
-        mWindow.getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mWindow.setStatusBarColor((Angry.getInstance().getTopBackgroundColor()));
-        }
-
-        layout.setBackgroundResource(Angry.getInstance().getBackground());
-    }
-
-    public void refreshLayout3() {
-        if (layout == null) {
-            layout = (ConstraintLayout) findViewById(R.id.main_layout);
-            mWindow = getWindow();
-        }
-        mWindow.getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mWindow.setStatusBarColor((Board.getInstance().getTopBackgroundColor()));
-        }
-
-        layout.setBackgroundResource(Board.getInstance().getBackground());
-    }
-
 
     public void refreshLayout() {
         if (layout == null) {
@@ -331,13 +271,23 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         mWindow.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mWindow.setStatusBarColor((BuggerService.getInstance().getMood().getTopBackgroundColor()));
-        }
-        if(mGifImageView !=null)//Optional
-            mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
-        layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+        if(preferences.getBoolean(SETTINGS_IS_ASLEEP, false)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mWindow.setStatusBarColor(Color.BLACK);
+            }
+            if(mGifImageView !=null)//Optional
+                mGifImageView.setImageResource(R.drawable.jon_sleeping);     //TODO SLEEPING GIF
+            layout.setBackgroundResource(R.drawable.sleeping_background);
+        }else {
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mWindow.setStatusBarColor(BuggerService.getInstance().getMood().getTopBackgroundColor());
+            }
+            if (mGifImageView != null)//Optional
+                mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
+            layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+        }
     }
 
     @Override

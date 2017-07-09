@@ -58,7 +58,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
 
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         jonPng = ((ImageView) findViewById(R.id.jon_in_slefie));
-
+        jonPng.setImageResource(BuggerService.getInstance().getMood().getPng());
         surfaceHolder.addCallback(surfaceView);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 

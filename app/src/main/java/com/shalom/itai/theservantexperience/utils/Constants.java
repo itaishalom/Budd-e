@@ -73,7 +73,9 @@ public class Constants {
     public static final String MOOD_CHANGE_BROADCAST = "android.intent.action.MoodChanged";
     public static final int INITIAL_POINTS = 20;
     public static String Directory ;
-    
+
+    public static final int FULL_INT_ALPHA = 255;
+    public static final int HALF_INT_ALPHA = 128;
     ////SETTINGS:
     public static final String SETTINGS_POINTS = "GLOBAL_POINTS";
     public static final String SETTINGS_NAME = "SETTINGS_NAME";

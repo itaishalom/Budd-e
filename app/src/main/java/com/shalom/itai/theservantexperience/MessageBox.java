@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
 
@@ -48,7 +49,7 @@ public class MessageBox extends Activity {
                    // tx.setText("");
                 }
                 else{
-                    chatIntent = new Intent(MessageBox.this, MainActivity.class);
+                    chatIntent = new Intent(MessageBox.this, Main2Activity.class);
 
                     chatIntent.putExtra("wakeUpOptions",true);
                 }

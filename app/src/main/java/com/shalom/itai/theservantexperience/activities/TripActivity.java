@@ -41,6 +41,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import org.json.JSONArray;
@@ -68,7 +69,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isRestarted = false;
     private String locationName;
     private static final String TAG = "TripActivity";
-    private String[] JonIs = new String[]{"Jon is looking around..", "Jon enjoys the breeze", "Jon collecting flowers"};
+    private String[] JonIs = new String[]{Constants.ENTITY_NAME+" is looking around..", Constants.ENTITY_NAME+" enjoys the breeze", Constants.ENTITY_NAME+" collecting flowers"};
     /**
      * Provides the entry point to Google Play services.
      */
@@ -327,7 +328,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                         .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                         .build();                   // Creates a CameraPosition from the builder
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                mMap.addMarker(new MarkerOptions().position(target).title("Jon wants to visit"));
+                mMap.addMarker(new MarkerOptions().position(target).title(Constants.ENTITY_NAME+" wants to visit"));
             }
         }
     }
@@ -433,7 +434,7 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
                     double lat = location.optDouble("lat");
                     double lng = location.optDouble("lng");
                     LatLng whereAreWe = new LatLng(lat, lng);
-                    mMap.addMarker(new MarkerOptions().position(whereAreWe).title("Jon wants to visit"));
+                    mMap.addMarker(new MarkerOptions().position(whereAreWe).title(Constants.ENTITY_NAME+" wants to visit"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(whereAreWe));
                     //   mMap.animateCamera(CameraUpdateFactory.zoomIn());
                     //     mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);

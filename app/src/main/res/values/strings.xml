@@ -1,16 +1,16 @@
 <resources>
-    <string name="app_name">"Jon"</string>
+    <string name="app_name">"Budd-e"</string>
 
     <string name="title_activity_update">updateActivity</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_update_os">Android Update</string>
-    <string name="service_name">Jon</string>
+    <string name="service_name">Budd-e</string>
     <string name="title_activity_login">I hate you!</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">User</string>
-    <string name="prompt_password">Dear jon, your humor is very funney, I am.... (sorry)</string>
+    <string name="prompt_password">Dear Budd-e, your humor is very funny, I am.... (sorry)</string>
     <string name="action_sign_in">Say sorry?</string>
     <string name="action_sign_in_short">I hate you! I am Locked</string>
     <string name="error_invalid_email">This email address is invalid</string>
@@ -22,14 +22,14 @@
     </string>
     <string name="action_settings">settings</string>
     <string name="action_favorite">favorite</string>
-    <string name="alert_dialog_Wake_up_buttons_title">Wake up Jon?</string>
+    <string name="alert_dialog_Wake_up_buttons_title">Wake up Budd-e?</string>
     <string name="alert_dialog_Permission_Request">Permission required</string>
     <string name="alert_dialog_Confirm">Are you sure?</string>
     <string name="alert_dialog_Game">Want to play a game?</string>
     <string name="alert_dialog_Trip_buttons_title">Can we go to </string>
     <string name="alert_dialog_Selfie_buttons_title">Can we do selfie?</string>
     <string name="alert_dialog_cancel">Shhhh…</string>
-    <string name="alert_dialog_ok">Wake up Jon!</string>
+    <string name="alert_dialog_ok">Wake up Budd-e!</string>
     <string name="title_activity_trip">Map</string>
     <string name="title_activity_selfie">SelfieActivity</string>
     <string name="send_to">Share..</string>
@@ -50,7 +50,7 @@
     <string name="user_wins">Games won</string>
     <string name="friendship_progress">Friendship progress</string>
     <string name="user_looses">Games lost</string>
-    <string name="hello_i_m_jon">Hello, I\'m Jon!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
+    <string name="hello_i_m_jon">Hello, I\'m Budd-e!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
     <string name="this_is_how_we_can_chat">This is how we can chat</string>
     <string name="title_activity_incoming_call">IncomingCallActivity</string>
     <string name="dummy_button">Dummy Button</string>

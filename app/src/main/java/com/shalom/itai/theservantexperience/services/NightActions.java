@@ -12,6 +12,7 @@ import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import pl.droidsonroids.gif.GifImageView;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.utils.Constants;
 
 import java.util.Timer;
 
@@ -29,13 +30,13 @@ public class NightActions extends Actions {
         if(instance == null){
             instance = new NightActions(context,notif_icon);
         }
-        instance.StartTimers(context);
+    //    instance.StartTimers(context);
        // instance.addNotification("Jon is sleeping","shh....");
         return instance;
     }
 
     private NightActions(Context context,int icon_id){
-        super(context,"Jon is sleeping","shh....");
+        super(context, Constants.ENTITY_NAME+" is sleeping","shh....");
         mNotification_id = 1;
         mNotification_icon = icon_id;
         IS_AWAKE = false;

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.utils.Constants;
@@ -52,7 +53,7 @@ abstract class Actions {
                         .setOngoing(true)
                         .setAutoCancel(false);
 // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(context, MainActivity.class);
+        Intent resultIntent = new Intent(context, Main2Activity.class);
         resultIntent.putExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, true);
 // The stack builder object will contain an artificial back stack for the
 // started Activity.

@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 
 public class OverlyService extends Service implements OnTouchListener, OnClickListener {
@@ -57,7 +58,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         //overlayedButton.setImageResource(R.drawable.jon_png);
         //ResourcesCompat.getDrawable(getResources(), R.drawable.name, null);
 
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.jon_png,null);
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), BuggerService.getInstance().getMood().getPng(),null);
         drawable.setBounds(0, 0, (int)(drawable.getIntrinsicWidth()*0.5),
                 (int)(drawable.getIntrinsicHeight()*0.5));
 /*
@@ -161,7 +162,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
 
     @Override
     public void onClick(View v) {
-        startActivity(new Intent(this, MainActivity.class).putExtra("STOP_OVERLAY",true));
+        startActivity(new Intent(this, Main2Activity.class));
 
 
         //overlayedButton.setVisibility(View.INVISIBLE);

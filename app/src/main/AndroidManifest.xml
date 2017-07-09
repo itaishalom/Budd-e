@@ -59,7 +59,7 @@
     <application
         android:allowBackup="true"
         android:logo="@drawable/title"
-        android:icon="@drawable/jon_png"
+        android:icon="@drawable/budde_face"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"

@@ -1,6 +1,8 @@
 package com.shalom.itai.theservantexperience.utils;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
@@ -12,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -22,7 +25,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.CalendarContract;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
@@ -30,9 +35,12 @@ import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.services.BuggerService;
@@ -48,6 +56,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static android.content.Context.BATTERY_SERVICE;
 import static com.shalom.itai.theservantexperience.services.DayActions.SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;
@@ -57,8 +66,11 @@ import static com.shalom.itai.theservantexperience.services.DayActions.allFacts;
 import static com.shalom.itai.theservantexperience.services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
 
 //import android.icu.util.Calendar;
@@ -68,6 +80,135 @@ import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory
  */
 
 public class Functions {
+
+    public static class oneTimeFunctions{
+        public static void setUserName(AppCompatActivity activity,String TAG) {
+            if (!USER_NAME.isEmpty()) {
+                return;
+            }
+            Cursor c = null;
+            try {
+                c = activity.getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+                if (c == null) {
+                    throw new Exception("cursor null");
+                }
+                c.moveToFirst();
+                String name = (c.getString(c.getColumnIndex("display_name")));
+                if (name != null && !name.isEmpty()) {
+                    USER_NAME = name;
+                } else {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "setUserName: failed getting user name with cursor.. trying from mail");
+                String name = getPrimaryEmail(activity);
+                if (!name.isEmpty()) {
+                    USER_NAME = name;
+                } else {
+                    Log.d(TAG, "setUserName: failed getting user name from mail");
+                    // TODO ASK FOR NAME
+                }
+            } finally {
+                if (c != null)
+                    c.close();
+                if (USER_NAME != null && !USER_NAME.isEmpty()) {
+                    BuggerService.getInstance().writeToSettings(SETTINGS_NAME, USER_NAME);
+                }
+            }
+        }
+
+        public static String getPrimaryEmail(AppCompatActivity activity) {
+            try {
+                AccountManager accountManager = AccountManager.get(activity);
+                if (accountManager == null)
+                    return "";
+                Account[] accounts = accountManager.getAccounts();
+                Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+                for (Account account : accounts) {
+                    // make sure account.name is an email address before adding to the list
+                    if (emailPattern.matcher(account.name).matches()) {
+
+                        return account.name.split("@")[0].replaceAll("\\P{L}", " ").trim();
+                    }
+                }
+                return "";
+            } catch (SecurityException e) {
+                // exception will occur if app doesn't have GET_ACCOUNTS permission
+                return "";
+            }
+        }
+
+        /**
+         * Sets alarm to one hour from now......
+         */
+        public static void setAlarm(AppCompatActivity activity) {
+            AlarmManager am = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(activity, MyScheduledReceiver.class);
+            i.putExtra("BirthDay", true);
+            PendingIntent pi = PendingIntent.getBroadcast(activity, 0, i, 0);
+            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (60 * 60 * 1000), pi); // Millisec * Second * Minute
+        }
+
+        /**
+         * This Adds to Jon's birthday to the user's calendar
+         */
+        public static void addCalendarMeeting(final AppCompatActivity activity) {
+
+            try {
+                ContentResolver cr = activity.getContentResolver();
+                ContentValues values = new ContentValues();
+                Calendar cal = Calendar.getInstance();
+                values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
+                values.put(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
+                values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
+                //  TimeZone timeZone = TimeZone.getDefault();
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC/GMT +2:00");
+                // default calendar
+                values.put(CalendarContract.Events.CALENDAR_ID, 1);
+                values.put(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+                values.put("hasAlarm", 1);
+                values.put(CalendarContract.Events.DURATION, "+P1H");
+                values.put(CalendarContract.Events.HAS_ALARM, 1);
+                if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                    //   ActivityCompat.requestPermissions(this, permissions, REQUESTS);
+                    return;
+                }
+                Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+                if (uri == null) {
+                    secondTryCalendar(activity);
+                }
+                setAlarm(activity);
+                Toast.makeText(activity.getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+                Intent LaunchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.google.android.calendar");
+                activity.startActivity(LaunchIntent);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.finish();
+                        Intent intent = new Intent(BuggerService.getInstance(), Main2Activity.class).putExtra(DONE_CALENDAR, true);
+                        activity.startActivity(intent);
+                    }
+                }, 4000);
+            } catch (Exception e) {
+                secondTryCalendar(activity);
+            }
+        }
+
+        public static void secondTryCalendar(AppCompatActivity activity) {
+            Calendar cal = Calendar.getInstance();
+            Intent intent = new Intent(Intent.ACTION_EDIT);
+            intent.setType("vnd.android.cursor.item/event");
+            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis() + 60 * 60 * 1000);
+            intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
+            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
+            intent.putExtra(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
+            Toast.makeText(activity.getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
+            setAlarm(activity);
+            activity.startActivity(intent);
+        }
+    }
+
 
     public static void createJokes() {
         String facts = "If you have 3 quarters, 4 dimes, and 4 pennies, you have $1.19. You also have the largest amount of money in coins without being able to make change for a dollar. ++ ++The numbers '172' can be found on the back of the U.S. $5 dollar bill in the bushes at the base of the Lincoln Memorial. ++ ++President Kennedy was the fastest random speaker in the world with upwards of 350 words per minute. ++ ++In the average lifetime, a person will walk the equivalent of 5 times around the equator. ++ ++Odontophobia is the fear of teeth. ++ ++The 57 on Heinz ketchup bottles represents the number of varieties of pickles the company once had. ++ ++In the early days of the telephone, operators would pick up a call and use the phrase, \"Well, are you there?\". It wasn't until 1895 that someone suggested answering the phone with the phrase \"number please?\" ++ ++The surface area of an average-sized brick is 79 cm squared. ++ ++According to suicide statistics, Monday is the favored day for self-destruction. ++ ++Cats sleep 16 to 18 hours per day. ++ ++The most common name in the world is Mohammed. ++ ++It is believed that Shakespeare was 46 around the time that the King James Version of the Bible was written. In Psalms 46, the 46th word from the first word is shake and the 46th word from the last word is spear. ++ ++Karoke means \"empty orchestra\" in Japanese. ++ ++The Eisenhower interstate system requires that one mile in every five must be straight. These straight sections are usable as airstrips in times of war or other emergencies. ++ ++The first known contraceptive was crocodile dung, used by Egyptians in 2000 B.C. ++ ++Rhode Island is the smallest state with the longest name. The official name, used on all state documents, is \"Rhode Island and Providence Plantations.\" ++ ++When you die your hair still grows for a couple of months. ++ ++There are two credit cards for every person in the United States. ++ ++Isaac Asimov is the only author to have a book in every Dewey-decimal category. ++ ++The newspaper serving Frostbite Falls, Minnesota, the home of Rocky and Bullwinkle, is the Picayune Intellegence. ++ ++It would take 11 Empire State Buildings, stacked one on top of the other, to measure the Gulf of Mexico at its deepest point. ++ ++The first person selected as the Time Magazine Man of the Year - Charles Lindbergh in 1927. ++ ++The most money ever paid for a cow in an auction was $1.3 million. ++ ++It took Leo Tolstoy six years to write \"War & Peace\". ++ ++The Neanderthal's brain was bigger than yours is. ++ ++On the new hundred dollar bill the time on the clock tower of Independence Hall is 4:10. ++ ++Each of the suits on a deck of cards represents the four major pillars of the economy in the middle ages: heart represented the Church, spades represented the military, clubs represented agriculture, and diamonds represented the merchant class. ++ ++The names of the two stone lions in front of the New York Public Library are Patience and Fortitude. They were named by then-mayor Fiorello LaGuardia. ++ ++The Main Library at Indiana University sinks over an inch every year because when it was built, engineers failed to take into account the weight of all the books that would occupy the building. ++ ++The sound of E.T. walking was made by someone squishing her hands in jelly. ++ ++Lucy and Linus (who where brother and sister) had another little brother named Rerun. (He sometimes played left-field on Charlie Brown\'s baseball team, [when he could find it!]). ++ ++The pancreas produces Insulin. ++ ++1 in 5,000 north Atlantic lobsters are born bright blue. ++ ++There are 10 human body parts that are only 3 letters long (eye hip arm leg ear toe jaw rib lip gum). ++ ++A skunk's smell can be detected by a human a mile away. ++ ++The word \"lethologica\" describes the state of not being able to remember the word you want. ++ ++The king of hearts is the only king without a moustache. ++ ++Henry Ford produced the model T only in black because the black paint available at the time was the fastest to dry. ++ ++Mario, of Super Mario Bros. fame, appeared in the 1981 arcade game, Donkey Kong. His original name was Jumpman, but was changed to Mario to honor the Nintendo of America's landlord, Mario Segali. ++ ++The three best-known western names in China: Jesus Christ, Richard Nixon, and Elvis Presley. ++ ++Every year about 98% of the atoms in your body are replaced. ++ ++Elephants are the only mammals that can't jump. ++ ++The international telephone dialing code for Antarctica is 672. ++ ++World Tourist day is observed on September 27. ++ ++Women are 37% more likely to go to a psychiatrist than men are. ++ ++The human heart creates enough pressure to squirt blood 30 feet (9 m). ++ ++Diet Coke was only invented in 1982. ++ ++There are more than 1,700 references to gems and precious stones in the King James translation of the Bible. ++ ++When snakes are born with two heads, they fight each other for food. ++ ++American car horns beep in the tone of F. ++ ++Turning a clock's hands counterclockwise while setting it is not necessarily harmful. It is only damaging when the timepiece contains a chiming mechanism. ++ ++There are twice as many kangaroos in Australia as there are people. The kangaroo population is estimated at about 40 million. ++ ++Police dogs are trained to react to commands in a foreign language; commonly German but more recently Hungarian. ++ ++The Australian $5 to $100 notes are made of plastic. ++ ++St. Stephen is the patron saint of bricklayers. ++ ++The average person makes about 1,140 telephone calls each year. ++ ++Stressed is Desserts spelled backwards. ++ ++If you had enough water to fill one million goldfish bowls, you could fill an entire stadium. ++ ++Mary Stuart became Queen of Scotland when she was only six days old. ++ ++Charlie Brown's father was a barber. ++ ++Flying from London to New York by Concord, due to the time zones crossed, you can arrive 2 hours before you leave. ++ ++Dentists have recommended that a toothbrush be kept at least 6 feet (2 m) away from a toilet to avoid airborne particles resulting from the flush. ++ ++You burn more calories sleeping than you do watching TV. ++ ++A lion's roar can be heard from five miles away. ++ ++The citrus soda 7-UP was created in 1929; \"7\" was selected because the original containers were 7 ounces. \"UP\" indicated the direction of the bubbles. ++ ++Canadian researchers have found that Einstein's brain was 15% wider than normal. ++ ++The average person spends about 2 years on the phone in a lifetime. ++ ++The fist product to have a bar code was Wrigleys gum. ++ ++The largest number of children born to one woman is recorded at 69. From 1725-1765, a Russian peasant woman gave birth to 16 sets of twins, 7 sets of triplets, and 4 sets of quadruplets. ++ ++Beatrix Potter created the first of her legendary \"Peter Rabbit\" children's stories in 1902. ++ ++In ancient Rome, it was considered a sign of leadership to be born with a crooked nose. ++ ++The word \"nerd\" was first coined by Dr. Seuss in \"If I Ran the Zoo.\" ++ ++A 41-gun salute is the traditional salute to a royal birth in Great Britain. ++ ++The bagpipe was originally made from the whole skin of a dead sheep. ++ ++The roar that we hear when we place a seashell next to our ear is not the ocean, but rather the sound of blood surging through the veins in the ear. Any cup-shaped object placed over the ear produces the same effect. ++ ++Revolvers cannot be silenced because of all the noisy gasses which escape the cylinder gap at the rear of the barrel. ++ ++Liberace Museum has a mirror-plated Rolls Royce; jewel-encrusted capes, and the largest rhinestone in the world, weighing 59 pounds and almost a foot in diameter. ++ ++A car that shifts manually gets 2 miles more per gallon of gas than a car with automatic shift. ++ ++Cats can hear ultrasound. ++ ++Dueling is legal in Paraguay as long as both parties are registered blood donors. ++ ++The highest point in Pennsylvania is lower than the lowest point in Colorado. ++ ++The United States has never lost a war in which mules were used. ++ ++Children grow faster in the springtime. ++ ++On average, there are 178 sesame seeds on each McDonalds BigMac bun. ++ ++Paul Revere rode on a horse that belonged to Deacon Larkin. ++ ++The Baby Ruth candy bar was actually named after Grover Cleveland's baby daughter, Ruth. ++ ++Minus 40 degrees Celsius is exactly the same as minus 40 degrees Fahrenheit. ++ ++Clans of long ago that wanted to get rid of unwanted people without killing them used to burn their houses down -- hence the expression \"to get fired\" ++ ++Nobody knows who built the Taj Mahal. The names of the architects, masons, and designers that have come down to us have all proved to be latter-day inventions, and there is no evidence to indicate who the real creators were. ++ ++Every human spent about half an hour as a single cell. ++ ++7.5 million toothpicks can be created from a cord of wood. ++ ++The plastic things on the end of shoelaces are called aglets. ++ ++A 41-gun salute is the traditional salute to a royal birth in Great Britain. ++ ++The earliest recorded case of a man giving up smoking was on April 5, 1679, when Johan Katsu, Sheriff of Turku, Finland, wrote in his diary \"I quit smoking tobacco.\" He died one month later. ++ ++\"Goodbye\" came from \"God bye\" which came from \"God be with you.\" ++ ++February is Black History Month. ++ ++Jane Barbie was the woman who did the voice recordings for the Bell System. ++ ++The first drive-in service station in the United States was opened by Gulf Oil Company - on December 1, 1913, in Pittsburgh, Pennsylvania. ++ ++The elephant is the only animal with 4 knees. ++ ++Kansas state law requires pedestrians crossing the highways at night to wear tail lights.";
@@ -115,7 +256,7 @@ public class Functions {
 
             Calendar cal = Calendar.getInstance();
             values.put(CalendarContract.Events.DTSTART, cal.getTimeInMillis() + 60 * 60 * 1000);
-            values.put(CalendarContract.Events.TITLE, "Jon's birthday!");
+            values.put(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
             values.put(CalendarContract.Events.DESCRIPTION, "Happy birthday to me!");
             //  TimeZone.getTimeZone("2");
             //  TimeZone timeZone = TimeZone.getDefault();
@@ -165,7 +306,7 @@ public class Functions {
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis() + 60 * 60 * 1000);
         intent.putExtra(CalendarContract.Events.RRULE, "FREQ=YEARLY");
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis() + 60 * 60 * 2000);
-        intent.putExtra(CalendarContract.Events.TITLE, "Jon's birthday!");
+        intent.putExtra(CalendarContract.Events.TITLE, Constants.ENTITY_NAME+"'s birthday!");
         Toast.makeText(context.getApplicationContext(), "My birthday!!", Toast.LENGTH_SHORT).show();
         context.startActivity(intent);
     }
@@ -302,7 +443,7 @@ public class Functions {
 
     public static boolean createJonFolder() {
 
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "Jon");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.ENTITY_NAME);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
