@@ -5,18 +5,25 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toolbar;
 
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.activities.ToolBarActivityNew;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.FontEditView;
+import com.shalom.itai.theservantexperience.utils.FontTextView;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.List;
@@ -36,22 +43,22 @@ import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_QUICK_RE
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 
 
-public class ChatActivity extends ToolBarActivity implements AIListener {
+public class ChatActivity extends ToolBarActivityNew implements AIListener {
     private static final String TAG = "ChatActivity";
     //private static ChatActivity instance;
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
-    private EditText chatText;
+    private FontEditView chatText;
     private AIDataService aiDataService;
     private boolean side = false;
     private boolean LEFT = false;
     private boolean RIGHT = true;
-
+    private ConstraintLayout hidingLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState,R.layout.activity_chat);
-
+        super.onCreate(savedInstanceState,R.layout.activity_chat,R.menu.tool_bar_options);
+        getSupportActionBar().setIcon(R.drawable.title);
         //  setContentView(R.layout.activity_chat);
 
         Button buttonSend = (Button) findViewById(R.id.send);
@@ -61,7 +68,7 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.right_msg);
         listView.setAdapter(chatArrayAdapter);
 
-        chatText = (EditText) findViewById(R.id.msg);
+        chatText = (FontEditView) findViewById(R.id.msg);
         Intent startIntent = getIntent();
         String startCov = startIntent.getStringExtra(CHAT_START_MESSAGE);
         if(startCov !=null && !startCov.isEmpty()){
@@ -111,6 +118,58 @@ public class ChatActivity extends ToolBarActivity implements AIListener {
         return instance;
     }
 */
+    @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared){
+        int val = 0;
+        if(hidingLayout != null){
+            val = hidingLayout.getHeight();
+        }
+        ConstraintSet set = new ConstraintSet();
+        ListView list = (ListView) findViewById(R.id.msgview);
+     //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
+     //   layout.setLayoutParams(params);
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) list.getLayoutParams();
+        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                list.getHeight() +val- layoutAppeared.getHeight());
+
+        newParams.setMargins(16,16,16,16);
+        newParams.setMarginStart(20);
+        newParams.setMarginEnd(20);
+
+        layout.removeView(list);
+        layout.addView(list, -1, newParams);
+        set.clone(layout);
+        set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
+        set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
+        set.connect(list.getId(), ConstraintSet.TOP, layoutAppeared.getId(), ConstraintSet.BOTTOM, 8);
+        set.applyTo(layout);
+        hidingLayout = layoutAppeared;
+    }
+
+    @Override
+    protected void showBeneath(ConstraintLayout layoutAppeared){
+        ConstraintSet set = new ConstraintSet();
+        ListView list = (ListView) findViewById(R.id.msgview);
+        //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
+        //   layout.setLayoutParams(params);
+        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                list.getHeight() + layoutAppeared.getHeight());
+        newParams.setMargins(16,16,16,16);
+        newParams.setMarginStart(20);
+        newParams.setMarginEnd(20);
+    //    Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        layout.removeView(list);
+        layout.addView(list, -1, newParams);
+        set.clone(layout);
+        set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
+        set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
+        set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
+        set.applyTo(layout);
+        hidingLayout= null;
+    }
+
     private boolean sendChatMessage(boolean isLeft,boolean waitForRespond, String text) {
         String tempText;
         if(!text.isEmpty())

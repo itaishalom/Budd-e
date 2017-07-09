@@ -61,6 +61,7 @@
     <string name="action_wins">wins</string>
     <string name="action_new_game">new game</string>
     <string name="trees_left_12">TREES LEFT: 12</string>
+    <string name="send">Send</string>
 </resources>
 
 

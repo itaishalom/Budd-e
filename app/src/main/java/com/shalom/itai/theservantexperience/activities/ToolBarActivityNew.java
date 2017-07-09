@@ -54,7 +54,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     View[] arr;
     Window mWindow;
     protected BroadcastReceiver mReceiver;
-    ConstraintLayout layout;
+    protected ConstraintLayout layout;
     private Menu barMenu;
     protected int mOptionsId;
     GifImageView mGifImageView;
@@ -144,6 +144,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         ((TextView) findViewById(R.id.temperature_status_ind)).setText((getBatteryTemperature(this).name()));
     }
 
+    protected void hideBeneath(ConstraintLayout layoutAppeared){}
+    protected void showBeneath(ConstraintLayout layoutAppeared){}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean isTurnedOn;// = false;
@@ -164,9 +166,11 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 if (isTurnedOn) {
                     invalidateStatusParam();
                     moodLayout.setVisibility(View.VISIBLE);
+                    hideBeneath(moodLayout);
                     relationsLayout.setVisibility(View.INVISIBLE);
                 } else {
                     moodLayout.setVisibility(View.INVISIBLE);
+                    showBeneath(moodLayout);
                 }
                 return true;
             case R.id.action_favorite:
@@ -175,8 +179,10 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                     invalidateRelationsData();
                     relationsLayout.setVisibility(View.VISIBLE);
                     moodLayout.setVisibility(View.INVISIBLE);
+                    hideBeneath(relationsLayout);
                 }else {
                     relationsLayout.setVisibility(View.INVISIBLE);
+                    showBeneath(relationsLayout);
                 }
                 return true;
             case R.id.actions_mems:
@@ -328,7 +334,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mWindow.setStatusBarColor((BuggerService.getInstance().getMood().getTopBackgroundColor()));
         }
-        mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
+        if(mGifImageView !=null)//Optional
+            mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
         layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
 
     }
