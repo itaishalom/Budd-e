@@ -24,18 +24,20 @@
 
     <TableLayout
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:stretchColumns="1"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        app:layout_constraintVertical_bias="0.0">
 
         <TableRow
             android:layout_width="match_parent"
@@ -50,8 +52,8 @@
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/battery_status_ind"
                 style="@style/CustomText"
-                android:gravity="right"
                 android:layout_marginStart="0dp"
+                android:gravity="right"
                 android:text="Great" />
         </TableRow>
 
@@ -64,14 +66,13 @@
                 style="@style/CustomText"
 
                 android:layout_marginStart="0dp"
-                android:text="Reception Status"
-             />
+                android:text="Reception Status" />
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/reception_status_ind"
                 style="@style/CustomText"
-                android:gravity="right"
                 android:layout_marginStart="0dp"
+                android:gravity="right"
                 android:text="Ok" />
 
         </TableRow>
@@ -83,11 +84,8 @@
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/temperature_status"
                 style="@style/CustomText"
-
-
                 android:layout_marginStart="0dp"
-                android:text="Temperature Status"
-            />
+                android:text="Temperature Status" />
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/temperature_status_ind"
@@ -95,8 +93,7 @@
 
                 android:layout_marginStart="0dp"
                 android:gravity="right"
-                android:text="Ok"
-         />
+                android:text="Ok" />
         </TableRow>
 
     </TableLayout>

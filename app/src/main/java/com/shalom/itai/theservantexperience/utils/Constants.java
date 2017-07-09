@@ -5,6 +5,7 @@ package com.shalom.itai.theservantexperience.utils;
  */
 
 public class Constants {
+    public static final String ENTITY_NAME = "Budd-e";
     public static final int BUG_WAIT_TIME = 10000;
     public static final int LOCATION_DISTNCE_CHECK = 5000;
     public static final int LOCK_WAIT_TIME = 500;
@@ -84,4 +85,7 @@ public class Constants {
     public static final String SETTING_LOG = "SETTING_LOG";
     public static final String SETTINGS_IS_TUTORIAL_DONE = "TUTORIAL_DONE";
     public static final String SETTINGS_IS_OPEN_VIDEO_DONE = "SETTINGS_IS_OPEN_VIDEO_DONE";
+
+    public static final String SETTINGS_USER_WINS = "SETTINGS_USER_WINS";
+    public static final String SETTINGS_USER_LOOSE = "SETTINGS_USER_LOOSE";
 }

@@ -5,463 +5,430 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#04967D"
+    android:background="@drawable/grid"
     tools:context="com.shalom.itai.theservantexperience.activities.MatchesGameActivity">
 
-    <Button
-        android:id="@+id/fire"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+    <include
+        android:id="@+id/game_wins_layout"
+        layout="@layout/game_wins_layout"
+        app:layout_constraintLeft_toRightOf="@+id/GifImageView"
+        android:layout_marginLeft="0dp"
+        android:layout_width="252dp"
+        android:layout_height="77dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Burn!"
-        app:layout_constraintHorizontal_bias="0.13"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/heap2" />
 
-    <Button
-        android:id="@+id/new_game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="New"
-        app:layout_constraintHorizontal_bias="0.819"
-        app:layout_constraintLeft_toRightOf="@+id/fire"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+    <ImageButton
+        android:id="@+id/fire"
+
+        android:layout_width="26dp"
+        android:layout_height="33dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        app:srcCompat="@drawable/burn"
+        android:background="@null"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/heap1_data"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintVertical_bias="0.176" />
 
     <include
         android:id="@+id/my_toolbar"
-        layout="@layout/toolbar"
+        layout="@layout/toolbar_new"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <include
-        android:id="@+id/relation_layout"
-        layout="@layout/relations_layout" />
-
-    <include
-        android:id="@+id/mood_layout"
-        layout="@layout/mood_layout" />
 
     <pl.droidsonroids.gif.GifImageView
-        android:id="@+id/jon_in_game"
-        android:layout_width="163dp"
-        android:layout_height="61dp"
+        android:id="@+id/GifImageView"
+        android:layout_width="99dp"
+        android:layout_height="96dp"
         app:srcCompat="@drawable/jon_png"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="43dp"
+        app:layout_constraintHorizontal_bias="0.105"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/heap2_data"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="31dp" />
 
 
-    <TextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
+        style="@style/CustomText"
         android:id="@+id/heap1_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Number of matches: 12"
-        app:layout_constraintBottom_toTopOf="@+id/heap1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/heap2"
-        app:layout_constraintVertical_bias="0.864"
+        android:text="trees_left_12"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="13dp"
+        app:layout_constraintTop_toBottomOf="@+id/heap1"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
-    <TextView
+    <com.shalom.itai.theservantexperience.utils.FontTextView
+        style="@style/CustomText"
         android:id="@+id/heap2_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of matches: 12"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/mood_layout"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/heap2"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintVertical_bias="0.939"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/trees_left_12"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/heap2"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/heap1" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/heap1"
         android:layout_width="0dp"
-        android:layout_height="204dp"
-        android:layout_marginBottom="-21dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="141dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintHorizontal_bias="0.0">
+        app:layout_constraintRight_toRightOf="parent">
 
         <ImageView
             android:id="@+id/imageView5"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView4"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView6" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView10"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView8"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="82dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/imageView29"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView9" />
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView6"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView29" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView15"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView29"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView7"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView8" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView11"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView4"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:onClick="onImageClick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/imageView3"
+            app:layout_constraintTop_toBottomOf="@+id/imageView9"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
+
+        <ImageView
+            android:id="@+id/imageView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:onClick="onImageClick"
+            app:layout_constraintRight_toLeftOf="@+id/imageView12"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/match" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="82dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView5" />
-
-        <ImageView
-            android:id="@+id/imageView15"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/imageView12"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintLeft_toRightOf="@+id/imageView11"
-            app:layout_constraintVertical_bias="0.344" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/imageView11"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView8"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView9"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView8"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView10" />
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView15"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintLeft_toRightOf="@+id/imageView3"
-            app:layout_constraintVertical_bias="0.344" />
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView12"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView10"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintLeft_toRightOf="@+id/imageView15"
-            app:layout_constraintVertical_bias="0.344" />
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView6"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView5"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView7" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView12"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/imageView10"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="-1dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/imageView9"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match"
-            app:layout_constraintVertical_bias="0.344"
-            app:layout_constraintLeft_toRightOf="@+id/imageView12" />
+            app:srcCompat="@drawable/match" />
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/heap2"
         android:layout_width="0dp"
-        android:layout_height="185dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
         android:visibility="visible"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintBottom_toTopOf="@+id/heap1"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/heap1"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintVertical_bias="0.79">
+        app:layout_constraintVertical_bias="0.775">
 
         <ImageView
             android:id="@+id/heap2_imageView5"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView6"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView4"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView10"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView8"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="82dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView9"
-            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView29"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match" />
-
-        <ImageView
-            android:id="@+id/heap2_imageView7"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView29"
-            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView6"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match" />
-
-        <ImageView
-            android:id="@+id/heap2_imageView29"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView8"
-            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView7"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/match" />
-
-        <ImageView
-            android:id="@+id/heap2_imageView4"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView5"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />
 
         <ImageView
-            android:id="@+id/heap2_imageView15"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:id="@+id/heap2_imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView11"
+            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView6"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView15"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
+
+        <ImageView
+            android:id="@+id/heap2_imageView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:onClick="onImageClick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView7"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView11"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
+
+        <ImageView
+            android:id="@+id/heap2_imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:onClick="onImageClick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView3"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView9"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/match" />
+
+        <ImageView
+            android:id="@+id/heap2_imageView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:onClick="onImageClick"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView12"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView3"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginRight="82dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/heap2_imageView11"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView8"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView9"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView10"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView11"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView3"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView15"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView12"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView15"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView10"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView6"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginRight="0dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView7"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView5"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heap2_imageView12"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/match" />
 
         <ImageView
             android:id="@+id/heap2_imageView10"
-            android:layout_width="11dp"
-            android:layout_height="101dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="-1dp"
             android:layout_marginTop="8dp"
             android:onClick="onImageClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/heap2_imageView12"
             app:layout_constraintRight_toLeftOf="@+id/heap2_imageView9"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/match" />

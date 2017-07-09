@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,7 @@ public class Main2Activity extends ToolBarActivityNew {
     private ImageButton openGame;
     private ImageButton openTrip;
     private ImageButton openMore;
+    private int animationTime = 70;
     private boolean isShown = false;
     private int mAnimationIndex;
     AlphaAnimation mOnAnimation;
@@ -86,16 +88,21 @@ public class Main2Activity extends ToolBarActivityNew {
                         if (((ImageButton) v).getImageAlpha() != 255) {
                             ((ImageButton) v).setImageAlpha(255);
                             if (v == openChat) {
+                                //refreshLayout2();
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, "Jon is here"));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (v == openGame) {
-                                Main2Activity.this.startActivity(new Intent(Main2Activity.this, MatchesGameActivity.class).putExtra(ASK_TO_PLAY, false));
+                            //    refreshLayout3();
+                               Main2Activity.this.startActivity(new Intent(Main2Activity.this, MatchesGameActivity.class).putExtra(ASK_TO_PLAY, false));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (v == openTrip) {
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, TripActivity.class));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
+                            }
+                            if (v == openPoke) {
+                           //     BuggerService.setSYSTEM_GlobalPoints(-5,"check");
                             }
                             // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             //   Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
@@ -142,15 +149,16 @@ public class Main2Activity extends ToolBarActivityNew {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_main_new);
+        super.onCreate(savedInstanceState, R.layout.activity_main_new,R.menu.tool_bar_options);
+        getSupportActionBar().setIcon(R.drawable.title);
         mAnimationIndex = 0;
         mOnAnimation = new AlphaAnimation(0.0f, 0.5f); // Change alpha from fully visible to invisible
-        mOnAnimation.setDuration(100); // duration - half a second
+        mOnAnimation.setDuration(animationTime); // duration - half a second
         mOnAnimation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
         mOnAnimation.setRepeatCount(0); // Repeat animation infinitely
 
         mOffAnimation = new AlphaAnimation(0.5f, 0.0f); // Change alpha from fully visible to invisible
-        mOffAnimation.setDuration(100); // duration - half a second
+        mOffAnimation.setDuration(animationTime); // duration - half a second
         mOffAnimation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
         mOffAnimation.setRepeatCount(0); // Repeat animation infinitely
 
@@ -233,11 +241,11 @@ public class Main2Activity extends ToolBarActivityNew {
             }
         });
 
-        GifImageView gifImageView = (GifImageView) findViewById(R.id.GifImageView);
+    //    GifImageView gifImageView = (GifImageView) findViewById(R.id.GifImageView);
 
-        gifImageView.setImageResource(R.drawable.budde_gif);
-        gifImageView.setDrawingCacheEnabled(true);
-        gifImageView.setOnTouchListener(changeColorListener);
+     //   gifImageView.setImageResource(R.drawable.optimistic_gif);
+        mGifImageView.setDrawingCacheEnabled(true);
+        mGifImageView.setOnTouchListener(changeColorListener);
 
         // openPoke.buildDrawingCache(true);
         //    openPoke.setOnTouchListener(imageButtonListner);

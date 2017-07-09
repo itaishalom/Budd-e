@@ -1,5 +1,7 @@
 package com.shalom.itai.theservantexperience.moods;
 
+import com.shalom.itai.theservantexperience.R;
+
 /**
  * Created by Itai on 08/07/2017.
  */
@@ -7,9 +9,14 @@ package com.shalom.itai.theservantexperience.moods;
 public class Optimistic extends Mood{
     private static Optimistic instance;
 
+    private Optimistic(){
+        mBackgroundId = R.drawable.optimistic_background;
+        mBuddeGif = R.drawable.optimistic_gif;
+        mTopBackgroundColor = 0xFFF6B478;
+    }
+
     public static Mood getInstance(){
-        if(instance==null)
-        {
+        if(instance==null) {
             instance = new Optimistic();
         }
         return instance;

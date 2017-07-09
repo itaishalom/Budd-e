@@ -1,5 +1,7 @@
 package com.shalom.itai.theservantexperience.moods;
 
+import com.shalom.itai.theservantexperience.R;
+
 /**
  * Created by Itai on 08/07/2017.
  */
@@ -7,16 +9,20 @@ package com.shalom.itai.theservantexperience.moods;
 public class Angry extends Mood{
     private static Angry instance;
 
+    private Angry(){
+        mBackgroundId = R.drawable.angrey_background;
+        mTopBackgroundColor = 0xFF471817;
+    }
+
     public static Mood getInstance(){
-        if(instance==null)
-        {
+        if(instance==null) {
             instance = new Angry();
         }
         return instance;
     }
 }
 
-
+//
 /*
         Sad(0),
         Angry(1),

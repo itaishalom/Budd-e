@@ -4,33 +4,47 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.FontTextView;
+import com.shalom.itai.theservantexperience.utils.Functions;
+
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_LOOSE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_WINS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
-public class MatchesGameActivity extends ToolBarActivity implements DialogCaller {
+public class MatchesGameActivity extends ToolBarActivityNew implements DialogCaller {
     private MatchesGameActivity act;
     private boolean turnIsBegan = false;
     private int matchesCounterTurn = 0;
@@ -42,49 +56,43 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     private final int UNBURN_DIRECTION = 1;
     private TextView heap1_text;
     private TextView heap2_text;
-    private Button fire;
-    private final String NUM_OF_MATCHES = "Number of matches: ";
-
+    private ImageButton fire;
+    private final String NUM_OF_MATCHES = "TREES LEFT: ";
+    private boolean isSnackShown;
     private MediaPlayer mediaPlayer;
     private boolean isJonPlay = true;
-    private GifImageView gifImageView;
+    private LinkedBlockingQueue<String> snacks;
+    //  private GifImageView gifImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState, R.layout.activity_matches_game);
+        super.onCreate(savedInstanceState, R.layout.activity_matches_game, R.menu.tool_bar_game_options);
         // setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
-        gifImageView = (GifImageView ) findViewById(R.id.jon_in_game);
-        gifImageView.setImageResource(R.drawable.jon_blinks);
+
+        snacks = new LinkedBlockingQueue<>();
         heap1_text = (TextView) findViewById(R.id.heap1_data);
         heap2_text = (TextView) findViewById(R.id.heap2_data);
-        Button newGame = (Button) findViewById(R.id.new_game);
-        newGame.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        newGame();
-                    }
-                }
-        );
 
-        fire = (Button) findViewById(R.id.fire);
-        arr = new View[]{fire, newGame};
+
+        fire = (ImageButton) findViewById(R.id.fire);
+        fire.setImageAlpha(128);
+        //   arr = new View[]{fire, newGame};
         act = this;
         Intent intent = getIntent();
-        if(intent ==null){
+        if (intent == null) {
             showDialog();
-        }
-        else if(intent.getBooleanExtra(ASK_TO_PLAY,true)){
+        } else if (intent.getBooleanExtra(ASK_TO_PLAY, true)) {
             showDialog();
-        }else {
+        } else {
 
             doPositive();
         }
         //  firstStep();
     }
 
-    private void newGame(){
+    @Override
+    protected void newGame() {
         turnIsBegan = false;
         matchesCounterTurn = 0;
         takeFromHeapOne = false;
@@ -113,17 +121,41 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         // startActivity(new Intent(this,RefreshScreen.class));
 
     }
+    @Override
+    protected void invalidateGameStatus(int wins, int loose) {
+        invalidateWins(wins);
+        invalidateLooses(loose);
 
+    }
+    private void invalidateWins(int wins){
+        FontTextView winsText = (FontTextView) findViewById(R.id.my_wins_ind);
+        winsText.setText(String.valueOf(wins));
+    }
+
+    private void invalidateLooses(int loose){
+        FontTextView looseText = (FontTextView) findViewById(R.id.my_loses_ind);
+        looseText.setText(String.valueOf(loose));
+    }
 
     private void endOfGame(boolean isJonWon) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         if (isJonWon) {
-            String JON_WINS = "Jon beats the user";
+            BuggerService.setSYSTEM_GlobalPoints(1, "I won a game!");
+            String JON_WINS = ENTITY_NAME + " beats the user";
             toastThis(JON_WINS);
+            int newNum = preferences.getInt(SETTINGS_USER_LOOSE, 0)+1;
+            Functions.writeToSettings(SETTINGS_USER_LOOSE,newNum,this);
             mediaPlayer = MediaPlayer.create(this, R.raw.jon_wins);
+            invalidateLooses(newNum);
             setBrightness(0.9f);
+
         } else {
+            BuggerService.setSYSTEM_GlobalPoints(-1, "I lost a game!");
             setBrightness(0.1f);
+            int newNum = preferences.getInt(SETTINGS_USER_WINS, 0)+1;
             mediaPlayer = MediaPlayer.create(this, R.raw.jon_lose);
+            Functions.writeToSettings(SETTINGS_USER_WINS,newNum,this);
+            invalidateWins(newNum);
         }
         AudioManager am =
                 (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -148,11 +180,19 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     }
 
     private void setUserTurn() {
-        gifImageView.setAlpha(0.3f);
+        mGifImageView.setAlpha(0.3f);
         isJonPlay = false;
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fire.setImageAlpha(255);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fire.setImageAlpha(128);
+                    }
+                }, 500);
                 if (matchesCounterTurn != 0) {
 
                     if (takeFromHeapOne) {
@@ -175,11 +215,11 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     private void setJonTurn() {
         isJonPlay = true;
-        gifImageView.setAlpha(1.0f);
+        mGifImageView.setAlpha(1.0f);
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastThis("Jon's turn!");
+                toastThis(ENTITY_NAME + "'s turn!");
             }
         });
     }
@@ -262,8 +302,54 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
         }
     }
 
+
+    class myCallback extends Snackbar.Callback {
+        @Override
+        public void onDismissed(Snackbar snackbar, int event) {
+            isSnackShown = false;
+            String newInfo = snacks.poll();
+            if (newInfo != null) {
+                snackbar = Snackbar
+                        .make(layout, newInfo, Snackbar.LENGTH_SHORT);
+                Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                View snackbarView = snackbar.getView();
+                TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.BLACK);
+
+                snackbar.addCallback(new myCallback());
+                snackbar.show();
+            }
+        }
+
+        @Override
+        public void onShown(Snackbar snackbar) {
+
+        }
+    }
+
+
     private void toastThis(String info) {
-        Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
+        if (!isSnackShown) {
+            isSnackShown = true;
+            Snackbar snackbar = Snackbar
+                    .make(layout, info, Snackbar.LENGTH_SHORT);
+            Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+            layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            View snackbarView = snackbar.getView();
+            TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.BLACK);
+            snackbar.addCallback(new myCallback());
+            snackbar.show();
+        } else {
+            try {
+                snacks.put(info);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //    Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -294,9 +380,9 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
             }
         }
         if ((heap1 == 1) && (heap2 == 1)) {
-            toastThis("Jon took 1 matches from heap number 2");
+            toastThis(ENTITY_NAME + " took 1 matches from heap number 2");
             jonBurn(R.id.heap2, 1);
-            toastThis("The user beats Jon");
+            toastThis("The user beats " + ENTITY_NAME);
             endOfGame(false);
             return;
         }
@@ -323,7 +409,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
                 while (heap1 - randomNum < 1);
             }
             heap1 = heap1 - randomNum;
-            toastThis("Jon took " + randomNum +
+            toastThis(ENTITY_NAME + " took " + randomNum +
                     " matches from heap number 1");
 
             jonBurn(R.id.heap1, randomNum);
@@ -339,9 +425,9 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
             }
 
             heap2 = heap2 - randomNum;
-            toastThis("Jon took " + randomNum + " matches from heap number 2");
-            toastThis("Number of matches in the first heap is:" + heap1);
-            toastThis("Number of matches in the second heap is:" + heap2);
+            toastThis(ENTITY_NAME + " took " + randomNum + " matches from heap number 2");
+            //        toastThis("Number of matches in the first heap is:" + heap1);
+            //      toastThis("Number of matches in the second heap is:" + heap2);
             jonBurn(R.id.heap2, randomNum);
         }
         toastThis("Select number of matches to take:");
@@ -397,7 +483,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
     @Override
     public void doPositive() {
 
-        BuggerService.setSYSTEM_GlobalPoints(1,"We played a game together!");
+        BuggerService.setSYSTEM_GlobalPoints(1, "We played a game together!");
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         if (settings.getBoolean(SETTING_SHOW_EXPLAIN_GAME, true)) {
             final Dialog dialog = new Dialog(this);
@@ -424,7 +510,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
             });
             //    CheckBox checkBox = (CheckBox) dialog.findViewById(R.id.dont_show_again_check);
             dialog.show();
-        }else{
+        } else {
             setJonTurn();
             firstStep();
         }
@@ -432,7 +518,7 @@ public class MatchesGameActivity extends ToolBarActivity implements DialogCaller
 
     @Override
     public void doNegative() {
-        BuggerService.setSYSTEM_GlobalPoints(-1,"You dont wanted to play a game with me");
+        BuggerService.setSYSTEM_GlobalPoints(-1, "You dont wanted to play a game with me");
         toastThis("Demit you!");
         finish();
     }

@@ -388,6 +388,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (!isMyServiceRunning(BuggerService.class)) {
+            Log.d(TAG, "onNewIntent: rerunning bugger");     
+        }
 /*
         if (intent.getBooleanExtra("STOP_OVERLAY", false)) {
             Intent myService = new Intent(this, OverlyService.class);

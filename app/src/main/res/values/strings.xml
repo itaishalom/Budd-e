@@ -47,6 +47,9 @@
     <string name="chat_message">Chat message…</string>
     <string name="ok">OK</string>
     <string name="friendship_level">Friendship level</string>
+    <string name="user_wins">Games won</string>
+    <string name="friendship_progress">Friendship progress</string>
+    <string name="user_looses">Games lost</string>
     <string name="hello_i_m_jon">Hello, I\'m Jon!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
     <string name="this_is_how_we_can_chat">This is how we can chat</string>
     <string name="title_activity_incoming_call">IncomingCallActivity</string>
@@ -55,6 +58,9 @@
     <string name="permission_requested_message">Please allow the permission at the following page</string>
     <string name="mems">mems_title</string>
     <string name="action_title">title_toolBar</string>
+    <string name="action_wins">wins</string>
+    <string name="action_new_game">new game</string>
+    <string name="trees_left_12">TREES LEFT: 12</string>
 </resources>
 
 

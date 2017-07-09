@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relation_layout"
+    android:id="@+id/game_wins_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -44,13 +44,13 @@
 
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
-                android:id="@+id/friendship_level"
+                android:id="@+id/my_wins"
                 style="@style/CustomText"
                 android:layout_marginStart="0dp"
-                android:text="@string/friendship_level" />
+                android:text="@string/user_wins" />
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
-                android:id="@+id/friendship_level_ind"
+                android:id="@+id/my_wins_ind"
                 style="@style/CustomText"
                 android:gravity="end"
                 android:layout_width="wrap_content"
@@ -65,30 +65,18 @@
             android:layout_height="match_parent">
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
-                android:id="@+id/textView4"
-                android:text="@string/friendship_progress"
+                android:id="@+id/my_loses"
+                android:text="@string/user_looses"
                 style="@style/CustomText"
                 android:layout_marginStart="0dp" />
 
-            <ProgressBar
-                android:id="@+id/progressBarRelations"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="20dp"
-
-                android:layout_height="match_parent"
-                android:layout_marginStart="0dp"
-
-
-                android:layout_marginTop="10dp"
-                android:bottomLeftRadius="5dp"
-
-                android:bottomRightRadius="5dp"
+            <com.shalom.itai.theservantexperience.utils.FontTextView
+                android:id="@+id/my_loses_ind"
+                style="@style/CustomText"
                 android:gravity="end"
-
-                android:progressDrawable="@drawable/custom_progressbar"
-                android:topLeftRadius="5dp"
-
-                android:topRightRadius="5dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
         </TableRow>
     </TableLayout>
 </android.support.constraint.ConstraintLayout>

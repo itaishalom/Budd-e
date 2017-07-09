@@ -65,4 +65,14 @@
         <item name="android:textColor">#ffffff</item>
     </style>
 
+    <style name="SpacedToolbar" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:actionButtonStyle">@style/ActionButton</item>
+
+    </style>
+
+    <style name="ActionButton" parent="@android:style/Widget.ActionButton">
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+
+
 </resources>

@@ -7,7 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_header_selector"
+    android:theme="@style/SpacedToolbar"
+    android:background="@drawable/optimistic_background"
     tools:context="com.shalom.itai.theservantexperience.activities.Main2Activity">
 
     <include
@@ -16,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <include
+        android:id="@+id/relation_layout"
+        layout="@layout/relations_layout" />
+
+    <include
+        android:id="@+id/mood_layout"
+        layout="@layout/mood_layout" />
+
+
 
     <ImageButton
 
