@@ -30,6 +30,7 @@ public class Constants {
         public static final String INPUT_TO_SPLASH_CLASS_NAME = "CLASS_NAME";
         public static final String DONE_CALENDAR = "DONE_CALENDAR";
         public static final String ASK_TO_PLAY = "ASK_TO_PLAY";
+        public static final String JUST_WOKE_UP = "wakeUpOptions";
     }
 
     public enum Status {
@@ -90,4 +91,8 @@ public class Constants {
 
     public static final String SETTINGS_USER_WINS = "SETTINGS_USER_WINS";
     public static final String SETTINGS_USER_LOOSE = "SETTINGS_USER_LOOSE";
+
+    public static final String SETTINGS_TIRED_POINTS = "SETTINGS_TIRED_POINTS";
+    public static final int SETTINGS_INITIAL_TIRED_POINTS = 150;
+    public static final int SETTINGS_MAX_TIRED_POINTS = 300;
 }

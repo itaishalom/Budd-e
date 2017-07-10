@@ -30,7 +30,7 @@ public class NightActions extends Actions {
         if(instance == null){
             instance = new NightActions(context,notif_icon);
         }
-    //    instance.StartTimers(context);
+       instance.StartTimers(context);
        // instance.addNotification("Jon is sleeping","shh....");
         return instance;
     }

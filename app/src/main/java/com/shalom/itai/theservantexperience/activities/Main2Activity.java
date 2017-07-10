@@ -34,13 +34,14 @@ import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_ME
 import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
-public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
+public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     public final static String TAG = "Main2Activity";
     private ImageButton openPoke;
     private ImageButton openChat;
@@ -61,8 +62,13 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
-            int color = bmp.getPixel((int) event.getX(), (int) event.getY());
+            int color;// = Color.CYAN;
+            try {
+                Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
+                color = bmp.getPixel((int) event.getX(), (int) event.getY());
+            } catch (Exception e) {
+                color = Color.CYAN;
+            }
             if (color == Color.TRANSPARENT) {
                 return false;
             } else {
@@ -79,6 +85,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
                 }
                 return true;
             }
+
         }
     };
 
@@ -106,7 +113,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
                         if (((ImageButton) v).getImageAlpha() != 255) {
                             ((ImageButton) v).setImageAlpha(255);
                             SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
-                            if(preferences.getBoolean(SETTINGS_IS_ASLEEP, false)){
+                            if (preferences.getBoolean(SETTINGS_IS_ASLEEP, false)) {
                                 currendPressed = (ImageButton) v;
                                 showDialog();
                                 return true;
@@ -158,7 +165,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
             Functions.oneTimeFunctions.setUserName(this, TAG);
 
         }
-        if(settings.getBoolean(SETTINGS_IS_ASLEEP, false))
+        if (settings.getBoolean(SETTINGS_IS_ASLEEP, false))
             BuggerService.getInstance().sendJonToSleep();
         else
             BuggerService.getInstance().wakeUpJon();
@@ -178,8 +185,13 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
             //   mCancelTrip.setVisibility(View.VISIBLE); //TODO
         }
         Intent intent = getIntent();
-        if (intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
+        if (intent !=null && intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
             BuggerService.getInstance().setNotif();
+        }
+        else if (intent !=null && intent.getBooleanExtra(JUST_WOKE_UP, false)) {
+
+
+            //    forceWakeUp();                //TODO
         }
         invalidateOptionsMenu();
         if (readyToInvalidate && BuggerService.getIsServiceUP()) {
@@ -333,17 +345,17 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller{
 
     @Override
     public void doPositive() {
-        if(currendPressed!=null){
+        if (currendPressed != null) {
             currendPressed.setImageAlpha(HALF_INT_ALPHA);
         }
         BuggerService.getInstance().wakeUpJon();
         refreshLayout();
-     //   talkAboutWakeUp();
+        //   talkAboutWakeUp();
     }
 
     @Override
     public void doNegative() {
-        if(currendPressed!=null){
+        if (currendPressed != null) {
             currendPressed.setImageAlpha(HALF_INT_ALPHA);
         }
         Toast.makeText(Main2Activity.this, "...ZZZzzzZZZzzz!", Toast.LENGTH_SHORT).show();

@@ -1,6 +1,7 @@
 package com.shalom.itai.theservantexperience.chatBot;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -42,6 +43,9 @@ import ai.api.model.Result;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_QUICK_REPLY;
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 
 
 public class ChatActivity extends ToolBarActivityNew implements AIListener {
@@ -55,6 +59,7 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
     private boolean LEFT = false;
     private boolean RIGHT = true;
     private ConstraintLayout hidingLayout;
+    private String[] denyGoodNight = new String[]{"I am not tired","It's too early","Not now","I don't feel like"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -251,13 +256,20 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                                         ((ResponseMessage.ResponseSpeech) resultList.get(BuggerService.getInstance().getRelationsStatus().getResponseNumber())).getSpeech().get(0);
                             }
                             if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
-                                sendChatMessage(false,false,finalAnswer);
-                                Intent intent = new Intent(ChatActivity.this, Main2Activity.class);
-                                //intent.putExtra("sleep",true); //TODO change sleep call to bugger
-                                BuggerService.getInstance().sendJonToSleep();
-                                startActivity(intent);
-                                finish();
-                                return;
+                                SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                                int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+                                if(tired<SETTINGS_INITIAL_TIRED_POINTS) {
+                                    sendChatMessage(false, false, finalAnswer);
+                                    Intent intent = new Intent(ChatActivity.this, Main2Activity.class);
+                                    //intent.putExtra("sleep",true); //TODO change sleep call to bugger
+                                    BuggerService.getInstance().sendJonToSleep();
+                                    startActivity(intent);
+                                    finish();
+                                    return;
+                                }else{
+                                    int index = Functions.throwRandom(denyGoodNight.length,0);
+                                    finalAnswer = denyGoodNight[index];
+                                }
                             }
                             sendChatMessage(false,false,finalAnswer);
 

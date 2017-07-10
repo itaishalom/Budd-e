@@ -78,7 +78,9 @@ import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
@@ -463,7 +465,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         break;
                     case 1:
-                        if (BuggerService.getInstance().shouldIDoThis() >= 0.5) {
+                        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                        int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+                        if (tired >= 50) {
                             Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
                         } else {
@@ -491,7 +495,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
     private void talkAboutWakeUp() {
         List<String> legendList = new ArrayList<>();
         legendList.add("Sorry to wake you up, Did you hear the news?");
-        legendList.add("Stop sleeping you piece of metal");
+        legendList.add("Stop sleeping you idiot");
         legendList.add("Ohhh... oops");
         chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -511,7 +515,9 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                         cleanListOptions();
                         break;
                     case 2:
-                        if (BuggerService.getInstance().shouldIBeNice()) {
+                        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                        int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+                        if (tired>50) {
                             Toast.makeText(MainActivity.this, "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();

@@ -3,13 +3,23 @@ package com.shalom.itai.theservantexperience.services;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.services.BuggerService.indexActive;
 import static com.shalom.itai.theservantexperience.services.BuggerService.stopBugger;
 import static com.shalom.itai.theservantexperience.services.DayActions.Activities;
+import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
+import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -21,16 +31,52 @@ class TimerTaskForUser extends ContextTimerTask {
         super(context);
     }
 
+    private boolean wakingUpLogic(float tired) {
+
+        if (tired < 20 && tired > 5) {
+            if (Functions.throwRandom(4, 1) >= 3) {
+                //       BuggerService.getInstance().sendJonToSleep();
+                return true;
+            }
+        }
+        if (tired <= 5 && tired > 1) {
+            if (Functions.throwRandom(4, 2) >= 3) {
+                //     BuggerService.getInstance().sendJonToSleep();
+                return true;
+            }
+        }
+        if (tired <= 1) {
+            //   BuggerService.getInstance().sendJonToSleep();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void run() {
+        SharedPreferences settings = mContext.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+        boolean shouldSleep = wakingUpLogic(tired);
+        if(tired>0)
+            Functions.writeToSettings(SETTINGS_TIRED_POINTS, tired - 1, mContext);
+
         ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
         String activityOnTop = ar.topActivity.getClassName();
-
-        if (!checkScreenAndLock(mContext))
+        if(activityOnTop.contains("theservant") && activityOnTop.contains("MessageBox")){
             return;
-
+        }
+        if (!checkScreenAndLock(mContext)) {
+            if (shouldSleep) {
+                BuggerService.getInstance().sendJonToSleep();
+                Intent intent = new Intent(this.mContext, Main2Activity.class);
+                this.mContext.startActivity(intent);
+                return;
+            }
+            Log.d("Timer", "run: screen locked");
+            return;
+        }
         if (!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
                 && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
                 && !activityOnTop.toLowerCase().contains("camera")
@@ -47,13 +93,19 @@ class TimerTaskForUser extends ContextTimerTask {
                     this.mContext.startActivity(intent);
                 } else {
                 */
-                    Intent intent = new Intent(this.mContext, Activities[indexActive]);
+                if (shouldSleep) {
+                    BuggerService.getInstance().sendJonToSleep();
+                    Intent intent = new Intent(this.mContext, Main2Activity.class);
                     this.mContext.startActivity(intent);
+                    return;
                 }
+                Intent intent = new Intent(this.mContext, Activities[indexActive]);
+                this.mContext.startActivity(intent);
+            } else {
                 indexActive++;
                 if (indexActive == Activities.length)
                     indexActive = 0;
             }
         }
     }
-
+}
