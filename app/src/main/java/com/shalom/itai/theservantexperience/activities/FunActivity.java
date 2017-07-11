@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,11 +36,11 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SHOW_IMSULT_T
 
 
 //TODO more interaction
-public class FunActivity extends AppCompatActivity {
+public class FunActivity extends ToolBarActivityNew {
     private TextView text;
     private Random rand;
-    private Button likeBut;
-    private Button unlikeBut;
+    private ImageButton likeBut;
+    private ImageButton unlikeBut;
     private BroadcastReceiver mReceiver;
     //private static FunActivity thisActivity;
     private Timer timerUI;
@@ -47,10 +48,10 @@ public class FunActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fun);
+        super.onCreate(savedInstanceState,R.layout.activity_fun,R.menu.tool_bar_game_options,true,-1);
+        //setContentView(R.layout.activity_fun);
 
-
+//    super.onCreate(savedInstanceState, R.layout.activity_matches_game_2, R.menu.tool_bar_game_options,false,-1);
         rand = new Random();
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;
@@ -83,7 +84,7 @@ public class FunActivity extends AppCompatActivity {
 
     private void putResponseButtons(final Bitmap bitmapImage)
     {
-        likeBut = (Button) findViewById(R.id.like);
+        likeBut = (ImageButton) findViewById(R.id.like);
         likeBut.setVisibility(VISIBLE);
         likeBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -91,6 +92,7 @@ public class FunActivity extends AppCompatActivity {
                 likeBut.setVisibility(INVISIBLE);
                 continueAnalyze(bitmapImage);
                 text.setText("Thanks!!");
+                 findViewById(R.id.check_this_joke).setVisibility(INVISIBLE);
                 final Animation animationFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 text.startAnimation(animationFadeIn);
                 final Handler handler = new Handler();
@@ -114,7 +116,7 @@ public class FunActivity extends AppCompatActivity {
             }
         });
 
-        unlikeBut = (Button) findViewById(R.id.unlike);
+        unlikeBut = (ImageButton) findViewById(R.id.unlike);
         unlikeBut.setVisibility(VISIBLE);
         unlikeBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -122,8 +124,6 @@ public class FunActivity extends AppCompatActivity {
                 unlikeBut.setVisibility(INVISIBLE);
                 likeBut.setVisibility(INVISIBLE);
                 text.setText(allInsults.get(rand.nextInt(allInsults.size())));
-                ImageView imageViewLaugh = (ImageView) findViewById(R.id.imageLaugh);
-                imageViewLaugh.setVisibility(INVISIBLE);
                 ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
                 imageViewAngry.setVisibility(VISIBLE);
                 BuggerService.setSYSTEM_GlobalPoints(-1, "You didn't like my joke");
@@ -206,8 +206,6 @@ public class FunActivity extends AppCompatActivity {
     {
         timerUI.cancel();
         timerUI.purge();
-        Toast.makeText(FunActivity.this, "end!",
-                Toast.LENGTH_LONG).show();
     }
 
     @Override

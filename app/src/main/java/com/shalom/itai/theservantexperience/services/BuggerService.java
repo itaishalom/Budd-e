@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import pl.droidsonroids.gif.GifImageView;
 
-import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
 import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.LOG_SEPARATOR;
 import static com.shalom.itai.theservantexperience.utils.Constants.MOOD_CHANGE_BROADCAST;
@@ -40,12 +38,11 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSU
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_LOG;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_USERNAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE_BROADCAST;
-import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryTemperature;
 import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
+import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.getUserName;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandomProb;
 
 /**
@@ -182,7 +179,7 @@ public class BuggerService extends Service {
             }
             if (oldMood != currentMood) {
                 Log.d(TAG, "setSYSTEM_GlobalPoints: Changed status");
-                Intent i = new Intent(MOOD_CHANGE_BROADCAST);//.putExtra("path", pathToImage);
+                Intent i = new Intent(MOOD_CHANGE_BROADCAST).putExtra("Mood",currentMood.getClass().getSimpleName());//.putExtra("path", pathToImage);
                 getInstance().sendBroadcast(i);
                 //     Toast.makeText(getInstance(),"Changed status",Toast.LENGTH_LONG);
             }
@@ -207,7 +204,6 @@ public class BuggerService extends Service {
 
     private void loadUserName() {
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        USER_NAME = settings.getString(SETTING_USERNAME, "");
     }
 
 
@@ -245,7 +241,8 @@ public class BuggerService extends Service {
     }
 
     private void save(ArrayList<String> arr, String query, String SETTING) {
-        query = query.replaceAll("(?i)" + Constants.ENTITY_NAME, USER_NAME);
+
+        query = query.replaceAll("(?i)" + Constants.ENTITY_NAME, getUserName(this));
         if (!arr.contains(query)) {
             arr.add(query);
         }

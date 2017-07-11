@@ -13,7 +13,7 @@ public class Board extends Mood{
         mBackgroundId = R.drawable.board_background;
         mTopBackgroundColor = "#f6b57a";
         mBuddePng =R.drawable.board_png;
-        mBuddeGif =R.drawable.board_png;
+        mBuddeGif =R.drawable.board_gif;
     }
 
     public static Mood getInstance(){

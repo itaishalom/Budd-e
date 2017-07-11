@@ -59,7 +59,6 @@ public class MessageBox extends Activity {
                         am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                         0);
                 mediaPlayer.start();
-             //   turnLed();
                 if(isWokeUp){
                     BuggerService.getInstance().wakeUpJon();
                 }
@@ -93,18 +92,9 @@ public class MessageBox extends Activity {
                     //  TextView tx = (TextView) findViewById(R.id.jon_text) ;  //TODO ??
                     // tx.setText("");
                 } else {
-
                     chatIntent = new Intent(MessageBox.this, Main2Activity.class);
-
                     chatIntent.putExtra(JUST_WOKE_UP, true);
-
                 }
-
-/*
-                NotificationManager nm = ( NotificationManager ) getSystemService( NOTIFICATION_SERVICE );
-                nm.cancel( LED_ID );
-*/
-
                 startActivity(chatIntent);
                 finish();
             }
@@ -115,15 +105,5 @@ public class MessageBox extends Activity {
     public static MessageBox getInstance() {
         return instance;
     }
-  /*
-    private void turnLed() {
-        NotificationManager nm = ( NotificationManager ) getSystemService( NOTIFICATION_SERVICE );
-        Notification notif = new Notification();
-        notif.ledARGB = 0xFFff0000;
-        notif.flags = Notification.FLAG_SHOW_LIGHTS;
-        notif.ledOnMS = 500;
-        notif.ledOffMS = 2000;
-        nm.notify(LED_ID, notif);
-    }
-*/
+
 }

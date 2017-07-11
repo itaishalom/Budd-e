@@ -138,7 +138,7 @@ public class IncomingCallActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mMediaPlayer.stop();
                 mViber.cancel();
-                startActivity(new Intent(IncomingCallActivity.this,MainActivity.class));
+                startActivity(new Intent(IncomingCallActivity.this,Main2Activity.class));
                 finish();
             }
         });

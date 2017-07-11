@@ -61,7 +61,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState, R.layout.activity_matches_game, R.menu.tool_bar_game_options,false,-1);
+        super.onCreate(savedInstanceState, R.layout.activity_matches_game_2, R.menu.tool_bar_game_options,false,-1);
         // setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
 
         snacks = new LinkedBlockingQueue<>();
@@ -304,7 +304,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
             String newInfo = snacks.poll();
             if (newInfo != null) {
                 snackbar = Snackbar
-                        .make(layout, newInfo, Snackbar.LENGTH_SHORT);
+                        .make(mainLayout, newInfo, Snackbar.LENGTH_SHORT);
                 Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
                 layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 View snackbarView = snackbar.getView();
@@ -327,7 +327,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
         if (!isSnackShown) {
             isSnackShown = true;
             Snackbar snackbar = Snackbar
-                    .make(layout, info, Snackbar.LENGTH_SHORT);
+                    .make(mainLayout, info, Snackbar.LENGTH_SHORT);
             Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
             layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             View snackbarView = snackbar.getView();

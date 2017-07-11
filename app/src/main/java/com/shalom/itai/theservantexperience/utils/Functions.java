@@ -72,8 +72,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
-import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_USERNAME;
 import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
 
 //import android.icu.util.Calendar;
@@ -96,11 +95,18 @@ public class Functions {
             activity.sendBroadcast(intentShortcut);
         }
 
+        public static String getUserName(Context context){
+            SharedPreferences settings = context.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+           return settings.getString(SETTING_USERNAME,"");
+        }
 
         public static void setUserName(AppCompatActivity activity,String TAG) {
-            if (!USER_NAME.isEmpty()) {
+            SharedPreferences settings = activity.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+            String defName = settings.getString(SETTING_USERNAME,"");
+            if(!defName.isEmpty()){
                 return;
             }
+            String USER_NAME ="";
             Cursor c = null;
             try {
                 c = activity.getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
@@ -127,7 +133,7 @@ public class Functions {
                 if (c != null)
                     c.close();
                 if (USER_NAME != null && !USER_NAME.isEmpty()) {
-                    BuggerService.getInstance().writeToSettings(SETTINGS_NAME, USER_NAME);
+                    BuggerService.getInstance().writeToSettings(SETTING_USERNAME, USER_NAME);
                 }
             }
         }

@@ -19,17 +19,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.CalendarContract;
-import android.provider.ContactsContract;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -41,7 +36,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
@@ -61,27 +55,13 @@ import java.util.regex.Pattern;
 
 import pl.droidsonroids.gif.GifImageView;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_WIFI_STATE;
-import static android.Manifest.permission.GET_ACCOUNTS;
-import static android.Manifest.permission.INTERNET;
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
-import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
-import static android.Manifest.permission.VIBRATE;
-import static android.Manifest.permission.WAKE_LOCK;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
-import static com.shalom.itai.theservantexperience.utils.Constants.USER_NAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
@@ -117,7 +97,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         createJonFolder();
         //  addCalendarMeeting();
         if (!settings.getBoolean(IS_INSTALLED, false)) {
-            setUserName();
+        //    setUserName();
             addCalendarMeeting();
 
         }
@@ -230,6 +210,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
         mainLayout.setBackgroundColor(Color.parseColor("#04967D"));
     }
 
+/*
 
     private void setUserName() {
         if (!USER_NAME.isEmpty()) {
@@ -265,6 +246,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             }
         }
     }
+*/
 
     private String getPrimaryEmail() {
         try {
@@ -406,7 +388,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
             SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
             createJonFolder();
             if (!settings.getBoolean(IS_INSTALLED, false)) {
-                setUserName();
+              //  setUserName();
         //        BuggerService.getInstance().createLogger();
                 takeScreenshot(MainActivity.this, "I was born");
                 addCalendarMeeting();

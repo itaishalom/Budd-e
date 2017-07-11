@@ -14,7 +14,7 @@ public class Excited extends Mood{
         mBackgroundId = R.drawable.excited_background;
         mTopBackgroundColor = "#fbed8d";
         mBuddePng =R.drawable.excited_png;
-        mBuddeGif =R.drawable.excited_png;
+        mBuddeGif =R.drawable.excited_gif;
     }
 
     public static Mood getInstance(){

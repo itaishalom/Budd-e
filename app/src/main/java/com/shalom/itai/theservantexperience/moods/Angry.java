@@ -13,7 +13,7 @@ public class Angry extends Mood{
         mBackgroundId = R.drawable.angrey_background;
         mTopBackgroundColor = "#480000";
         mBuddePng =R.drawable.angry_png;
-        mBuddeGif =R.drawable.angry_png;
+        mBuddeGif =R.drawable.angry_gif;
     }
 
     public static Mood getInstance(){

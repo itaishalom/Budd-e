@@ -11,7 +11,7 @@ public class Sleep extends Mood{
 
     private Sleep(){
         mBackgroundId = R.drawable.sleep_background;
-        mBuddeGif = R.drawable.sleep_png;
+        mBuddeGif = R.drawable.sleep_gif;
         mBuddePng = R.drawable.sleep_png;
         mTopBackgroundColor = "#000000";
     }

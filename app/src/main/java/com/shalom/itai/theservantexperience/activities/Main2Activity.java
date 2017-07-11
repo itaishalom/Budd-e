@@ -1,17 +1,13 @@
 package com.shalom.itai.theservantexperience.activities;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -32,23 +28,27 @@ import com.shalom.itai.theservantexperience.moods.Happy;
 import com.shalom.itai.theservantexperience.moods.Mood;
 import com.shalom.itai.theservantexperience.moods.Optimistic;
 import com.shalom.itai.theservantexperience.moods.Sad;
+import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
 
-import pl.droidsonroids.gif.GifImageView;
-
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
+import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.getUserName;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
 public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
@@ -69,7 +69,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     private boolean wasClosedFromOutside = false;
     private boolean readyToInvalidate;
     private int moodIndex = 0;
-    private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance()};
+    private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance(), Sleep.getInstance()};
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -111,59 +111,68 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
                 //now map the coords we got to the
                 //bitmap (because of scaling)
-                ImageButton imageView = ((ImageButton) v);
+                ImageButton imageView =null;//= ((ImageButton) v);
                 try {
 
+                    for (ImageButton view : allImageButtons) {
+                        Bitmap bitmap = ((BitmapDrawable) view.getDrawable()).getBitmap();
 
-                    Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                        int pixel = bitmap.getPixel(x, y);
+                        int alpha = Color.alpha(pixel);
+                        //now check alpha for transparency
+                        if (alpha != 0) {
+                            imageView = view;
+                            break;
+                        }
+                    }
 
-                    int pixel = bitmap.getPixel(x, y);
-
-                    //now check alpha for transparency
-                    int alpha = Color.alpha(pixel);
-                    if (alpha != 0) {
-                        if (((ImageButton) v).getImageAlpha() != 255) {
-                            ((ImageButton) v).setImageAlpha(255);
+                    if (imageView != null) {
+                        if (imageView.getImageAlpha() != 255) {
+                            imageView.setImageAlpha(255);
                             SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
                             if (preferences.getBoolean(SETTINGS_IS_ASLEEP, false)) {
-                                currendPressed = (ImageButton) v;
+                                currendPressed = imageView;
                                 showDialog();
                                 return true;
                             }
 
-                            if (v==openMore){
-                                if(moodIndex == moodArr.length)
+                            if (imageView == openMore) {
+                                if (moodIndex == moodArr.length)
                                     moodIndex = 0;
+                                Client.getInstance("").sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
+
+
                                 BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
-                                moodIndex ++;
+                                moodIndex++;
                                 refreshLayout();
                                 return true;
+
                             }
 
-                            if (v == openChat) {
+                            if (imageView == openChat) {
                                 //refreshLayout2();
 
 
-                                   Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, "Jon is here"));
+                                Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, ENTITY_NAME+" is here"));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
-                            if (v == openGame) {
+                            if (imageView == openGame) {
                                 //    refreshLayout3();
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, MatchesGameActivity.class).putExtra(ASK_TO_PLAY, false));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
-                            if (v == openTrip) {
+                            if (imageView == openTrip) {
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, TripActivity.class));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
-                            if (v == openPoke) {
+                            if (imageView == openPoke) {
                                 //     BuggerService.setSYSTEM_GlobalPoints(-5,"check");
                             }
                             // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             //   Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
 
                         } else {
-                            ((ImageButton) v).setImageAlpha(128);
+                            imageView.setImageAlpha(128);
                         }
                     }
                 } catch (IllegalArgumentException e) {
@@ -183,7 +192,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                     (allImageButtons.get(i)).clearAnimation();
                 mAnimationIndex = allImageButtons.size() - 1;
             }
-         //   startedAnimation = true;
+            //   startedAnimation = true;
 
             allImageButtons.get(allImageButtons.size() - 1).clearAnimation();
             allImageButtons.get(allImageButtons.size() - 1).startAnimation(mOffAnimation);
@@ -198,7 +207,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             if (startedAnimation) {
                 for (int i = 0; i < allImageButtons.size(); i++)
                     (allImageButtons.get(i)).clearAnimation();
-               // mAnimationIndex = 0;
+                // mAnimationIndex = 0;
             }
             startedAnimation = true;
             allImageButtons.get(0).clearAnimation();
@@ -212,7 +221,9 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
         // getSupportActionBar().setIcon(R.drawable.title);
-
+        Functions.oneTimeFunctions.setUserName(this,TAG);
+        String uName = getUserName(this);
+        Client.getInstance(uName.replace(" ","_")).sendMessage(uName + " Just joined");
         initializeAnimations();
         initializeGui();
 
@@ -231,6 +242,13 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     @Override
     public void onResume() {
         super.onResume();
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        if((settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)) ){
+            Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,false,this);
+            if(checkScreenAndLock(this)){
+                return;
+            }
+        }
         if (allImageButtons != null) {
             for (int i = 0; i < allImageButtons.size(); i++)
                 allImageButtons.get(i).setImageAlpha(128);
@@ -382,8 +400,6 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         });
         readyToInvalidate = true;
     }
-
-
 
 
     @Override

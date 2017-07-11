@@ -72,8 +72,13 @@
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED" />
 
         <receiver android:name=".chatBot.MyScheduledReceiver" />
-
         <service android:name=".services.OverlyService" />
+
+        <receiver android:name=".utils.MoodChangingReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MoodChanged" />
+            </intent-filter>
+        </receiver>
 
 
         <activity

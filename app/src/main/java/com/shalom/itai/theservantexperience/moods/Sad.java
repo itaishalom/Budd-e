@@ -11,7 +11,7 @@ public class Sad extends Mood{
 
     private Sad(){
         mBackgroundId = R.drawable.sad_background;
-        mBuddeGif = R.drawable.sad_png;
+        mBuddeGif = R.drawable.sad_gif;
         mBuddePng = R.drawable.sad_png;
         mTopBackgroundColor = "#000000";
     }

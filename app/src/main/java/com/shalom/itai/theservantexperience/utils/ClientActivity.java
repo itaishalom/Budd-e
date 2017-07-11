@@ -364,7 +364,7 @@ public class ClientActivity extends AppCompatActivity {
         return new String(hexChars);
     }
 
-    public class Message {
+    public static class Message {
         private String fromName, message;
         private boolean isSelf;
 

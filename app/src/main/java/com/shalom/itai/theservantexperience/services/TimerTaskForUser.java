@@ -4,8 +4,12 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.shalom.itai.theservantexperience.MessageBox;
+import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
@@ -14,6 +18,7 @@ import java.util.List;
 import static com.shalom.itai.theservantexperience.services.DayActions.Activities;
 import static com.shalom.itai.theservantexperience.utils.Constants.BUG_INDEX;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
@@ -65,14 +70,22 @@ class TimerTaskForUser extends ContextTimerTask {
             return;
         }
         if (!checkScreenAndLock(mContext)) {
+       //     playSound();
             if (shouldSleep) {
                 BuggerService.getInstance().sendJonToSleep();
                 Intent intent = new Intent(this.mContext, Main2Activity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.mContext.startActivity(intent);
                 return;
+            }else{
+                if (!settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)) {
+                    Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,true,mContext);
+                    Intent intent = new Intent(this.mContext, Main2Activity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    this.mContext.startActivity(intent);
+                }
+                return;
             }
-            Log.d("Timer", "run: screen locked");
-            return;
         }
         if (!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
                 && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
@@ -91,6 +104,7 @@ class TimerTaskForUser extends ContextTimerTask {
                 } else {
                 */
             if (shouldSleep) {
+                playSound();
                 BuggerService.getInstance().sendJonToSleep();
                 Intent intent = new Intent(this.mContext, Main2Activity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -101,11 +115,22 @@ class TimerTaskForUser extends ContextTimerTask {
             Intent intent = new Intent(this.mContext, Activities[indexActive]);
             if (indexActive == Activities.length)
                 indexActive = 0;
+            playSound();
             Functions.writeToSettings(BUG_INDEX, indexActive + 1, mContext);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.mContext.startActivity(intent);
-
-
         }
     }
+
+    private void playSound(){
+        MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.ring_message);
+        AudioManager am =
+                (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0);
+        mediaPlayer.start();
+    }
+
 }

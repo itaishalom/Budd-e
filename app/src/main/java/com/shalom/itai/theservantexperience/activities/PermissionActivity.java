@@ -35,6 +35,8 @@ import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
+import static com.shalom.itai.theservantexperience.utils.Constants.BUG_INDEX;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 
@@ -45,15 +47,16 @@ public class PermissionActivity extends AppCompatActivity {
             VIBRATE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, READ_PHONE_STATE,
             ACCESS_WIFI_STATE, INTERNET, WRITE_SETTINGS, WAKE_LOCK, SYSTEM_ALERT_WINDOW, INSTALL_SHORTCUT};
 
-    private static String failedPermission = null;
-
     private static final int REQUESTS = 100;
     public final static int REQUEST_OVERLAY = 1231;
     public final static int REQUEST_DENIED_PERMISSION = 1232;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this );
+        Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this ); //TODO remove
+        Functions.writeToSettings(BUG_INDEX, 0 , this);
+        Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE, false , this);
+      //  settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
@@ -88,7 +91,6 @@ public class PermissionActivity extends AppCompatActivity {
                             // again the permission and directing to
                             // the app settingi
                         } else {
-                            failedPermission = permission;
                             popUpForRequest(null,0);
                             // this.showDialog();
                             return;

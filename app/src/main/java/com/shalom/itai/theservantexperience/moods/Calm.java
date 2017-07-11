@@ -13,7 +13,7 @@ public class Calm extends Mood {
         mBackgroundId = R.drawable.calm_background;
         mTopBackgroundColor = "#f6b57a";
         mBuddePng =R.drawable.calm_png;
-        mBuddeGif =R.drawable.calm_png;
+        mBuddeGif =R.drawable.calm_gif;
     }
 
     public static Mood getInstance(){

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -63,11 +64,10 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     private ConstraintLayout relationsLayout;
     private ConstraintLayout moodLayout;
     private ConstraintLayout gameWinsLayout;
-    protected ConstraintLayout mainLayout;
     View[] arr;
     Window mWindow;
     protected BroadcastReceiver mReceiver;
-    protected ConstraintLayout layout;
+    protected ViewGroup mainLayout;
     private Menu barMenu;
     protected int mOptionsId;
     GifImageView mGifImageView;
@@ -85,7 +85,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         refreshLayout();
         mOptionsId = optionsId;
         mIdOfHidedView = hideIdView;
-        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
+
+            mainLayout = (ViewGroup) findViewById(R.id.main_layout);
         //    layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);//0xf6b478);
@@ -147,8 +148,6 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     }
  */
 
-    protected void collapseView(){}
-
     protected void turnOfAllActionsBar(){
         for (int i = 0; i < barMenu.size(); i++) {
             barMenu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
@@ -192,6 +191,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     }
 
     protected void hideBeneath(ConstraintLayout layoutAppeared) {
+        if(!(mainLayout instanceof ConstraintLayout))
+            return;
         if (mIdOfHidedView != -1) {
             int val = 0;
             if (hidingLayout != null) {
@@ -212,28 +213,30 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
             newParams.height = list.getHeight() + val - layoutAppeared.getHeight();
             //   newParams.setMargins(16, 16, 16, 16);
 
-            layout.removeView(list);
-            layout.addView(list, -1, newParams);
-            set.clone(layout);
-            set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
-            set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
+            mainLayout.removeView(list);
+            mainLayout.addView(list, -1, newParams);
+            set.clone((ConstraintLayout)mainLayout);
+            set.connect(list.getId(), ConstraintSet.LEFT, mainLayout.getId(), ConstraintSet.LEFT, 8);
+            set.connect(list.getId(), ConstraintSet.RIGHT, mainLayout.getId(), ConstraintSet.RIGHT, 8);
             set.connect(list.getId(), ConstraintSet.TOP, layoutAppeared.getId(), ConstraintSet.BOTTOM, 8);
-            set.applyTo(layout);
+            set.applyTo((ConstraintLayout)mainLayout);
             hidingLayout = layoutAppeared;
         }
     }
 
     protected void showBeneath() {
+        if(!(mainLayout instanceof ConstraintLayout))
+            return;
         if(mIdOfHidedView != -1){
         ConstraintSet set = new ConstraintSet();
         View list =  findViewById(mIdOfHidedView);
-        layout.removeView(list);
-        layout.addView(list, -1, originalParams);
-        set.clone(layout);
+            mainLayout.removeView(list);
+            mainLayout.addView(list, -1, originalParams);
+        set.clone((ConstraintLayout)mainLayout);
         set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
-        set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
-        set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
-        set.applyTo(layout);
+        set.connect(list.getId(), ConstraintSet.LEFT, mainLayout.getId(), ConstraintSet.LEFT, 8);
+        set.connect(list.getId(), ConstraintSet.RIGHT, mainLayout.getId(), ConstraintSet.RIGHT, 8);
+        set.applyTo((ConstraintLayout)mainLayout);
             hidingLayout = null;
     }
     }
@@ -263,9 +266,9 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                     invalidateStatusParam();
                     moodLayout.setVisibility(View.VISIBLE);
                     hideBeneath(moodLayout);
-                    relationsLayout.setVisibility(View.INVISIBLE);
+                    relationsLayout.setVisibility(View.GONE);
                 } else {
-                    moodLayout.setVisibility(View.INVISIBLE);
+                    moodLayout.setVisibility(View.GONE);
                     showBeneath();
                 }
                 return true;
@@ -274,10 +277,10 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 if (isTurnedOn) {
                     invalidateRelationsData();
                     relationsLayout.setVisibility(View.VISIBLE);
-                    moodLayout.setVisibility(View.INVISIBLE);
+                    moodLayout.setVisibility(View.GONE);
                     hideBeneath(relationsLayout);
                 } else {
-                    relationsLayout.setVisibility(View.INVISIBLE);
+                    relationsLayout.setVisibility(View.GONE);
                     showBeneath();
                 }
                 return true;
@@ -286,8 +289,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                     finish();
                     return true;
                 }
-                moodLayout.setVisibility(View.INVISIBLE);
-                relationsLayout.setVisibility(View.INVISIBLE);
+                moodLayout.setVisibility(View.GONE);
+                relationsLayout.setVisibility(View.GONE);
                 startActivity(new Intent(this, SplashActivity.class).putExtra(INPUT_TO_SPLASH_CLASS_NAME, GalleryActivity.class.getSimpleName()));
                 overridePendingTransition(R.anim.slide_top_in, R.anim.slide_bottom_out);
                 return true;
@@ -300,7 +303,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 int losses = preferences.getInt(SETTINGS_USER_LOOSE, 0);
                 invalidateGameStatus(wins, losses);
                 if (gameWinsLayout.getVisibility() == View.VISIBLE) {
-                    gameWinsLayout.setVisibility(View.INVISIBLE);
+                    gameWinsLayout.setVisibility(View.GONE);
                     showBeneath();
                 }
                 else {
@@ -362,8 +365,11 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
 
 
     protected void refreshLayout() {
-        if (layout == null) {
-            layout = (ConstraintLayout) findViewById(R.id.main_layout);
+        View lay =  findViewById(R.id.main_layout);
+        if (mainLayout == null) {
+
+                mainLayout = (ViewGroup) findViewById(R.id.main_layout);
+
             mWindow = getWindow();
             mGifImageView = (GifImageView) findViewById(R.id.GifImageView);
         }
@@ -371,13 +377,15 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
              //   int color = BuggerService.getInstance().getMood().getTopBackgroundColor();
              //   if(color !=0)
+                if(mWindow == null)
+                    return;
                 mWindow.setStatusBarColor(Color.parseColor(BuggerService.getInstance().getMood().getTopBackgroundColor()));
                // else
                //     mWindow.setStatusBarColor(Color.parseColor("#000000"));
             }
             if (mGifImageView != null)//Optional
                 mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
-            layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+        lay.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
         }
 
 

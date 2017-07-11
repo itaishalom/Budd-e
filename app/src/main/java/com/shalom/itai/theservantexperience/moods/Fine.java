@@ -13,7 +13,7 @@ public class Fine extends Mood{
         mBackgroundId = R.drawable.fine_background;
         mTopBackgroundColor = "#fedd29";
         mBuddePng =R.drawable.fine_png;
-        mBuddeGif  =R.drawable.fine_png;
+        mBuddeGif  =R.drawable.fine_gif;
     }
 
 

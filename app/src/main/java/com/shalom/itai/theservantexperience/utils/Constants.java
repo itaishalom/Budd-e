@@ -67,7 +67,7 @@ public class Constants {
         }
     }*/
 
-    public static String USER_NAME ;// "imageByteArray";
+  //  public static String USER_NAME ;// "imageByteArray";
     public static final String SAVE_IMAGE =  "toSaveImage";
     public static final String IMAGE_READY = "android.intent.action.ImageReady";
     public static final String STATUS_CHANGE_BROADCAST = "android.intent.action.StatusChanged";
@@ -79,7 +79,6 @@ public class Constants {
     public static final int HALF_INT_ALPHA = 128;
     ////SETTINGS:
     public static final String SETTINGS_POINTS = "GLOBAL_POINTS";
-    public static final String SETTINGS_NAME = "SETTINGS_NAME";
     public static final String SETTINGS_IS_ASLEEP = "SETTINGS_SLEEP";
     public static final String SETTINGS_INSULTS = "SETTINGS_INSULTS";
     public static final String SETTINGS_BLESSES = "SETTINGS_BLESSES";
@@ -95,4 +94,7 @@ public class Constants {
     public static final String SETTINGS_TIRED_POINTS = "SETTINGS_TIRED_POINTS";
     public static final int SETTINGS_INITIAL_TIRED_POINTS = 150;
     public static final int SETTINGS_MAX_TIRED_POINTS = 300;
+
+    public static final String SETTINGS_CALLED_MAIN_ONCE = "SETTINGS_CALLED_MAIN_ONCE";
+   // public static String SETTINGS_USER_NAME = "SETTINGS_USER_NAME";// "imageByteArray";
 }

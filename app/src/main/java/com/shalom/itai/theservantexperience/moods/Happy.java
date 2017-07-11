@@ -13,7 +13,7 @@ public class Happy extends Mood{
         mBackgroundId = R.drawable.happy_background;
         mTopBackgroundColor = "#faf2b4";
         mBuddePng =R.drawable.happy_png;
-        mBuddeGif = R.drawable.happy_png;
+        mBuddeGif = R.drawable.happy_gif;
     }
 
 
