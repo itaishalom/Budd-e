@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toolbar;
 
 import com.shalom.itai.theservantexperience.activities.Main2Activity;
@@ -59,11 +60,11 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
     private boolean LEFT = false;
     private boolean RIGHT = true;
     private ConstraintLayout hidingLayout;
-    private String[] denyGoodNight = new String[]{"I am not tired","It's too early","Not now","I don't feel like"};
+    private String[] denyGoodNight = new String[]{"I am not tired", "It's too early", "Not now", "I don't feel like"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState,R.layout.activity_chat,R.menu.tool_bar_options);
+        super.onCreate(savedInstanceState, R.layout.activity_chat, R.menu.tool_bar_options, true,R.id.msgview);
         getSupportActionBar().setIcon(R.drawable.title);
         //  setContentView(R.layout.activity_chat);
 
@@ -77,8 +78,8 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
         chatText = (FontEditView) findViewById(R.id.msg);
         Intent startIntent = getIntent();
         String startCov = startIntent.getStringExtra(CHAT_START_MESSAGE);
-        if(startCov !=null && !startCov.isEmpty()){
-            sendChatMessage(false,false,startCov);
+        if (startCov != null && !startCov.isEmpty()) {
+            sendChatMessage(false, false, startCov);
         }
         final AIConfiguration config = new AIConfiguration("7f164d5c270e4014aa878dd674c6bccf",
                 AIConfiguration.SupportedLanguages.English,
@@ -87,8 +88,8 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
         aiDataService = new AIDataService(config);
 
         String chatReply = startIntent.getStringExtra(CHAT_QUICK_REPLY);
-        if(chatReply !=null && !chatReply.isEmpty()){
-            sendChatMessage(true,true,chatReply);
+        if (chatReply != null && !chatReply.isEmpty()) {
+            sendChatMessage(true, true, chatReply);
         }
 
         chatText.setText("go to sleep");
@@ -100,7 +101,7 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatMessage(true,true,"");// isLeft= true
+                sendChatMessage(true, true, "");// isLeft= true
             }
         });
 
@@ -116,30 +117,31 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
             }
         });
 
-   //     instance = this;
+        //     instance = this;
     }
-   /*
-    private static ChatActivity getInstance()
-    {
-        return instance;
-    }
-*/
-    @Override
-    protected void hideBeneath(ConstraintLayout layoutAppeared){
+
+    /*
+     private static ChatActivity getInstance()
+     {
+         return instance;
+     }
+ */
+  /*  @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared) {
         int val = 0;
-        if(hidingLayout != null){
+        if (hidingLayout != null) {
             val = hidingLayout.getHeight();
         }
         ConstraintSet set = new ConstraintSet();
         ListView list = (ListView) findViewById(R.id.msgview);
-     //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
-     //   layout.setLayoutParams(params);
+        //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
+        //   layout.setLayoutParams(params);
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) list.getLayoutParams();
         ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.MATCH_PARENT,
-                list.getHeight() +val- layoutAppeared.getHeight());
+                list.getHeight() + val - layoutAppeared.getHeight());
 
-        newParams.setMargins(16,16,16,16);
+        newParams.setMargins(16, 16, 16, 16);
         newParams.setMarginStart(20);
         newParams.setMarginEnd(20);
 
@@ -154,42 +156,32 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
     }
 
     @Override
-    protected void showBeneath(ConstraintLayout layoutAppeared){
+    protected void showBeneath(ConstraintLayout layoutAppeared) {
         ConstraintSet set = new ConstraintSet();
         ListView list = (ListView) findViewById(R.id.msgview);
-        //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
-        //   layout.setLayoutParams(params);
-        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                list.getHeight() + layoutAppeared.getHeight());
-        newParams.setMargins(16,16,16,16);
-        newParams.setMarginStart(20);
-        newParams.setMarginEnd(20);
-    //    Toolbar toolbar = (Toolbar)findViewById(R.id.my_toolbar);
         layout.removeView(list);
-        layout.addView(list, -1, newParams);
+        layout.addView(list, -1, originalParams);
         set.clone(layout);
         set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
         set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
         set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
         set.applyTo(layout);
-        hidingLayout= null;
-    }
+        hidingLayout = null;
+    }*/
 
-    private boolean sendChatMessage(boolean isLeft,boolean waitForRespond, String text) {
+    private boolean sendChatMessage(boolean isLeft, boolean waitForRespond, String text) {
         String tempText;
-        if(!text.isEmpty())
-        {
+        if (!text.isEmpty()) {
             tempText = text;
-        }else {
-            tempText =chatText.getText().toString();
+        } else {
+            tempText = chatText.getText().toString();
             chatText.setText("");
         }
         final String query = tempText;
-        if(query.isEmpty())
+        if (query.isEmpty())
             return false;
-        chatArrayAdapter.add(new ChatMessage(isLeft,query ));
-        if(!waitForRespond)
+        chatArrayAdapter.add(new ChatMessage(isLeft, query));
+        if (!waitForRespond)
             return true;
 
         final AIRequest aiRequest = new AIRequest();
@@ -213,16 +205,15 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                     final String finalParameterString = parameterString;
                     String res = result.getFulfillment().getSpeech();*/
 
-                    runOnUiThread(new Runnable(){
+                    runOnUiThread(new Runnable() {
 
                         @Override
-                        public void run(){
-                            if (result.getMetadata().getIntentName() == null)
-                            {
-                                Uri uri = Uri.parse("http://www.google.com/#q="+query.replace(" ","+"));
+                        public void run() {
+                            if (result.getMetadata().getIntentName() == null) {
+                                Uri uri = Uri.parse("http://www.google.com/#q=" + query.replace(" ", "+"));
                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                 startActivity(intent);
-                                sendChatMessage(false,false,"I hope it helped you");
+                                sendChatMessage(false, false, "I hope it helped you");
                                 return;
                             }
                             String whatHappend = "";
@@ -238,27 +229,25 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                             }
 
 
-                            if((Functions.allowToChangeFromChat()) && (point != 0)){
-                                BuggerService.setSYSTEM_GlobalPoints(point,whatHappend);
+                            if ((Functions.allowToChangeFromChat()) && (point != 0)) {
+                                BuggerService.setSYSTEM_GlobalPoints(point, whatHappend);
                             }
-                            Fulfillment answer =result.getFulfillment();
+                            Fulfillment answer = result.getFulfillment();
 
                             List<ResponseMessage> resultList = answer.getMessages();
                             String finalAnswer;
-                            if(resultList.size()==1)
-                            {
+                            if (resultList.size() == 1) {
                                 finalAnswer = ((ResponseMessage.ResponseSpeech) resultList.get(0)).getSpeech().get(0);
-                            }
-                            else{
-                                String status  = BuggerService.getInstance().getRelationsStatus().getRelationStatus();
+                            } else {
+                                String status = BuggerService.getInstance().getRelationsStatus().getRelationStatus();
                                 Log.d(TAG, "run: " + status);
                                 finalAnswer =
                                         ((ResponseMessage.ResponseSpeech) resultList.get(BuggerService.getInstance().getRelationsStatus().getResponseNumber())).getSpeech().get(0);
                             }
-                            if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")){
+                            if (result.getMetadata().getIntentName().equals("smalltalk.greetings.goodnight")) {
                                 SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                                 int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
-                                if(tired<SETTINGS_INITIAL_TIRED_POINTS) {
+                                if (tired < SETTINGS_INITIAL_TIRED_POINTS) {
                                     sendChatMessage(false, false, finalAnswer);
                                     Intent intent = new Intent(ChatActivity.this, Main2Activity.class);
                                     //intent.putExtra("sleep",true); //TODO change sleep call to bugger
@@ -266,19 +255,20 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                                     startActivity(intent);
                                     finish();
                                     return;
-                                }else{
-                                    int index = Functions.throwRandom(denyGoodNight.length,0);
+                                } else {
+                                    int index = Functions.throwRandom(denyGoodNight.length, 0);
                                     finalAnswer = denyGoodNight[index];
                                 }
                             }
-                            sendChatMessage(false,false,finalAnswer);
+                            sendChatMessage(false, false, finalAnswer);
 
 
                             // Toast.makeText(getApplicationContext(),res,Toast.LENGTH_LONG).show();
                             /*Toast.makeText(getApplicationContext(),"Query:" + result.getResolvedQuery() +
                                     "\nAction: " + result.getAction() +
                                     "\nParameters: " + finalParameterString,Toast.LENGTH_LONG).show();
-                        */}
+                        */
+                        }
                     });
 
 
@@ -288,6 +278,7 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
                 }
                 return null;
             }
+
             @Override
             protected void onPostExecute(AIResponse aiResponse) {
                 if (aiResponse != null) {
@@ -329,6 +320,7 @@ public class ChatActivity extends ToolBarActivityNew implements AIListener {
     public void onListeningFinished() {
 
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

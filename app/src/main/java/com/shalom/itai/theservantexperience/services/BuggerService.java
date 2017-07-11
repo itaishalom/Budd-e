@@ -17,6 +17,7 @@ import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
 import com.shalom.itai.theservantexperience.moods.Mood;
 import com.shalom.itai.theservantexperience.moods.MoodFactory;
+import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.relations.RelationsStatus;
 import com.shalom.itai.theservantexperience.utils.Constants;
@@ -59,9 +60,8 @@ public class BuggerService extends Service {
     public static boolean isLoginUp = false;
     private double latDistanceToDest = 0;
     private double lngDistanceToDest = 0;
-    public static boolean stopBugger = false;
     //  public static  Class[] Activities= new Class[]{SpeechRecognitionActivity.class, FunActivity.class ,DancingActivity.class, SmsSendActivity.class};
-    public static int indexActive = 0;
+  //  public static int indexActive = 0;
     private static int SYSTEM_GlobalPoints;
     private static BuggerService mInstance;
     private static RelationsStatus currentRelationsStatus;
@@ -74,6 +74,10 @@ public class BuggerService extends Service {
     //public static boolean startOverly = false;
     private static Mood currentMood = null;
 
+
+    public void setCurrntMood(Mood m){
+        currentMood = m;
+    }
 
     @Nullable
     @Override
@@ -131,10 +135,11 @@ public class BuggerService extends Service {
         if (intent != null) {
             if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, false)) {
                 Intent startMainActivity = new Intent(getApplicationContext(), Main2Activity.class);
+                startMainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(startMainActivity);
                 mStartId = startId;
             } else if (intent.getBooleanExtra(Constants.JonIntents.UPD_BUG_RUN_TUT, false)) {
-                startActivity(new Intent(this, TutorialActivity.class));
+                startActivity(new Intent(this, TutorialActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } else if (settings.getBoolean(SETTINGS_IS_ASLEEP, false)) {
                 sendJonToSleep();
             } else {
@@ -297,9 +302,12 @@ public class BuggerService extends Service {
     }
 
     public void wakeUpJon() {
+        if(currentTimeAction instanceof DayActions)
+            return ;// Already awake
         if (currentTimeAction != null)
             currentTimeAction.StopTimers(this);
         currentTimeAction = DayActions.start(getApplicationContext(), 0);
+        currentMood = getInstance().changeMood();
         writeToSettings(SETTINGS_IS_ASLEEP, false);
     }
 
@@ -326,10 +334,13 @@ public class BuggerService extends Service {
     }
 
     public void sendJonToSleep() {
+        if(currentTimeAction instanceof NightActions)
+            return ;// Already awake
         if (currentTimeAction != null) {
             currentTimeAction.StopTimers(this);
         }
         currentTimeAction = NightActions.start(getApplicationContext(), 0);
+        currentMood = Sleep.getInstance();
         writeToSettings(SETTINGS_IS_ASLEEP, true);
     }
 

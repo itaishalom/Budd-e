@@ -6,21 +6,20 @@ import com.shalom.itai.theservantexperience.R;
  * Created by Itai on 08/07/2017.
  */
 
-public class Happy extends Mood{
-    private static Happy instance;
+public class Sleep extends Mood{
+    private static Sleep instance;
 
-    private Happy(){
-        mBackgroundId = R.drawable.happy_background;
-        mTopBackgroundColor = "#faf2b4";
-        mBuddePng =R.drawable.happy_png;
-        mBuddeGif = R.drawable.happy_png;
+    private Sleep(){
+        mBackgroundId = R.drawable.sleep_background;
+        mBuddeGif = R.drawable.sleep_png;
+        mBuddePng = R.drawable.sleep_png;
+        mTopBackgroundColor = "#000000";
     }
-
 
     public static Mood getInstance(){
         if(instance==null)
         {
-            instance = new Happy();
+            instance = new Sleep();
         }
         return instance;
     }

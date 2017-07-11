@@ -11,8 +11,9 @@ public class Optimistic extends Mood{
 
     private Optimistic(){
         mBackgroundId = R.drawable.optimistic_background;
-        mBuddeGif = R.drawable.optimistic_gif;
-        mTopBackgroundColor = 0xFFF6B478;
+        mBuddeGif = R.drawable.optimistic_png;
+        mBuddePng = R.drawable.optimistic_png;
+        mTopBackgroundColor = "#f4b47a";
     }
 
     public static Mood getInstance(){

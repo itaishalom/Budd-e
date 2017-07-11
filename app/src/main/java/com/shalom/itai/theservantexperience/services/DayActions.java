@@ -52,7 +52,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allFacts;
 
     private static boolean stopBugger = false;
-    public static  Class[] Activities= new Class[]{IncomingCallActivity.class, FunActivity.class,BoardActivity.class ,MatchesGameActivity.class, FunActivity.class,SelfieV2.class,ClientActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
+    public static  Class[] Activities= new Class[]{ FunActivity.class,IncomingCallActivity.class,BoardActivity.class ,MatchesGameActivity.class, FunActivity.class,SelfieV2.class,ClientActivity.class,TripActivity.class, SpeechRecognitionActivity.class ,DancingActivity.class, SmsSendActivity.class};
     public static int indexActive = 0;
     private int mId=0;
     public static int SYSTEM_oldDay;

@@ -21,21 +21,15 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.FontTextView;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Function;
 
-import pl.droidsonroids.gif.GifImageView;
-
+import static android.view.View.VISIBLE;
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
@@ -67,7 +61,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState, R.layout.activity_matches_game, R.menu.tool_bar_game_options);
+        super.onCreate(savedInstanceState, R.layout.activity_matches_game, R.menu.tool_bar_game_options,false,-1);
         // setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
 
         snacks = new LinkedBlockingQueue<>();
@@ -207,7 +201,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
                     takeFromHeapOne = false;
                     secondStep();
                 } else {
-                    toastThis("no matches selected!");
+                    toastThis("no trees selected!");
                 }
             }
         });
@@ -380,7 +374,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
             }
         }
         if ((heap1 == 1) && (heap2 == 1)) {
-            toastThis(ENTITY_NAME + " took 1 matches from heap number 2");
+            toastThis(ENTITY_NAME + " burned 1 tree from heap number 2");
             jonBurn(R.id.heap2, 1);
             toastThis("The user beats " + ENTITY_NAME);
             endOfGame(false);
@@ -409,8 +403,8 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
                 while (heap1 - randomNum < 1);
             }
             heap1 = heap1 - randomNum;
-            toastThis(ENTITY_NAME + " took " + randomNum +
-                    " matches from heap number 1");
+            toastThis(ENTITY_NAME + " burned " + randomNum +
+                    " trees from heap number 1");
 
             jonBurn(R.id.heap1, randomNum);
 
@@ -425,12 +419,12 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
             }
 
             heap2 = heap2 - randomNum;
-            toastThis(ENTITY_NAME + " took " + randomNum + " matches from heap number 2");
+            toastThis(ENTITY_NAME + " burned " + randomNum + " trees from heap number 2");
             //        toastThis("Number of matches in the first heap is:" + heap1);
             //      toastThis("Number of matches in the second heap is:" + heap2);
             jonBurn(R.id.heap2, randomNum);
         }
-        toastThis("Select number of matches to take:");
+        toastThis("Select number of trees to burn:");
     }
 
     private void restoreMatches() {
@@ -449,7 +443,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
                     }
                 }
             }
-            changeMatchesVisibility(id, R.drawable.match, View.VISIBLE);
+            changeMatchesVisibility(id, R.drawable.match, VISIBLE);
         }
     }
 
@@ -514,6 +508,16 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
             setJonTurn();
             firstStep();
         }
+    }
+
+    @Override
+    protected void showBeneath(){
+        mGifImageView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared){
+        mGifImageView.setVisibility(View.INVISIBLE);
     }
 
     @Override

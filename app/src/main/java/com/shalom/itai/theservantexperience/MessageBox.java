@@ -1,8 +1,11 @@
 package com.shalom.itai.theservantexperience;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_QUICK_RE
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
+import static com.shalom.itai.theservantexperience.utils.Constants.LED_ID;
 import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_WINS;
@@ -30,7 +34,7 @@ import static com.shalom.itai.theservantexperience.utils.Functions.takeScreensho
 
 public class MessageBox extends Activity {
     private static MessageBox instance;
-
+    private boolean isWokeUp = false;
     /**
      * Called when the activity is first created.
      * Transparency defined on manifest!!!
@@ -55,7 +59,10 @@ public class MessageBox extends Activity {
                         am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                         0);
                 mediaPlayer.start();
-                BuggerService.getInstance().wakeUpJon();
+             //   turnLed();
+                if(isWokeUp){
+                    BuggerService.getInstance().wakeUpJon();
+                }
             }
         });
 
@@ -67,6 +74,7 @@ public class MessageBox extends Activity {
         if (startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("MainActivity")) {
             ((TextView) findViewById(R.id.jons_text_message_box)).setText(getIntent().getStringExtra("START_TEXT"));
             findViewById(R.id.user_response).setVisibility(View.INVISIBLE);
+            isWokeUp= true;
         } else if (startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("ChatActivity")) {
             ((TextView) findViewById(R.id.jons_text_message_box)).setText(getIntent().getStringExtra("START_TEXT"));
         }
@@ -85,11 +93,18 @@ public class MessageBox extends Activity {
                     //  TextView tx = (TextView) findViewById(R.id.jon_text) ;  //TODO ??
                     // tx.setText("");
                 } else {
+
                     chatIntent = new Intent(MessageBox.this, Main2Activity.class);
 
                     chatIntent.putExtra(JUST_WOKE_UP, true);
 
                 }
+
+/*
+                NotificationManager nm = ( NotificationManager ) getSystemService( NOTIFICATION_SERVICE );
+                nm.cancel( LED_ID );
+*/
+
                 startActivity(chatIntent);
                 finish();
             }
@@ -100,4 +115,15 @@ public class MessageBox extends Activity {
     public static MessageBox getInstance() {
         return instance;
     }
+  /*
+    private void turnLed() {
+        NotificationManager nm = ( NotificationManager ) getSystemService( NOTIFICATION_SERVICE );
+        Notification notif = new Notification();
+        notif.ledARGB = 0xFFff0000;
+        notif.flags = Notification.FLAG_SHOW_LIGHTS;
+        notif.ledOnMS = 500;
+        notif.ledOffMS = 2000;
+        nm.notify(LED_ID, notif);
+    }
+*/
 }

@@ -7,16 +7,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/SpacedToolbar"
     android:background="@drawable/optimistic_background"
     tools:context="com.shalom.itai.theservantexperience.activities.Main2Activity">
 
     <include
         android:id="@+id/my_toolbar"
         layout="@layout/toolbar_new"
-        app:layout_constraintTop_toTopOf="parent"
+
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <include
         android:id="@+id/relation_layout"
@@ -47,7 +49,7 @@
         app:layout_constraintVertical_bias="0.66" />
 
     <ImageButton
-        android:id="@+id/chat_image"
+        android:id="@+id/open_chat_image"
         android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,10 +116,10 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintVertical_bias="0.325" />
 
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/GifImageView"
-        android:layout_width="212dp"
-        android:layout_height="225dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="false"
         android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"

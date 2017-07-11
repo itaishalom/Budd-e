@@ -49,6 +49,7 @@
     <string name="friendship_level">Friendship level</string>
     <string name="user_wins">Games won</string>
     <string name="friendship_progress">Friendship progress</string>
+    <string name="energy_progress">Energy level</string>
     <string name="user_looses">Games lost</string>
     <string name="hello_i_m_jon">Hello, I\'m Budd-e!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
     <string name="this_is_how_we_can_chat">This is how we can chat</string>

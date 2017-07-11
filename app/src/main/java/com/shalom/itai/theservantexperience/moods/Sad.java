@@ -1,11 +1,20 @@
 package com.shalom.itai.theservantexperience.moods;
 
+import com.shalom.itai.theservantexperience.R;
+
 /**
  * Created by Itai on 08/07/2017.
  */
 
 public class Sad extends Mood{
     private static Sad instance;
+
+    private Sad(){
+        mBackgroundId = R.drawable.sad_background;
+        mBuddeGif = R.drawable.sad_png;
+        mBuddePng = R.drawable.sad_png;
+        mTopBackgroundColor = "#000000";
+    }
 
     public static Mood getInstance(){
         if(instance==null)

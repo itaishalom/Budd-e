@@ -33,6 +33,7 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 import java.io.File;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Functions.copy;
 
 public class FullScreenMemory extends AppCompatActivity {
@@ -196,15 +197,17 @@ public class FullScreenMemory extends AppCompatActivity {
             if (file.delete()) {
                 Toast.makeText(this.getApplicationContext(), "Forgot it :(", Toast.LENGTH_SHORT).show();
                 //  Snackbar.make(container, "Forgot it :(", Snackbar.LENGTH_SHORT).show();
-                startActivity(new Intent(this, SplashActivity.class));
-                overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+             //   startActivity(new Intent(this, SplashActivity.class).putExtra(INPUT_TO_SPLASH_CLASS_NAME,"GalleryActivity"));
+             //   overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
                 finish();
             } else {
                 Snackbar.make(container, "I failed to forget it", Snackbar.LENGTH_SHORT).show();
+                BuggerService.setSYSTEM_GlobalPoints(-1,"Deleted my memory");
             }
 
         } else {
             Snackbar.make(container, "Hahaha!! You can't delete my memories", Snackbar.LENGTH_SHORT).show();
+            BuggerService.setSYSTEM_GlobalPoints(-1,"Tried to delete my memory");
         }
     }
     private void share(){

@@ -467,11 +467,11 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                     case 1:
                         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
-                        if (tired >= 50) {
+                        if (tired >= SETTINGS_INITIAL_TIRED_POINTS) {
                             Toast.makeText(MainActivity.this, "Ok", Toast.LENGTH_LONG).show();
                             BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
                         } else {
-                            Toast.makeText(MainActivity.this, "Nope", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Nope, too tired", Toast.LENGTH_LONG).show();
                             BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this);
                         }
                         chatListView.setAdapter(new ChatListViewAdapter(MainActivity.this, R.layout.layout_for_listview, new ArrayList<String>()));
@@ -517,7 +517,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
                     case 2:
                         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
-                        if (tired>50) {
+                        if (tired>SETTINGS_INITIAL_TIRED_POINTS) {
                             Toast.makeText(MainActivity.this, "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(MainActivity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();

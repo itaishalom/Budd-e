@@ -12,7 +12,7 @@ public class Constants {
     public static final int SHOW_IMSULT_TIME = 7000;
     public static final String PREFS_NAME = "MySettings";
     public static final String IS_INSTALLED = "isInstalled";
-
+    public static final String BUG_INDEX = "BUG_INDEX";
     public static final String IS_LOCKED = "isLocked";
     public static final String CHAT_START_MESSAGE = "startConversation";
     public static final String CHAT_QUICK_REPLY = "answerToConversation";
@@ -22,7 +22,7 @@ public class Constants {
     public static final int MINUTE = 60000;
     public static final String IMAGE_BYTE_ARRAY = "imageByteArray";
     public static final String LOG_SEPARATOR = " <> ";
-
+    public static final int LED_ID = 0;
     public static class JonIntents{
         public static final String UPD_BUG_RUN_TUT = "runTutorial";
         public static final String UPD_BUG_RUN_MAIN = "runMain";

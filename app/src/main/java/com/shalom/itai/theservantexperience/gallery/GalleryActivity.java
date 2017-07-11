@@ -5,27 +5,34 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.shalom.itai.theservantexperience.activities.ToolBarActivity;
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.activities.ToolBarActivityNew;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-public class GalleryActivity extends ToolBarActivity {
+public class GalleryActivity extends ToolBarActivityNew {
   //  private HashMap<String,Bitmap> cacheBitmaps;
     public static boolean closeOnReturn = false;
+    private ConstraintLayout hidingLayout;
+    ConstraintLayout.LayoutParams originalParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_gallery);
+        super.onCreate(savedInstanceState, R.layout.activity_gallery,R.menu.tool_bar_options,true,R.id.relative_layout_to_hide);
         // setContentView(R.layout.activity_gallery);
  //       cacheBitmaps = new HashMap<>()
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -182,4 +189,49 @@ public class GalleryActivity extends ToolBarActivity {
     //    overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
         overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
     }
+
+
+/*    @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared) {
+        int val = 0;
+        if (hidingLayout != null) {
+            val = hidingLayout.getHeight();
+        }
+        ConstraintSet set = new ConstraintSet();
+        RelativeLayout list = (RelativeLayout) findViewById(R.id.relative_layout_to_hide);
+        //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
+        //   layout.setLayoutParams(params);
+      originalParams = (ConstraintLayout.LayoutParams) list.getLayoutParams();
+
+        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(originalParams);
+              *//*
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                list.getHeight() + val - layoutAppeared.getHeight());
+*//*
+        newParams.height = list.getHeight() + val - layoutAppeared.getHeight();
+     //   newParams.setMargins(16, 16, 16, 16);
+
+        layout.removeView(list);
+        layout.addView(list, -1, newParams);
+        set.clone(layout);
+        set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
+        set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
+        set.connect(list.getId(), ConstraintSet.TOP, layoutAppeared.getId(), ConstraintSet.BOTTOM, 8);
+        set.applyTo(layout);
+        hidingLayout = layoutAppeared;
+    }
+
+    @Override
+    protected void showBeneath(ConstraintLayout layoutAppeared) {
+        ConstraintSet set = new ConstraintSet();
+        RelativeLayout list = (RelativeLayout) findViewById(R.id.relative_layout_to_hide);
+        layout.removeView(list);
+        layout.addView(list, -1, originalParams);
+        set.clone(layout);
+        set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
+        set.connect(list.getId(), ConstraintSet.LEFT, layout.getId(), ConstraintSet.LEFT, 8);
+        set.connect(list.getId(), ConstraintSet.RIGHT, layout.getId(), ConstraintSet.RIGHT, 8);
+        set.applyTo(layout);
+        hidingLayout = null;
+    }*/
 }

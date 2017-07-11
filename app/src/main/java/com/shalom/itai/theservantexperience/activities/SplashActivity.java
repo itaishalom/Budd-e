@@ -31,12 +31,14 @@ public class SplashActivity extends AppCompatActivity {
                     Log.d(TAG, "SplashActivity: Error!");
                 } finally {
                     Intent i = null;
-                    if (className.equals("GalleryActivity")) {
+                    if(className ==null ||className.equals("MainActivity") ){
+                        i = new Intent(SplashActivity.this,
+                                Main2Activity.class);
+                    }
+                    else if (className.equals("GalleryActivity")) {
                          i = new Intent(SplashActivity.this,
                                 GalleryActivity.class);
-                    }else if(className.equals("MainActivity"))
-                         i = new Intent(SplashActivity.this,
-                                MainActivity.class);
+                    }
                     startActivity(i);
                     finish();
                 }

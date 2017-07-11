@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.Constants;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
@@ -34,6 +35,8 @@ import static android.Manifest.permission.VIBRATE;
 import static android.Manifest.permission.WAKE_LOCK;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_SETTINGS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 
 public class PermissionActivity extends AppCompatActivity {
     private String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
@@ -50,6 +53,7 @@ public class PermissionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         ActivityCompat.requestPermissions(this, permissions, REQUESTS);
@@ -124,15 +128,6 @@ public class PermissionActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void createShortcut() {
-        Intent intentShortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-        intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-        Parcelable appicon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.drawable.budde_face);
-        intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, appicon);
-        intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), Main2Activity.class));
-        intentShortcut.putExtra("duplicate", false);
-        sendBroadcast(intentShortcut);
-    }
 
     private void startSettings(final int code, String settings) {
         final Intent intent = new Intent(settings,
@@ -149,7 +144,6 @@ public class PermissionActivity extends AppCompatActivity {
                 /** if not construct intent to request permission */
                 startSettings(REQUEST_OVERLAY, Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             } else {
-                createShortcut();
                 startService(new Intent(this, BuggerService.class).putExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, true));
                 finish();
             }
@@ -166,7 +160,6 @@ public class PermissionActivity extends AppCompatActivity {
        /* if so check once again if we have permission */
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (Settings.canDrawOverlays(this)) {
-                        createShortcut();
                         startService(new Intent(this, BuggerService.class).putExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, true));
                         finish();
                         //   BuggerService.startOverly = true;

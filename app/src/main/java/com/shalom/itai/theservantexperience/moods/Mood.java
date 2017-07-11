@@ -9,14 +9,14 @@ import pl.droidsonroids.gif.GifImageView;
  */
 
 public abstract class Mood {
-    protected int mTopBackgroundColor = 0xFFF6B478;
+    protected  String mTopBackgroundColor = "FFF6B478";
     protected int mBackgroundId = R.drawable.optimistic_background;
     protected int mBuddeGif =R.drawable.optimistic_gif;
-    protected int mBuddePng =R.drawable.optimistic_gif;
+    protected int mBuddePng =R.drawable.optimistic_png;
     public int getBackground(){
         return mBackgroundId;
     }
-    public int getTopBackgroundColor(){
+    public String getTopBackgroundColor(){
         return mTopBackgroundColor;
     }
     public int getGif(){

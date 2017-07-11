@@ -77,8 +77,8 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         params.y = 0;
         /*android:layout_width="212dp"
         android:layout_height="225dp"*/
-        params.width = 200;
-        params.height = 100;
+        params.width =(int) (drawable.getIntrinsicWidth()*0.3);
+        params.height = (int)(drawable.getIntrinsicHeight()*0.3);
         wm.addView(overlayedButton, params);
         //    wm.updateViewLayout(overlayedButton,new LayoutParams(10,10));
         topLeftView = new View(this);
@@ -162,7 +162,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
 
     @Override
     public void onClick(View v) {
-        startActivity(new Intent(this, Main2Activity.class));
+        startActivity(new Intent(this, Main2Activity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
 
         //overlayedButton.setVisibility(View.INVISIBLE);
@@ -178,7 +178,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
         /*android:layout_width="212dp"
         android:layout_height="225dp"*/
         params.width = 200;
-        params.height = 100;
+        params.height = 200;
         wm.addView(mProgress, params);
 
         Handler handler = new Handler();

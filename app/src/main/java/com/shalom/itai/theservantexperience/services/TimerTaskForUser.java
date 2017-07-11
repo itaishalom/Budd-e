@@ -11,15 +11,12 @@ import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.List;
 
-import static com.shalom.itai.theservantexperience.services.BuggerService.indexActive;
-import static com.shalom.itai.theservantexperience.services.BuggerService.stopBugger;
 import static com.shalom.itai.theservantexperience.services.DayActions.Activities;
-import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
+import static com.shalom.itai.theservantexperience.utils.Constants.BUG_INDEX;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
-import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 
 /**
  * Created by Itai on 09/04/2017.
@@ -57,14 +54,14 @@ class TimerTaskForUser extends ContextTimerTask {
         SharedPreferences settings = mContext.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
         boolean shouldSleep = wakingUpLogic(tired);
-        if(tired>0)
+        if (tired > 0)
             Functions.writeToSettings(SETTINGS_TIRED_POINTS, tired - 1, mContext);
 
         ActivityManager mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> RunningTask = mActivityManager.getRunningTasks(1);
         ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
         String activityOnTop = ar.topActivity.getClassName();
-        if(activityOnTop.contains("theservant") && activityOnTop.contains("MessageBox")){
+        if (activityOnTop.contains("theservant") && activityOnTop.contains("MessageBox")) {
             return;
         }
         if (!checkScreenAndLock(mContext)) {
@@ -83,8 +80,8 @@ class TimerTaskForUser extends ContextTimerTask {
                 && !activityOnTop.toLowerCase().contains("com.google.android.location.settings.LocationSettingsCheckerActivity".toLowerCase())
                 && !activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())
                 && !activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())) { //"com.google.android.location.settings.LocationSettingsCheckerActivity"
-            if (!stopBugger) {
-                /*
+
+                                /*
                 if (indexActive == -1) {
                     Functions.popUpMessage(mContext, "I am board!", "ChatActivity");
                 } else if (indexActive == -2) {
@@ -93,19 +90,22 @@ class TimerTaskForUser extends ContextTimerTask {
                     this.mContext.startActivity(intent);
                 } else {
                 */
-                if (shouldSleep) {
-                    BuggerService.getInstance().sendJonToSleep();
-                    Intent intent = new Intent(this.mContext, Main2Activity.class);
-                    this.mContext.startActivity(intent);
-                    return;
-                }
-                Intent intent = new Intent(this.mContext, Activities[indexActive]);
+            if (shouldSleep) {
+                BuggerService.getInstance().sendJonToSleep();
+                Intent intent = new Intent(this.mContext, Main2Activity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.mContext.startActivity(intent);
-            } else {
-                indexActive++;
-                if (indexActive == Activities.length)
-                    indexActive = 0;
+                return;
             }
+            int indexActive = settings.getInt(BUG_INDEX, 0);
+            Intent intent = new Intent(this.mContext, Activities[indexActive]);
+            if (indexActive == Activities.length)
+                indexActive = 0;
+            Functions.writeToSettings(BUG_INDEX, indexActive + 1, mContext);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.mContext.startActivity(intent);
+
+
         }
     }
 }

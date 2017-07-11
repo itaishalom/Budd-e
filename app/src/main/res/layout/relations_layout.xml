@@ -46,6 +46,7 @@
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/friendship_level"
                 style="@style/CustomText"
+                android:gravity="start"
                 android:layout_marginStart="0dp"
                 android:text="@string/friendship_level" />
 
@@ -68,6 +69,7 @@
                 android:id="@+id/textView4"
                 android:text="@string/friendship_progress"
                 style="@style/CustomText"
+                android:gravity="start"
                 android:layout_marginStart="0dp" />
 
             <ProgressBar
@@ -77,8 +79,6 @@
 
                 android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
-
-
                 android:layout_marginTop="10dp"
                 android:bottomLeftRadius="5dp"
 

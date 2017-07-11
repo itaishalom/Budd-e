@@ -36,6 +36,7 @@ class LockerTimer extends ContextTimerTask {
         if(!activityOnTop.toLowerCase().contains("login"))
         {
             Intent intent = new Intent(this.mContext, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.mContext.startActivity(intent);
 
             return;
@@ -45,7 +46,7 @@ class LockerTimer extends ContextTimerTask {
         {
             isLoginUp = true;
             Intent intent = new Intent(this.mContext, LoginActivity.class);
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.mContext.startActivity(intent);
         }
     }

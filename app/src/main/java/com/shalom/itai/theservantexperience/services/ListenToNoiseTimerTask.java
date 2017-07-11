@@ -43,7 +43,7 @@ class ListenToNoiseTimerTask extends ContextTimerTask {
         SharedPreferences settings = mContext.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         int tired= settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
         if (tired >= SETTINGS_MAX_TIRED_POINTS-30 && tired < SETTINGS_MAX_TIRED_POINTS-10) {
-            if (Functions.throwRandom(4, 1) >= 3) {
+            if (Functions.throwRandom(10, 1) >= 8) {
                 BuggerService.getInstance().wakeUpJon();
                 return;
             }
@@ -58,7 +58,8 @@ class ListenToNoiseTimerTask extends ContextTimerTask {
             BuggerService.getInstance().wakeUpJon();
             return;
         }
-        Functions.writeToSettings(SETTINGS_TIRED_POINTS,tired+1,mContext);
+        if(tired <SETTINGS_MAX_TIRED_POINTS)
+            Functions.writeToSettings(SETTINGS_TIRED_POINTS,tired+1,mContext);
 
 
         NoiseListener mNoiseListener = new NoiseListener();

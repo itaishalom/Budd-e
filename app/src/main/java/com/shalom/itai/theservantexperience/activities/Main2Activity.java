@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -22,6 +23,15 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.moods.Angry;
+import com.shalom.itai.theservantexperience.moods.Board;
+import com.shalom.itai.theservantexperience.moods.Calm;
+import com.shalom.itai.theservantexperience.moods.Excited;
+import com.shalom.itai.theservantexperience.moods.Fine;
+import com.shalom.itai.theservantexperience.moods.Happy;
+import com.shalom.itai.theservantexperience.moods.Mood;
+import com.shalom.itai.theservantexperience.moods.Optimistic;
+import com.shalom.itai.theservantexperience.moods.Sad;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
@@ -56,9 +66,10 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     ArrayList<ImageButton> allImageButtons;
     boolean startedAnimation = false;
     private ImageButton currendPressed;
-
+    private boolean wasClosedFromOutside = false;
     private boolean readyToInvalidate;
-
+    private int moodIndex = 0;
+    private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance()};
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -77,6 +88,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                     if (!isShown) {
                         allImageButtons.get(0).clearAnimation();
                         allImageButtons.get(0).startAnimation(mOnAnimation);
+                        turnOfAllActionsBar();
                     } else {
                         allImageButtons.get(allImageButtons.size() - 1).clearAnimation();
                         allImageButtons.get(allImageButtons.size() - 1).startAnimation(mOffAnimation);
@@ -118,9 +130,21 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 showDialog();
                                 return true;
                             }
+
+                            if (v==openMore){
+                                if(moodIndex == moodArr.length)
+                                    moodIndex = 0;
+                                BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
+                                moodIndex ++;
+                                refreshLayout();
+                                return true;
+                            }
+
                             if (v == openChat) {
                                 //refreshLayout2();
-                                Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, "Jon is here"));
+
+
+                                   Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, "Jon is here"));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (v == openGame) {
@@ -152,9 +176,42 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
 
     @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared) {
+        if (isShown) {
+            if (startedAnimation) {
+                for (int i = 0; i < allImageButtons.size(); i++)
+                    (allImageButtons.get(i)).clearAnimation();
+                mAnimationIndex = allImageButtons.size() - 1;
+            }
+         //   startedAnimation = true;
+
+            allImageButtons.get(allImageButtons.size() - 1).clearAnimation();
+            allImageButtons.get(allImageButtons.size() - 1).startAnimation(mOffAnimation);
+            isShown = false;
+            wasClosedFromOutside = true;
+        }
+    }
+
+    @Override
+    protected void showBeneath() {
+        if (wasClosedFromOutside && !isShown) {
+            if (startedAnimation) {
+                for (int i = 0; i < allImageButtons.size(); i++)
+                    (allImageButtons.get(i)).clearAnimation();
+               // mAnimationIndex = 0;
+            }
+            startedAnimation = true;
+            allImageButtons.get(0).clearAnimation();
+            allImageButtons.get(0).startAnimation(mOnAnimation);
+            isShown = true;
+            wasClosedFromOutside = false;
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options);
-        getSupportActionBar().setIcon(R.drawable.title);
+        super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
+        // getSupportActionBar().setIcon(R.drawable.title);
 
         initializeAnimations();
         initializeGui();
@@ -178,18 +235,14 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             for (int i = 0; i < allImageButtons.size(); i++)
                 allImageButtons.get(i).setImageAlpha(128);
         }
-        if (!isMyServiceRunning(BuggerService.class)) {
-
-        }
         if (BuggerService.getInstance().getIsTrip()) {
             //   mCancelTrip.setVisibility(View.VISIBLE); //TODO
         }
         Intent intent = getIntent();
-        if (intent !=null && intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
+        if (intent != null && intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
             BuggerService.getInstance().setNotif();
-        }
-        else if (intent !=null && intent.getBooleanExtra(JUST_WOKE_UP, false)) {
-
+        } else if (intent != null && intent.getBooleanExtra(JUST_WOKE_UP, false)) {
+            BuggerService.getInstance().wakeUpJon();
 
             //    forceWakeUp();                //TODO
         }
@@ -202,28 +255,14 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     }
 
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        startService(new Intent(this, BuggerService.class));
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+       /*
         if (!isMyServiceRunning(BuggerService.class)) {
             Log.d(TAG, "onNewIntent: rerunning bugger");
         }
+        */
         if (intent.getBooleanExtra("sendJonToSleep", false)) {
             //    BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this); //TODO
 
@@ -308,7 +347,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
     private void initializeGui() {
         openPoke = (ImageButton) findViewById(R.id.poke_image);
-        openChat = (ImageButton) findViewById(R.id.chat_image);
+        openChat = (ImageButton) findViewById(R.id.open_chat_image);
         openGame = (ImageButton) findViewById(R.id.game_image);
         openTrip = (ImageButton) findViewById(R.id.trip_image);
         openMore = (ImageButton) findViewById(R.id.more_image);
@@ -335,6 +374,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                 mainLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 if (!getApplicationContext().getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
                     takeScreenshot(Main2Activity.this, "I was born");
+                    Functions.oneTimeFunctions.createShortcut(Main2Activity.this);
                     addCalendarMeeting(Main2Activity.this);
                     BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
                 }
@@ -342,6 +382,9 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         });
         readyToInvalidate = true;
     }
+
+
+
 
     @Override
     public void doPositive() {

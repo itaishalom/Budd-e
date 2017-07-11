@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
@@ -23,6 +24,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.os.PowerManager;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
@@ -40,6 +42,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
@@ -82,6 +85,18 @@ import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory
 public class Functions {
 
     public static class oneTimeFunctions{
+
+        public static void createShortcut(AppCompatActivity activity) {
+            Intent intentShortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+            intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, activity.getString(R.string.app_name));
+            Parcelable appicon = Intent.ShortcutIconResource.fromContext(activity.getApplicationContext(), R.drawable.budde_face);
+            intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, appicon);
+            intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(activity.getApplicationContext(), Main2Activity.class));
+            intentShortcut.putExtra("duplicate", false);
+            activity.sendBroadcast(intentShortcut);
+        }
+
+
         public static void setUserName(AppCompatActivity activity,String TAG) {
             if (!USER_NAME.isEmpty()) {
                 return;
@@ -440,6 +455,22 @@ public class Functions {
 
     }
 
+
+    public static boolean isMyServiceRunning(Class<?> serviceClass, AppCompatActivity activity) {
+        ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        activity.startService(new Intent(activity, BuggerService.class));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static boolean createJonFolder() {
 

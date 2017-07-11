@@ -46,6 +46,7 @@
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/battery_status"
                 style="@style/CustomText"
+                android:gravity="start"
                 android:layout_marginStart="0dp"
                 android:text="Battery Status" />
 
@@ -53,7 +54,7 @@
                 android:id="@+id/battery_status_ind"
                 style="@style/CustomText"
                 android:layout_marginStart="0dp"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="Great" />
         </TableRow>
 
@@ -72,7 +73,7 @@
                 android:id="@+id/reception_status_ind"
                 style="@style/CustomText"
                 android:layout_marginStart="0dp"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="Ok" />
 
         </TableRow>
@@ -83,6 +84,7 @@
 
             <com.shalom.itai.theservantexperience.utils.FontTextView
                 android:id="@+id/temperature_status"
+                android:gravity="start"
                 style="@style/CustomText"
                 android:layout_marginStart="0dp"
                 android:text="Temperature Status" />
@@ -92,10 +94,41 @@
                 style="@style/CustomText"
 
                 android:layout_marginStart="0dp"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="Ok" />
         </TableRow>
 
+
+        <TableRow
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+        <com.shalom.itai.theservantexperience.utils.FontTextView
+            android:id="@+id/tired"
+            android:gravity="start"
+            android:text="@string/energy_progress"
+            style="@style/CustomText"
+            android:layout_marginStart="0dp" />
+
+        <ProgressBar
+            android:id="@+id/progressEnergy"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="20dp"
+
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:bottomLeftRadius="5dp"
+
+            android:bottomRightRadius="5dp"
+            android:gravity="end"
+
+            android:progressDrawable="@drawable/custom_progressbar"
+            android:topLeftRadius="5dp"
+
+            android:topRightRadius="5dp" />
+        </TableRow>
     </TableLayout>
 
 </android.support.constraint.ConstraintLayout>
