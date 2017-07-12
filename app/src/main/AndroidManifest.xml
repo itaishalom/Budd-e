@@ -87,6 +87,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SmsSendActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance" />
         <activity
             android:name=".activities.MainActivity"
@@ -128,6 +129,7 @@
 
         <activity
             android:name=".activities.DancingActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 
         <activity android:name=".activities.RecordActivity" />
@@ -138,6 +140,8 @@
         <activity
             android:name=".MessageBox"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+
             android:theme="@style/Theme.Transparent" />
         <!--
             <activity android:name=".Activities.GameActivity" /> -!>
@@ -163,20 +167,25 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.MemoriesGalleryActivity"
+            android:screenOrientation="portrait"
+
             android:launchMode="singleInstance" />
         <activity android:name=".activities.PictureActivty" />
         <activity
             android:name=".activities.SelfieV2"
             android:hardwareAccelerated="false"
             android:label="@string/title_activity_selfie"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activities.MatchesGameActivity"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />
-        <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".activities.SplashActivity" />
+        <activity android:name=".gallery.GalleryActivity"             android:screenOrientation="portrait"
+            />
+        <activity android:name=".activities.SplashActivity"             android:screenOrientation="portrait"
+            />
         <activity
             android:name=".gallery.FullScreenMemory"
             android:label="@string/title_activity_full_screen_memory" />
