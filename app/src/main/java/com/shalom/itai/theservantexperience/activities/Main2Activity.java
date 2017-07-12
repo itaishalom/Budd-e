@@ -5,15 +5,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -21,6 +27,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -60,6 +68,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALL
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SMS_SEND;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.getUserName;
@@ -89,6 +98,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     private boolean readyToInvalidate;
     private boolean isPokeOpen = false;
     private int moodIndex = 0;
+    private   String selectContact;
     private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance(), Sleep.getInstance()};
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
@@ -157,27 +167,19 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 showDialog();
                                 return true;
                             }
-
                             if (imageView == openMore) {
+                                Toast.makeText(Main2Activity.this,"Not available yet",Toast.LENGTH_SHORT);
                             //    forceWakeUp();
-
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
-
                                 BuggerService.getInstance().sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
-
-
                            //     BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
                                 moodIndex++;
                                 refreshLayout();
                                 return true;
-
                             }
-
                             if (imageView == openChat) {
                                 //refreshLayout2();
-
-
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, ENTITY_NAME+" is here"));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
@@ -187,6 +189,29 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (imageView == openTrip) {
+                                if(BuggerService.getInstance().getIsTrip()){
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this);
+                                    builder.setCancelable(false);
+                                    builder.setMessage("Cancel trip?")
+                                            .setTitle("Trip");
+                                    // Add the buttons
+                                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            BuggerService.getInstance().unTrip();
+                                            BuggerService.getInstance().bug();
+                                            BuggerService.setSYSTEM_GlobalPoints(-1,"Cancelled trip");
+                                            Toast.makeText(Main2Activity.this, "I don't like it! " + BuggerService.getInstance().getRandomInsult(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            return;
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
                                 Main2Activity.this.startActivity(new Intent(Main2Activity.this, TripActivity.class));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
@@ -364,6 +389,147 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
     }
 
+private void startSmsSession(){
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setCancelable(false);
+    builder.setMessage("Who is your best friend? Choose from the list")
+            .setTitle("Friends");
+    // Add the buttons
+    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int id) {
+           prepareList();
+        }
+    });
+    AlertDialog dialog = builder.create();
+    dialog.show();
+}
+
+private void prepareList(){
+    if(chatListView ==null){
+        chatListView= (ListView) findViewById(R.id.chat_list);
+    }
+    close();
+    mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+    chatListView.setVisibility(View.VISIBLE);
+
+     String namecsv="";
+     String phonecsv="";
+
+    // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
+    // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
+
+
+    Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+    while (phones.moveToNext()) {
+        //Read Contact Name
+        String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+        //Read Phone Number
+        String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+        if(name!=null)
+        {
+            namecsv += name + ",";
+            String digits = phoneNumber.replaceAll("[^0-9.]", "");
+
+            phonecsv += digits + ",";
+        }
+
+
+    }
+    phones.close();
+
+
+    //==============================================
+    // Convert csvstrimg into array
+    //==============================================
+    String[] namearray = namecsv.split(",");
+    String[] phonearray = phonecsv.split(",");
+    ArrayList<String> tempString = new ArrayList<>();
+    // String[] sArrFull = new String[phonearray.length];
+    String newString;
+    for (int i = 0; i< phonearray.length; i++)
+    {
+        newString = namearray[i]+":"+ phonearray[i];
+        if(i>1)
+        {
+            if(!tempString.contains(newString))
+            {
+                tempString.add( newString);
+                //     sArrFull[i] = newString;
+            }
+        }
+    }
+    java.util.Collections.sort(tempString);
+    List<String> legendList = new ArrayList<>(tempString.size());
+   // String[] sArrFull = new String[tempString.size()];
+    for(int i = 0; i< tempString.size(); i++)
+    {
+        legendList.add(i,tempString.get(i));// = tempString.get(i);
+    }
+
+    chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, legendList));
+    //Do something on click on ListView Click on Items
+    chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            //    ListView l = (ListView) arg0;
+            //   l.
+            Object o = chatListView.getItemAtPosition(arg2);
+            selectContact = o.toString();
+            Toast.makeText(getBaseContext(), o.toString(), Toast.LENGTH_SHORT).show();
+            //============================================
+            // Display number of contact on click.
+            //===========================================
+
+            //   iSelectedNum = arg2;
+            String[] vals = selectContact.split(":");
+            String name = vals[0];
+            String num = vals[1];
+            // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(Main2Activity.this);
+            builder1.setMessage("Is "+name+" is your best friend?");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String[] vals = selectContact.split(":");
+                            String name = vals[0];
+                            String num = vals[1];
+                            sendSMS(num,"Budd-E: Why does he love you more than he loves me?",name);
+                            cleanListOptions();
+                        }
+                    });
+
+            builder1.setNegativeButton(
+                    "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            cleanListOptions();
+                            startSmsSession();
+                            return;
+                        }
+                    });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }
+    });
+}
+    private void sendSMS(String phoneNo, String msg, String name) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "I send \""+msg+"\" to "+name+"!!",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+          return;
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -373,7 +539,10 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,false,this);
             if(checkScreenAndLock(this)){
                 return;
+            }else{
+                Toast.makeText(this, "Missed you", Toast.LENGTH_SHORT).show();
             }
+
         }
         if((settings.getBoolean(JUST_WOKE_UP, false)) ) {
             Functions.writeToSettings(JUST_WOKE_UP,false,this);
@@ -383,6 +552,12 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         if((settings.getBoolean(SAY_LOVE, false)) ) {
             Functions.writeToSettings(SAY_LOVE,false,this);
             popUpForRequest();
+        }
+
+
+        if((settings.getBoolean(SMS_SEND, false)) ) {
+            Functions.writeToSettings(SMS_SEND,false,this);
+            startSmsSession();
         }
 
         if (allImageButtons != null) {

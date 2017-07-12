@@ -56,8 +56,8 @@ public class PermissionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    //    Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this ); //TODO remove
-      //  Functions.writeToSettings(BUG_INDEX, 0 , this); //TODO remove
+       Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this ); //TODO remove
+        Functions.writeToSettings(BUG_INDEX, 0 , this); //TODO remove
         Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE, false , this);
       //  settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)
         super.onCreate(savedInstanceState);

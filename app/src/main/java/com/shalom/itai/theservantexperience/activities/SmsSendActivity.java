@@ -2,6 +2,8 @@ package com.shalom.itai.theservantexperience.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.ContactsContract;
@@ -18,8 +20,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SMS_SEND;
 
 public class SmsSendActivity extends AppCompatActivity {
     private String namecsv="";
@@ -37,7 +45,11 @@ public class SmsSendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms_send);
-          lv1 = (ListView) findViewById(R.id.listView1);
+        Functions.writeToSettings(SMS_SEND, true, this);
+        startActivity(new Intent(this,Main2Activity.class));
+        finish();
+    }
+      /*    lv1 = (ListView) findViewById(R.id.listView1);
         Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
         while (phones.moveToNext())
         {
@@ -137,7 +149,7 @@ public class SmsSendActivity extends AppCompatActivity {
                 String num = vals[1];
                 // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(SmsSendActivity.this);
-                builder1.setMessage("You really love "+name+" ?");
+                builder1.setMessage("Is "+name+" is your best friend?");
                 builder1.setCancelable(true);
 
                 builder1.setPositiveButton(
@@ -148,16 +160,6 @@ public class SmsSendActivity extends AppCompatActivity {
                                 String name = vals[0];
                                 String num = vals[1];
                                 sendSMS(num,"Jon: Why does he love you more than he loves me?",name);
-                            //    sendSMS(num,"i love you",name);
-                             /*
-                                if (allAddedPhoneNumbers.contains(num)) {
-                                    Toast.makeText(getBaseContext(), "The number: " + num + " already exists", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    allAddedPhoneNumbers.add(num);
-                                    Toast.makeText(getBaseContext(), "added: " + num, Toast.LENGTH_SHORT).show();
-                              //      SettingHand.saveNumbersToFile();
-                                }
-                               */
                             }
                         });
 
@@ -188,7 +190,7 @@ public class SmsSendActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
-    /*
+    *//*
     public void sendWhatsAppMsg(String phoneNo, String msg, String name){
         boolean isWhatsappInstalled = whatsappInstalledOrNot("com.whatsapp");
         if (isWhatsappInstalled) {
@@ -214,7 +216,7 @@ public class SmsSendActivity extends AppCompatActivity {
     }
 
     }
-    */
+    *//*
 
 
     private boolean whatsappInstalledOrNot(String uri) {
@@ -227,5 +229,5 @@ public class SmsSendActivity extends AppCompatActivity {
             app_installed = false;
         }
         return app_installed;
-    }
+    }*/
 }

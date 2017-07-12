@@ -47,7 +47,7 @@ abstract class Actions {
     private void addNotification(String headLine, String info, Context context) {
         mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.icon)  //R.drawable.icon
+                        .setSmallIcon(R.drawable.small_icon)  //R.drawable.icon
                         .setContentTitle(headLine)
                         .setContentText(info)
                         .setOngoing(true)

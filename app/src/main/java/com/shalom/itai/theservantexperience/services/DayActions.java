@@ -51,7 +51,7 @@ public class DayActions extends Actions {
     public static ArrayList<String> allJokes;
     public static ArrayList<String> allFacts;
 
-    public static  Class[] Activities= new Class[]{SelfieV2.class,DancingActivity.class,BoardActivity.class,SpeechRecognitionActivity.class ,FunActivity.class,IncomingCallActivity.class, MatchesGameActivity.class, SelfieV2.class, SmsSendActivity.class,TripActivity.class};
+    public static  Class[] Activities= new Class[]{ SmsSendActivity.class,SelfieV2.class,DancingActivity.class,BoardActivity.class,SpeechRecognitionActivity.class ,FunActivity.class, MatchesGameActivity.class, SelfieV2.class, SmsSendActivity.class,TripActivity.class};
     private int mId=0;
     public static int SYSTEM_oldDay;
     public static int SYSTEM_CURRENT_NUM_OF_CHATS_POINTS;

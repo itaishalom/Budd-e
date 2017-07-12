@@ -3,6 +3,7 @@ package com.shalom.itai.theservantexperience.services;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -97,15 +98,24 @@ public class BuggerService extends Service {
         loadPoints();
         loadInsultsAndBless();
         loadUserName();
-        client = new Client(Functions.getUserName(this));
+
         mInstance = this;
 
         currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         currentMood = changeMood();
     }
 
-    public void sendMessage(String msg){
-        client.sendMessage(msg);
+    public void sendMessage(final String msg){
+        client = new Client(Functions.getUserName(this));
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                client.sendMessage(msg);
+                client.close();
+            }
+        },1000);
+
     }
 
     public void setDistanceToDest(double lat, double lng) {
