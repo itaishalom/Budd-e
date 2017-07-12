@@ -42,7 +42,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryTemperature;
 import static com.shalom.itai.theservantexperience.utils.Functions.getReceptionLevel;
-import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.getUserName;
+import static com.shalom.itai.theservantexperience.utils.Functions.getUserName;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandomProb;
 
 /**

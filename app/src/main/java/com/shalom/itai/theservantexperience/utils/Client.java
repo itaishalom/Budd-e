@@ -20,7 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class Client {
-    static final String URL_WEBSOCKET = "ws://192.168.1.5:8080/WebMobileGroupChatServer/chat?name=";
+    static final String URL_WEBSOCKET = "ws://77.127.122.11:80/WebMobileGroupChatServer/chat?name=";
     // LogCat tag
     private static final String TAG = ClientActivity.class.getSimpleName();
 
@@ -52,8 +52,9 @@ public class Client {
 
             sendMessageToServer(getSendMessageJSON(msg));
         } catch (Exception e) {
-            instance.close();
-            instance = new Client(uName);
+            if(instance !=null)
+                instance.close();
+            instance = null;
         }
     }
 

@@ -95,10 +95,6 @@ public class Functions {
             activity.sendBroadcast(intentShortcut);
         }
 
-        public static String getUserName(Context context){
-            SharedPreferences settings = context.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-           return settings.getString(SETTING_USERNAME,"");
-        }
 
         public static void setUserName(AppCompatActivity activity,String TAG) {
             SharedPreferences settings = activity.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
@@ -268,6 +264,11 @@ public class Functions {
         initialIBlesses.add("No one is better than you!");
     }
 
+
+    public static String getUserName(Context context){
+        SharedPreferences settings = context.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        return settings.getString(SETTING_USERNAME,"");
+    }
 
     private static void addCalendarMeeting(final Context context) {
 

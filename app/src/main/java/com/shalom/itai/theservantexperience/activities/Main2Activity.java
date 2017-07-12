@@ -35,6 +35,7 @@ import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
@@ -48,7 +49,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_A
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
 import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
-import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.getUserName;
+import static com.shalom.itai.theservantexperience.utils.Functions.getUserName;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
 public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
@@ -139,7 +140,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             if (imageView == openMore) {
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
-                                Client.getInstance("").sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
+
+                                Client.getInstance(Functions.getUserName(Main2Activity.this)).sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
 
 
                                 BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);

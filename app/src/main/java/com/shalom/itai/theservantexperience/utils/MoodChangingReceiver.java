@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
+
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.MOOD_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
@@ -18,8 +20,7 @@ public class MoodChangingReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals(MOOD_CHANGE_BROADCAST)){
-            SharedPreferences settings = context.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-            String name = settings.getString(SETTING_USERNAME,"");
+            String name = Functions.getUserName(context);
             Client cl = Client.getInstance(name);
             cl.sendMessage(ENTITY_NAME +"'s mood at " +name +" is now "+intent.getStringExtra("Mood") );
         }
