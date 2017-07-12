@@ -13,13 +13,15 @@ import com.shalom.itai.theservantexperience.R;
  */
 
 public class MyAlertDialogFragment extends DialogFragment {
-    public static MyAlertDialogFragment newInstance(int title, String posButton, String negButton, String name) {
+    public static MyAlertDialogFragment newInstance(int title, String posButton, String negButton, String name,String msg) {
         MyAlertDialogFragment frag = new MyAlertDialogFragment();
         Bundle args = new Bundle();
         args.putInt("title", title);
         args.putString("posButton", posButton);
         args.putString("negButton", negButton);
         args.putString("name", name);
+        if(msg !=null)
+            args.putString("Message",msg);
         frag.setArguments(args);
         return frag;
     }
@@ -46,7 +48,8 @@ public class MyAlertDialogFragment extends DialogFragment {
             String title = (myTitle.toString());
             ab = new AlertDialog.Builder(getActivity()).setTitle(title);
         }
-
+        if(getArguments().get("Message") !=null)
+            ab.setMessage(getArguments().get("Message").toString());
         //  int title = getArguments().getInt("title");
         String posButton = getArguments().getString("posButton");
         String negButton = getArguments().getString("negButton");

@@ -38,6 +38,9 @@ import static android.Manifest.permission.WRITE_SETTINGS;
 import static com.shalom.itai.theservantexperience.utils.Constants.BUG_INDEX;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_ONE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_THREE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_TWO;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 
 public class PermissionActivity extends AppCompatActivity {
@@ -53,8 +56,8 @@ public class PermissionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this ); //TODO remove
-        Functions.writeToSettings(BUG_INDEX, 0 , this);
+    //    Functions.writeToSettings(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS, this ); //TODO remove
+      //  Functions.writeToSettings(BUG_INDEX, 0 , this); //TODO remove
         Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE, false , this);
       //  settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)
         super.onCreate(savedInstanceState);

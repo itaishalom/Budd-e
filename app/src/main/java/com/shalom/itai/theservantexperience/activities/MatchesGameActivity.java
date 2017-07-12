@@ -530,7 +530,7 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
     @Override
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Game, "Game!", "No.", getClass().getName());
+                .newInstance(R.string.alert_dialog_Game, "Game!", "No.", getClass().getName(),null);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 }

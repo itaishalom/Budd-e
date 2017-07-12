@@ -41,6 +41,7 @@ import pl.droidsonroids.gif.GifImageView;
 import static com.shalom.itai.theservantexperience.utils.Constants.FULL_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.INPUT_TO_SPLASH_CLASS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
@@ -151,9 +152,12 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     protected void turnOfAllActionsBar(){
         for (int i = 0; i < barMenu.size(); i++) {
             barMenu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
-            moodLayout.setVisibility(View.INVISIBLE);
-            relationsLayout.setVisibility(View.INVISIBLE);
         }
+        if(moodLayout.getVisibility() != View.GONE)
+            moodLayout.setVisibility(View.GONE);
+        if(relationsLayout.getVisibility() != View.GONE)
+            relationsLayout.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -266,6 +270,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                     invalidateStatusParam();
                     moodLayout.setVisibility(View.VISIBLE);
                     hideBeneath(moodLayout);
+                    if(relationsLayout.getVisibility() != View.GONE)
                     relationsLayout.setVisibility(View.GONE);
                 } else {
                     moodLayout.setVisibility(View.GONE);
@@ -277,6 +282,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 if (isTurnedOn) {
                     invalidateRelationsData();
                     relationsLayout.setVisibility(View.VISIBLE);
+                    if(moodLayout.getVisibility() != View.GONE)
                     moodLayout.setVisibility(View.GONE);
                     hideBeneath(relationsLayout);
                 } else {
@@ -392,6 +398,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Intent intent = getIntent();
+        Log.d("onResume", "onResume: " + intent.getBooleanExtra(JUST_WOKE_UP,false));
         Functions.isMyServiceRunning(BuggerService.class,this);
         refreshLayout();
         stopOverlay(this);

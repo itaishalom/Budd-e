@@ -84,7 +84,7 @@ public class MessageBox extends Activity {
             public void onClick(View v) {
                 TextView textView = (TextView) findViewById(R.id.jons_text_message_box);
                 TextView textResponse = (TextView) findViewById(R.id.user_response);
-                Intent chatIntent = null;
+                Intent chatIntent ;
                 if (startIntent.getStringExtra(MESSAGE_BOX_START_ACTIVITY).equals("ChatActivity")) {
                     chatIntent = new Intent(MessageBox.this, ChatActivity.class);
                     chatIntent.putExtra(CHAT_START_MESSAGE, textView.getText());
@@ -93,7 +93,8 @@ public class MessageBox extends Activity {
                     // tx.setText("");
                 } else {
                     chatIntent = new Intent(MessageBox.this, Main2Activity.class);
-                    chatIntent.putExtra(JUST_WOKE_UP, true);
+                    Functions.writeToSettings(JUST_WOKE_UP,true,MessageBox.this);
+                    chatIntent.putExtra(JUST_WOKE_UP, "yes");
                 }
                 startActivity(chatIntent);
                 finish();

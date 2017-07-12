@@ -9,8 +9,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.SAY_LOVE;
 
 public class SpeechRecognitionActivity extends AppCompatActivity  {
     private static final int REQUEST_CODE = 1234;
@@ -21,7 +24,11 @@ public class SpeechRecognitionActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_speech_reconition);
         textView = (TextView) findViewById(R.id.textView);
       //  Intent intent = getIntent();
-        prepareUser();
+
+        Functions.writeToSettings(SAY_LOVE,true,this);
+        startActivity(new Intent(this,Main2Activity.class));
+        finish();
+       // prepareUser();
     }
 
     private void startListen() {
@@ -65,11 +72,7 @@ public class SpeechRecognitionActivity extends AppCompatActivity  {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList arrayList = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-
-
-            if( !arrayList.get(0).equals("I love you"))
-            {
+            if( !arrayList.get(0).equals("I love you")) {
                 Toast.makeText(getApplicationContext(), "you can do better",Toast.LENGTH_LONG).show();
                 startListen();
             }else {

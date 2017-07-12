@@ -70,7 +70,7 @@ class TimerTaskForUser extends ContextTimerTask {
             return;
         }
         if (!checkScreenAndLock(mContext)) {
-       //     playSound();
+           playSound();
             if (shouldSleep) {
                 BuggerService.getInstance().sendJonToSleep();
                 Intent intent = new Intent(this.mContext, Main2Activity.class);

@@ -4,6 +4,7 @@ package com.shalom.itai.theservantexperience.utils;
  * Proudly written by Itai on 11/07/2017.
  */
 
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.SESSION_ID;
+
 public class Client {
     static final String URL_WEBSOCKET = "ws://77.127.122.11:80/WebMobileGroupChatServer/chat?name=";
     // LogCat tag
@@ -27,19 +30,12 @@ public class Client {
     private WebSocketClient mWebSocketClient;
     // Client name
     private String name = null;
-
+    private String mSessionId;
     // JSON flags to identify the kind of JSON response
     private static final String TAG_SELF = "self", TAG_NEW = "new",
             TAG_MESSAGE = "message", TAG_EXIT = "exit";
     private static String uName ="";
-    private static Client instance = null;
 
-    public static Client getInstance(String username) {
-        if (instance == null ) {
-            instance = new Client(username);
-        }
-        return instance;
-    }
 
     public void close() {
         if (mWebSocketClient != null) {
@@ -52,20 +48,19 @@ public class Client {
 
             sendMessageToServer(getSendMessageJSON(msg));
         } catch (Exception e) {
-            if(instance !=null)
-                instance.close();
-            instance = null;
+            e.printStackTrace();
         }
     }
 
-    private Client(String username) {
+    public Client(String username) {
         /**
          * Creating web socket client. This will have callback methods
          * */
         URI uri;
         try {
-            uName= username;
-            uri = new URI(URL_WEBSOCKET + username);
+            uName= username.replace(" ","_");
+
+            uri = new URI(URL_WEBSOCKET + uName);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -81,6 +76,7 @@ public class Client {
             @Override
             public void onMessage(String s) {
                 final String message = s;
+                parseMessage(s);
                 /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -93,13 +89,15 @@ public class Client {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.i("Websocket", "Closed " + s);
-                BuggerService.sessionId = null;
-                instance = null;
+                mSessionId = null;
+
             }
 
             @Override
             public void onError(Exception e) {
-                Log.i("Websocket", "Error " + e.getMessage());
+                if(mWebSocketClient!=null)
+                    mWebSocketClient.close();
+                Log.e("Websocket", "Error " + e.getMessage());
             }
         };
         mWebSocketClient.connect();
@@ -135,9 +133,10 @@ public class Client {
             if (flag.equalsIgnoreCase(TAG_SELF)) {
 
                 // Save the session id in shared preferences
-                BuggerService.sessionId = jObj.getString("sessionId");
+              //ION_ID,jObj.getString("sessionId"));
+                mSessionId = jObj.getString("sessionId");
 
-                Log.e(TAG, "Your session id: " + BuggerService.sessionId);
+                Log.e(TAG, "Your session id: " + mSessionId);
 
             } else if (flag.equalsIgnoreCase(TAG_NEW)) {
                 // If the flag is 'new', new person joined the room
@@ -156,7 +155,7 @@ public class Client {
                 boolean isSelf = true;
 
                 // Checking if the message was sent by you
-                if (!sessionId.equals(BuggerService.sessionId)) {
+                if (!sessionId.equals(mSessionId)) {
                     fromName = jObj.getString("name");
                     isSelf = false;
                 }
@@ -236,7 +235,7 @@ public class Client {
         try {
             JSONObject jObj = new JSONObject();
             jObj.put("flag", "message");
-            jObj.put("sessionId", BuggerService.sessionId);
+            jObj.put("sessionId", mSessionId);
             jObj.put("message", message);
 
             json = jObj.toString();

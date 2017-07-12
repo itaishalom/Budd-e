@@ -342,7 +342,7 @@ public class MainActivity extends ToolBarActivity implements DialogCaller {
 
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName());
+                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName(),null);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 

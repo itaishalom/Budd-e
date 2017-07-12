@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,22 +22,19 @@ import com.shalom.itai.theservantexperience.utils.ShakeListener;
 import static android.view.View.INVISIBLE;
 
 
-public class DancingActivity extends AppCompatActivity {
+public class DancingActivity extends ToolBarActivityNew implements DialogCaller{
 
-    private Button ButtenNo;
-    private Button ButtenYes;
-    private TextView infoTest;
     private MediaPlayer mediaPlayer;
     private boolean isDoneDancing = false;
     private Vibrator viber;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeListener mShakeListener;
-
+    private int moveDirection = 1;
+    private int shakeCounter = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dancing);
+        super.onCreate(savedInstanceState, R.layout.activity_dancing, R.menu.tool_bar_options, true, -1);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
@@ -45,21 +43,10 @@ public class DancingActivity extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(this, R.raw.bach);
 //        mediaPlayer.start();
 
-        infoTest = (TextView) findViewById(R.id.InfoText);
-        ButtenYes = (Button) findViewById(R.id.IDO);
-        ButtenYes.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                prepareMusic();
-            }
-        });
 
-        ButtenNo = (Button) findViewById(R.id.IDONT);
-        ButtenNo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {prepareMusic();
-            }
-        });
         mShakeListener = new ShakeListener();
         viber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        showDialog();
 
     }
 
@@ -71,8 +58,7 @@ public class DancingActivity extends AppCompatActivity {
                 AudioManager.STREAM_MUSIC,
                 am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                 0);
-        ButtenYes.setVisibility(INVISIBLE);
-        ButtenNo.setVisibility(INVISIBLE);
+
         mShakeListener.setOnShakeListener(new ShakeListener.OnShakeListener() {
 
             @Override
@@ -84,19 +70,34 @@ public class DancingActivity extends AppCompatActivity {
 
     }
 
+
+    private void animateBurnMatch(final View view, int direction) {
+        switch (direction) {
+            case -1:
+                view.animate().translationY(-50);
+                break;
+            case 1:
+                view.animate().translationY(0);
+        }
+    }
+
     private void startMusic() {
         mediaPlayer.start();
-        new CountDownTimer(30000, 1000) {
+        Toast.makeText(this,"Let's dance (Shake me) to Bach for 30 seconds, shake me!",Toast.LENGTH_LONG);
+        new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                infoTest.setText("Let's dance (Shake me) to Bach for " + millisUntilFinished / 1000);
+                moveDirection *= -1;
+                animateBurnMatch (mGifImageView,moveDirection);
+             //   Toast.makeText(this,"Let's dance (Shake me) to Bach for " + millisUntilFinished / 1000);
             }
 
             public void onFinish() {
-                infoTest.setText("Thanks!");
+                Toast.makeText(DancingActivity.this,"Thanks!",Toast.LENGTH_LONG);
                 mSensorManager.unregisterListener(mShakeListener);
                 mediaPlayer.stop();
                 isDoneDancing = true;
+                BuggerService.setSYSTEM_GlobalPoints(shakeCounter,"We danced together");
                 finish();
             }
         }.start();
@@ -105,7 +106,8 @@ public class DancingActivity extends AppCompatActivity {
     private void handleShakeEvent() {
         // Vibrate for 500 milliseconds
         viber.vibrate(500);
-        BuggerService.setSYSTEM_GlobalPoints(1,null);
+        shakeCounter++;
+     //   BuggerService.setSYSTEM_GlobalPoints(1,null);
         Toast.makeText(this, "I like it!!", Toast.LENGTH_SHORT).show();
     }
 
@@ -143,6 +145,20 @@ public class DancingActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void doPositive() {
+        prepareMusic();
+    }
 
+    @Override
+    public void doNegative() {
+        prepareMusic();
+    }
 
+    @Override
+    public void showDialog() {
+        DialogFragment newFragment = MyAlertDialogFragment
+                .newInstance(R.string.alert_dialog_dance, "Yes!", "No!", getClass().getName(),"Let us dance (Shake me) to Bach for 30 seconds, shake me!");
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
 }

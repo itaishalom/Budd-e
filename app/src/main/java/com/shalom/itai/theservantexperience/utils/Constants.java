@@ -6,8 +6,8 @@ package com.shalom.itai.theservantexperience.utils;
 
 public class Constants {
     public static final String ENTITY_NAME = "Budd-e";
-    public static final int BUG_WAIT_TIME = 10000;
-    public static final int LOCATION_DISTNCE_CHECK = 5000;
+    public static final int BUG_WAIT_TIME = 120000;
+    public static final int LOCATION_DISTNCE_CHECK = 120000;
     public static final int LOCK_WAIT_TIME = 500;
     public static final int SHOW_IMSULT_TIME = 7000;
     public static final String PREFS_NAME = "MySettings";
@@ -94,7 +94,14 @@ public class Constants {
     public static final String SETTINGS_TIRED_POINTS = "SETTINGS_TIRED_POINTS";
     public static final int SETTINGS_INITIAL_TIRED_POINTS = 150;
     public static final int SETTINGS_MAX_TIRED_POINTS = 300;
-
+    public static final String SAY_LOVE = "SAY_LOVE";
     public static final String SETTINGS_CALLED_MAIN_ONCE = "SETTINGS_CALLED_MAIN_ONCE";
+    public static final String SETTING_CONNECION_NUM = "SETTING_CONNECION_NUM";
+    public static final String SETTINGS_LOG_ONE = "SETTINGS_LOG_ONE";
+    public static final String SETTINGS_LOG_TWO = "SETTINGS_LOG_TWO";
+    public static final String SETTINGS_LOG_THREE = "SETTINGS_LOG_THREE";
+
+    public static final String SESSION_ID = "sessionId";
+
    // public static String SETTINGS_USER_NAME = "SETTINGS_USER_NAME";// "imageByteArray";
 }

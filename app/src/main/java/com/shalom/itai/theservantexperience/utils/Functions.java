@@ -72,6 +72,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.Directory;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.DONE_CALENDAR;
 import static com.shalom.itai.theservantexperience.utils.Constants.MESSAGE_BOX_START_ACTIVITY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_CONNECION_NUM;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_USERNAME;
 import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
 
@@ -267,7 +268,7 @@ public class Functions {
 
     public static String getUserName(Context context){
         SharedPreferences settings = context.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        return settings.getString(SETTING_USERNAME,"");
+       return settings.getString(SETTING_USERNAME,"");
     }
 
     private static void addCalendarMeeting(final Context context) {
@@ -446,7 +447,7 @@ public class Functions {
                 context.getApplicationContext(), 234324243, intent, 0);
         AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarm.set(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (x * 500),
+                System.currentTimeMillis() + (x),
                 pendingIntent);
 
     }

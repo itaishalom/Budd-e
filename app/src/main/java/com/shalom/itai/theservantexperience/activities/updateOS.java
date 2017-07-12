@@ -6,23 +6,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import static com.shalom.itai.theservantexperience.utils.Constants.*;
-import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
-
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.introduction.TutorialActivity;
-import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.Functions;
+
+import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_OPEN_VIDEO_DONE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_TUTORIAL_DONE;
 
 
 /**
@@ -111,6 +112,7 @@ public class updateOS extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         setContentView(R.layout.activity_update_os);
+        Functions.writeToSettings(SETTINGS_IS_TUTORIAL_DONE,true,this);
         if (preferences.getBoolean(SETTINGS_IS_OPEN_VIDEO_DONE, false)) {
             Intent intent;
             if (preferences.getBoolean(SETTINGS_IS_TUTORIAL_DONE, false)) {

@@ -1,11 +1,17 @@
 package com.shalom.itai.theservantexperience.activities;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
+import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.view.MotionEvent;
@@ -14,11 +20,14 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.chatBot.ChatActivity;
+import com.shalom.itai.theservantexperience.chatBot.ChatListViewAdapter;
 import com.shalom.itai.theservantexperience.moods.Angry;
 import com.shalom.itai.theservantexperience.moods.Board;
 import com.shalom.itai.theservantexperience.moods.Calm;
@@ -33,32 +42,40 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
+import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
 
 import java.util.ArrayList;
-import java.util.function.Function;
+import java.util.List;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_MESSAGE;
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.FULL_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SAY_LOVE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
-import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.utils.Functions.getUserName;
+import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
+
 public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
+    private int LOVE_REQUEST = 1212;
     public final static String TAG = "Main2Activity";
     private ImageButton openPoke;
     private ImageButton openChat;
     private ImageButton openGame;
     private ImageButton openTrip;
     private ImageButton openMore;
+    private ListView chatListView;
     private int animationTime = 70;
     private boolean isShown = false;
     private int mAnimationIndex;
@@ -67,14 +84,18 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     ArrayList<ImageButton> allImageButtons;
     boolean startedAnimation = false;
     private ImageButton currendPressed;
+    private Vibrator mViber;
     private boolean wasClosedFromOutside = false;
     private boolean readyToInvalidate;
+    private boolean isPokeOpen = false;
     private int moodIndex = 0;
     private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance(), Sleep.getInstance()};
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             int color;// = Color.CYAN;
+            if(chatListView.getVisibility()==View.VISIBLE)
+                return true;
             try {
                 Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
                 color = bmp.getPixel((int) event.getX(), (int) event.getY());
@@ -138,13 +159,15 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             }
 
                             if (imageView == openMore) {
+                            //    forceWakeUp();
+
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
 
-                                Client.getInstance(Functions.getUserName(Main2Activity.this)).sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
+                                BuggerService.getInstance().sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
 
 
-                                BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
+                           //     BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
                                 moodIndex++;
                                 refreshLayout();
                                 return true;
@@ -168,7 +191,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (imageView == openPoke) {
-                                //     BuggerService.setSYSTEM_GlobalPoints(-5,"check");
+                                isPokeOpen = true;
+                                openPokes();
                             }
                             // MainActivity.getInstance().overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             //   Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
@@ -185,9 +209,49 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
     };
 
+    private void openPokes(){
+        if(chatListView ==null){
+            chatListView= (ListView) findViewById(R.id.chat_list);
+        }
+        close();
+        mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+        chatListView.setVisibility(View.VISIBLE);
+        BuggerService.getInstance().wakeUpJon();
+        List<String> legendList = new ArrayList<>();
+        legendList.add("Poke");
+        legendList.add("Hurt");
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
 
-    @Override
-    protected void hideBeneath(ConstraintLayout layoutAppeared) {
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Toast.makeText(Main2Activity.this, "Hahaha :)", Toast.LENGTH_LONG).show();
+
+                        break;
+                    case 1:
+                        mainLayout.setBackgroundColor(Color.parseColor("#890606"));
+                        mViber.vibrate(1000);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                BuggerService.setSYSTEM_GlobalPoints(-1,"you hurt me");
+                                Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
+                                mainLayout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+                            }
+                        }, 1000);
+                        break;
+                }
+                isPokeOpen = false;
+                cleanListOptions();
+            }
+        });
+    }
+
+
+    private void close(){
         if (isShown) {
             if (startedAnimation) {
                 for (int i = 0; i < allImageButtons.size(); i++)
@@ -199,6 +263,14 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             allImageButtons.get(allImageButtons.size() - 1).clearAnimation();
             allImageButtons.get(allImageButtons.size() - 1).startAnimation(mOffAnimation);
             isShown = false;
+        }
+    }
+
+
+    @Override
+    protected void hideBeneath(ConstraintLayout layoutAppeared) {
+        if (isShown) {
+            close();
             wasClosedFromOutside = true;
         }
     }
@@ -219,16 +291,26 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (isPokeOpen){
+            cleanListOptions();
+            isPokeOpen = false;
+            return;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
         // getSupportActionBar().setIcon(R.drawable.title);
         Functions.oneTimeFunctions.setUserName(this,TAG);
         String uName = getUserName(this);
-        Client.getInstance(uName.replace(" ","_")).sendMessage(uName + " Just joined");
+        BuggerService.getInstance().sendMessage(uName + " Just joined");
         initializeAnimations();
         initializeGui();
-
+        mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         createJonFolder();
         if (!settings.getBoolean(IS_INSTALLED, false)) {
@@ -241,6 +323,48 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             BuggerService.getInstance().wakeUpJon();
     }
 
+
+
+    private void popUpForRequest() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage(R.string.say_love)
+                .setTitle(R.string.alert_dialog_love);
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+               startListen();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private void startListen() {
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(intent, LOVE_REQUEST);
+    }
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == LOVE_REQUEST && resultCode == RESULT_OK) {
+            ArrayList arrayList = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if( !arrayList.get(0).equals("I love you")) {
+                Toast.makeText(getApplicationContext(), "you can do better",Toast.LENGTH_LONG).show();
+                startListen();
+            }else {
+                Toast.makeText(getApplicationContext(), "I love you too!!!", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -251,6 +375,16 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                 return;
             }
         }
+        if((settings.getBoolean(JUST_WOKE_UP, false)) ) {
+            Functions.writeToSettings(JUST_WOKE_UP,false,this);
+            BuggerService.getInstance().wakeUpJon();
+            forceWakeUp();
+        }
+        if((settings.getBoolean(SAY_LOVE, false)) ) {
+            Functions.writeToSettings(SAY_LOVE,false,this);
+            popUpForRequest();
+        }
+
         if (allImageButtons != null) {
             for (int i = 0; i < allImageButtons.size(); i++)
                 allImageButtons.get(i).setImageAlpha(128);
@@ -261,10 +395,10 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
             BuggerService.getInstance().setNotif();
-        } else if (intent != null && intent.getBooleanExtra(JUST_WOKE_UP, false)) {
-            BuggerService.getInstance().wakeUpJon();
+        } else if (intent != null && intent.getStringExtra(JUST_WOKE_UP)!= null) {
+//            BuggerService.getInstance().wakeUpJon();
 
-            //    forceWakeUp();                //TODO
+  //          talkAboutWakeUp();
         }
         invalidateOptionsMenu();
         if (readyToInvalidate && BuggerService.getIsServiceUP()) {
@@ -283,6 +417,13 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             Log.d(TAG, "onNewIntent: rerunning bugger");
         }
         */
+
+        if (intent != null && intent.getBooleanExtra(JUST_WOKE_UP, false)) {
+            BuggerService.getInstance().wakeUpJon();
+
+            talkAboutWakeUp();
+        }
+
         if (intent.getBooleanExtra("sendJonToSleep", false)) {
             //    BuggerService.getInstance().sendJonToSleep(gifImageView, mainLayout, chatImage, MainActivity.this); //TODO
 
@@ -386,7 +527,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
         mGifImageView.setDrawingCacheEnabled(true);
         mGifImageView.setOnTouchListener(changeColorListener);
-
+        chatListView = (ListView) findViewById(R.id.chat_list);
+      //  chatListView.setVisibility(View.GONE);
         ViewTreeObserver vto = mainLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -411,7 +553,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
         BuggerService.getInstance().wakeUpJon();
         refreshLayout();
-        //   talkAboutWakeUp();
+           talkAboutWakeUp();
     }
 
     @Override
@@ -425,7 +567,152 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     @Override
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName());
+                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName(),null);
         newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    private void forceWakeUp() {
+        if(chatListView ==null){
+            chatListView= (ListView) findViewById(R.id.chat_list);
+        }
+        close();
+        mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+        chatListView.setVisibility(View.VISIBLE);
+        BuggerService.getInstance().wakeUpJon();
+        List<String> legendList = new ArrayList<>();
+        legendList.add("Put hear plugs and go back to bad");
+        legendList.add("Stay awake");
+        legendList.add("Ohhh... Sorry");
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
+
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Toast.makeText(Main2Activity.this, "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
+                        BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
+                        BuggerService.getInstance().sendJonToSleep();
+                        Main2Activity.this.refreshLayout();
+                        break;
+                    case 1:
+                        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                        int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+                        if (tired >= SETTINGS_INITIAL_TIRED_POINTS) {
+                            Toast.makeText(Main2Activity.this, "Ok", Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
+                        } else {
+                            Toast.makeText(Main2Activity.this, "Nope, too tired", Toast.LENGTH_LONG).show();
+                            BuggerService.getInstance().sendJonToSleep();
+                            Main2Activity.this.refreshLayout();
+                        }
+                        chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, new ArrayList<String>()));
+                        break;
+                    case 2:
+                        Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        BuggerService.setSYSTEM_GlobalPoints(-2,"You woke me up by making noise");
+                        BuggerService.getInstance().sendJonToSleep();
+                        Main2Activity.this.refreshLayout();
+                        chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, new ArrayList<String>()));
+                        break;
+                }
+                cleanListOptions();
+            }
+        });
+    }
+
+
+    private void talkAboutWakeUp() {
+        if(chatListView ==null){
+            chatListView= (ListView) findViewById(R.id.chat_list);
+        }
+        close();
+        mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+        chatListView.setVisibility(View.VISIBLE);
+        List<String> legendList = new ArrayList<>();
+        legendList.add("Sorry to wake you up, Did you hear the news?");
+        legendList.add("Stop sleeping you idiot");
+        legendList.add("Ohhh... oops");
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Toast.makeText(Main2Activity.this, "What happened? Checking Ynet..", Toast.LENGTH_LONG).show();
+                        BuggerService.setSYSTEM_GlobalPoints(1, "Woke me up to tell me something important");
+                        cleanListOptions();
+                        talkAboutNews();
+                        break;
+                    case 1:
+                        Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
+                        BuggerService.setSYSTEM_GlobalPoints(-2, "You woke me up for nothing");
+                        BuggerService.getInstance().sendJonToSleep();
+                        Main2Activity.this.refreshLayout();
+                        cleanListOptions();
+                        break;
+                    case 2:
+                        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                        int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
+                        if (tired>SETTINGS_INITIAL_TIRED_POINTS) {
+                            Toast.makeText(Main2Activity.this, "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
+                            cleanListOptions();
+                            return;
+                        } else {
+                            Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
+                            BuggerService.setSYSTEM_GlobalPoints(-1, "You woke me up for nothing");
+                            BuggerService.getInstance().sendJonToSleep();
+                            Main2Activity.this.refreshLayout();
+                            cleanListOptions();
+                        }
+                        break;
+                }
+            }
+        });
+    }
+
+    private void talkAboutNews() {
+        RSSFeedParser feeder = new RSSFeedParser();
+
+        Thread thread = feeder.fetchXML("http://www.ynet.co.il/Integration/StoryRss3254.xml");
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        List<RSSFeedParser.Entry> entries = feeder.vals;
+        List<String> newsList = new ArrayList<>();
+        for (int i = 0; i < entries.size(); i++) {
+            newsList.add(entries.get(i).toString());
+        }
+        if(chatListView ==null){
+            chatListView= (ListView) findViewById(R.id.chat_list);
+        }
+        close();
+        mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+        chatListView.setVisibility(View.VISIBLE);
+        chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, newsList));
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (BuggerService.getInstance().shouldIBeNice()) {
+                    String toStartWith = chatListView.getItemAtPosition(position).toString() + ". What you think about it??";
+                    Toast.makeText(Main2Activity.this, "Wow.. can't sleep now..", Toast.LENGTH_SHORT).show();
+                    cleanListOptions();
+                    startActivity(new Intent(Main2Activity.this,
+                            ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
+                } else {
+                    Toast.makeText(Main2Activity.this, "I don't care, let me sleep.", Toast.LENGTH_SHORT).show();
+                    Main2Activity.this.refreshLayout();
+                    cleanListOptions();
+                }
+            }
+        });
+    }
+
+    private void cleanListOptions() {
+        chatListView.setVisibility(View.GONE);chatListView.setAdapter(null);mGifImageView.setImageAlpha(FULL_INT_ALPHA);
     }
 }

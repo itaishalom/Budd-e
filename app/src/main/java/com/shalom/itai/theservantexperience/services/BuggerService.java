@@ -19,6 +19,7 @@ import com.shalom.itai.theservantexperience.moods.MoodFactory;
 import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.relations.RelationsStatus;
+import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
@@ -34,9 +35,14 @@ import static com.shalom.itai.theservantexperience.utils.Constants.LOG_SEPARATOR
 import static com.shalom.itai.theservantexperience.utils.Constants.MOOD_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_BLESSES;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSULTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_ONE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_THREE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_TWO;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_LOG;
 import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
@@ -66,11 +72,11 @@ public class BuggerService extends Service {
     private Actions currentTimeAction;
     private ArrayList<String> Arr_Insults_Sys;
     private ArrayList<String> Arr_Blesses_Sys;
-    private ArrayList<String> Arr_Logger_Sys;
+ //   private ArrayList<String> Arr_Logger_Sys;
     public static String sessionId;
     //public static boolean startOverly = false;
     private static Mood currentMood = null;
-
+    public Client client;
 
     public void setCurrntMood(Mood m){
         currentMood = m;
@@ -91,12 +97,16 @@ public class BuggerService extends Service {
         loadPoints();
         loadInsultsAndBless();
         loadUserName();
+        client = new Client(Functions.getUserName(this));
         mInstance = this;
 
         currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         currentMood = changeMood();
     }
 
+    public void sendMessage(String msg){
+        client.sendMessage(msg);
+    }
 
     public void setDistanceToDest(double lat, double lng) {
         latDistanceToDest = lat;
@@ -152,9 +162,36 @@ public class BuggerService extends Service {
         return isServiceUP;
     }
 
+    private static void doLogLogic(int pts){
+        int inc ;
+        if (pts >0){
+            inc = 1;
+        }else{
+            inc = -1;
+        }
+
+        SharedPreferences settings = getInstance().getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        if  (settings.getInt(SETTINGS_LOG_ONE, 0)==0) {
+            Functions.writeToSettings(SETTINGS_LOG_ONE, inc, getInstance());
+            return;
+        }
+        if  (settings.getInt(SETTINGS_LOG_TWO, 0)==0) {
+            Functions.writeToSettings(SETTINGS_LOG_TWO, inc, getInstance());
+            return;
+        }
+        if  (settings.getInt(SETTINGS_LOG_THREE, 0)==0) {
+            Functions.writeToSettings(SETTINGS_LOG_THREE, inc, getInstance());
+            return;
+        }
+        Functions.writeToSettings(SETTINGS_LOG_THREE, settings.getInt(SETTINGS_LOG_TWO, 0), getInstance());
+        Functions.writeToSettings(SETTINGS_LOG_TWO, settings.getInt(SETTINGS_LOG_ONE, 0), getInstance());
+        Functions.writeToSettings(SETTINGS_LOG_ONE, inc, getInstance());
+    }
+
     public static void setSYSTEM_GlobalPoints(int pts, String logMessage) {
-        if (logMessage != null)
-            getInstance().pushEventToLogger(logMessage + LOG_SEPARATOR + Integer.signum(pts));
+        doLogLogic(pts);
+        //  if (logMessage != null)
+           // getInstance().pushEventToLogger(logMessage + LOG_SEPARATOR + Integer.signum(pts));
         int oldNumOfPoints = SYSTEM_GlobalPoints;
         if (oldNumOfPoints + pts <= 0) {
             SYSTEM_GlobalPoints = 0;
@@ -168,9 +205,11 @@ public class BuggerService extends Service {
             RelationsStatus oldStatus = currentRelationsStatus;
             Mood oldMood = currentMood;
             currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
+            if(!(currentMood instanceof Sleep)) {
 
-            currentMood = getInstance().changeMood();
 
+                currentMood = getInstance().changeMood();
+            }
             if (oldStatus != currentRelationsStatus) {
                 Log.d(TAG, "setSYSTEM_GlobalPoints: Changed status");
                 Intent i = new Intent(STATUS_CHANGE_BROADCAST);//.putExtra("path", pathToImage);
@@ -209,7 +248,7 @@ public class BuggerService extends Service {
 
     private void loadInsultsAndBless() {
         Arr_Insults_Sys = new ArrayList<>();
-        Arr_Logger_Sys = new ArrayList<>();
+    //    Arr_Logger_Sys = new ArrayList<>();
         Arr_Blesses_Sys = new ArrayList<>();
 
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
@@ -230,13 +269,14 @@ public class BuggerService extends Service {
         } else {
             Functions.createBlesses(Arr_Blesses_Sys);
         }
-
+/*
         Set<String> logs = settings.getStringSet(SETTING_LOG, null);
         if (logs != null && !logs.isEmpty()) {
             for (String log : logs) {
                 Arr_Logger_Sys.add(log);
             }
         }
+        */
 
     }
 
@@ -377,15 +417,21 @@ public class BuggerService extends Service {
             pushEventToLogger("I was born" + LOG_SEPARATOR + "+");
         }
     */
+    /*
     private void pushEventToLogger(String event) {
-        Date now = new Date();
-        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-        save(Arr_Logger_Sys, now + LOG_SEPARATOR + event, SETTING_LOG);
-    }
+     //   Date now = new Date();
+       // android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+        save(Arr_Logger_Sys, System.currentTimeMillis()  + LOG_SEPARATOR + event, SETTING_LOG);
+    }*/
 
     public int getLastActionsGrade() {
+        SharedPreferences settings = getInstance().getApplicationContext().
+                getSharedPreferences(PREFS_NAME, 0);
+        return settings.getInt(SETTINGS_LOG_TWO, 0) + settings.getInt(SETTINGS_LOG_ONE, 0) +
+                settings.getInt(SETTINGS_LOG_THREE, 0);
+        /*
         int iters = 0;
-        int counter = 0;
+
         for (int i = Arr_Logger_Sys.size() - 1; i >= 0; i--) {
             String[] event = Arr_Logger_Sys.get(i).split(LOG_SEPARATOR);
             counter += Integer.parseInt(event[2]);
@@ -394,7 +440,8 @@ public class BuggerService extends Service {
                 break;
             }
         }
-        return counter;
+        */
+
     }
 
     public Mood changeMood() {

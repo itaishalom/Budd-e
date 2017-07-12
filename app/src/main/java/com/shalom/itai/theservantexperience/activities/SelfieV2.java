@@ -190,7 +190,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     @Override
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Selfie_buttons_title,"Yes!","No!",getClass().getName());
+                .newInstance(R.string.alert_dialog_Selfie_buttons_title,"Yes!","No!",getClass().getName(),null);
         newFragment.show(getSupportFragmentManager(),"dialog");
     }
 }

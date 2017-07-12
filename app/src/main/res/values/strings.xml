@@ -23,8 +23,10 @@
     <string name="action_settings">settings</string>
     <string name="action_favorite">favorite</string>
     <string name="alert_dialog_Wake_up_buttons_title">Wake up Budd-e?</string>
+    <string name="alert_dialog_dance">Wanna dance with me?</string>
     <string name="alert_dialog_Permission_Request">Permission required</string>
     <string name="alert_dialog_Confirm">Are you sure?</string>
+    <string name="alert_dialog_love">Love?</string>
     <string name="alert_dialog_Game">Want to play a game?</string>
     <string name="alert_dialog_Trip_buttons_title">Can we go to </string>
     <string name="alert_dialog_Selfie_buttons_title">Can we do selfie?</string>
@@ -58,6 +60,7 @@
     <string name="permission_denied_contacts">denied</string>
     <string name="permission_requested_message">Please allow the permission at the following page</string>
     <string name="mems">mems_title</string>
+    <string name="say_love">When you ready, say you love me!</string>
     <string name="action_title">title_toolBar</string>
     <string name="action_wins">wins</string>
     <string name="action_new_game">new game</string>
