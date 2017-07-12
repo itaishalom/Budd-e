@@ -60,7 +60,7 @@
     <string name="permission_denied_contacts">denied</string>
     <string name="permission_requested_message">Please allow the permission at the following page</string>
     <string name="mems">mems_title</string>
-    <string name="say_love">When you ready, say you love me!</string>
+    <string name="say_love">When you ready, say: "I love you!</string>
     <string name="action_title">title_toolBar</string>
     <string name="action_wins">wins</string>
     <string name="action_new_game">new game</string>

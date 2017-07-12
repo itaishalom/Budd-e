@@ -536,8 +536,9 @@ private void prepareList(){
         super.onResume();
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         if((settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)) ){
-            Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,false,this);
-            if(checkScreenAndLock(this)){
+
+            if(!checkScreenAndLock(this)){
+                Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,false,this);
                 return;
             }else{
                 Toast.makeText(this, "Missed you", Toast.LENGTH_SHORT).show();

@@ -143,7 +143,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
             shareIntent.putExtra(Intent.EXTRA_TEXT, "Check me and Jon!");
             setShareIntent(shareIntent);
             isBackFromShare = true;
-            BuggerService.getInstance().unbug();
+       //     BuggerService.getInstance().unbug();
             Intent result = Intent.createChooser(shareIntent, getResources().getText(R.string.send_to));
             startActivity(result);
             //   finish();

@@ -1,7 +1,9 @@
 package com.shalom.itai.theservantexperience.activities;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -55,10 +57,18 @@ public class FunActivity extends ToolBarActivityNew {
         rand = new Random();
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;
-        int jokeNum = rand.nextInt(allJokes.size());
-        text.setText("Q:"+allJokes.get(jokeNum));
+        String str="";
+        while(true){
+            int jokeNum = rand.nextInt(allJokes.size());
+            str = allJokes.get(jokeNum);
+            if(!str.trim().isEmpty())
+                break;
+        }
+
+        text.setText("Q:"+str);
 
         Button quitBut = (Button) findViewById(R.id.quit);
+        quitBut.setVisibility(INVISIBLE);
         quitBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 BuggerService b = BuggerService.getInstance();
@@ -71,6 +81,32 @@ public class FunActivity extends ToolBarActivityNew {
             }
         });
 
+
+      //  thisActivity = this;
+        showDialog();
+    }
+
+    private void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("Wanna hear a joke?")
+                .setTitle("Joke");
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                StartSession();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                BuggerService.setSYSTEM_GlobalPoints(-1,"Didn't want to hear a joke");
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void StartSession(){
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -78,8 +114,6 @@ public class FunActivity extends ToolBarActivityNew {
                 analayze();
             }
         }, 4000);
-      //  thisActivity = this;
-
     }
 
     private void putResponseButtons(final Bitmap bitmapImage)

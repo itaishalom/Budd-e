@@ -69,6 +69,7 @@ class TimerTaskForUser extends ContextTimerTask {
         if (activityOnTop.contains("theservant") && activityOnTop.contains("MessageBox")) {
             return;
         }
+        /*
         if (!checkScreenAndLock(mContext)) {
            playSound();
             if (shouldSleep) {
@@ -78,7 +79,8 @@ class TimerTaskForUser extends ContextTimerTask {
                 this.mContext.startActivity(intent);
                 return;
             }else{
-                if (!settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)) {
+                boolean isCalled = settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false);
+                if (!isCalled) {
                     Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,true,mContext);
                     Intent intent = new Intent(this.mContext, Main2Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -87,13 +89,22 @@ class TimerTaskForUser extends ContextTimerTask {
                 return;
             }
         }
+        */
         if (!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
                 && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
                 && !activityOnTop.toLowerCase().contains("camera")
                 && !activityOnTop.toLowerCase().contains("com.google.android.location.settings.LocationSettingsCheckerActivity".toLowerCase())
                 && !activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())
-                && !activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())) { //"com.google.android.location.settings.LocationSettingsCheckerActivity"
+                && !activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())
+                 || !checkScreenAndLock(mContext)){ //"com.google.android.location.settings.LocationSettingsCheckerActivity"
+            playSound();
+            if(!checkScreenAndLock(mContext)) {
+                if (activityOnTop.contains("theservant")) {
 
+                        return;
+
+                }
+            }
                                 /*
                 if (indexActive == -1) {
                     Functions.popUpMessage(mContext, "I am board!", "ChatActivity");
@@ -104,7 +115,7 @@ class TimerTaskForUser extends ContextTimerTask {
                 } else {
                 */
             if (shouldSleep) {
-                playSound();
+
                 BuggerService.getInstance().sendJonToSleep();
                 Intent intent = new Intent(this.mContext, Main2Activity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -115,7 +126,7 @@ class TimerTaskForUser extends ContextTimerTask {
             Intent intent = new Intent(this.mContext, Activities[indexActive]);
             if (indexActive == Activities.length)
                 indexActive = 0;
-            playSound();
+
             Functions.writeToSettings(BUG_INDEX, indexActive + 1, mContext);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.mContext.startActivity(intent);
