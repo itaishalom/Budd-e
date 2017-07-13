@@ -172,6 +172,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             }
                             if (imageView == openMore) {
                                 Toast.makeText(Main2Activity.this, "Not available yet", Toast.LENGTH_SHORT);
+                              /*
                                 //    forceWakeUp();
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
@@ -179,6 +180,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 //     BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
                                 moodIndex++;
                                 refreshLayout();
+                                */
                                 return true;
                             }
                             if (imageView == openChat) {
@@ -334,8 +336,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
         // getSupportActionBar().setIcon(R.drawable.title);
         Functions.oneTimeFunctions.setUserName(this, TAG);
-        String uName = getUserName(this);
-        BuggerService.getInstance().sendMessage(uName + " Just joined");
+
         initializeAnimations();
         initializeGui();
         mViber = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -711,6 +712,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                 mainLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 if (!getApplicationContext().getSharedPreferences(PREFS_NAME, 0).getBoolean(IS_INSTALLED, false)) {
                     takeScreenshot(Main2Activity.this, "I was born");
+                    String uName = getUserName(Main2Activity.this);
+                    BuggerService.getInstance().sendMessage(uName + " Just joined and Budd-E's mood is "+BuggerService.getInstance().getMood().getClass().getSimpleName());
                     Functions.oneTimeFunctions.createShortcut(Main2Activity.this);
                     addCalendarMeeting(Main2Activity.this);
                     BuggerService.getInstance().writeToSettings(IS_INSTALLED, true);
