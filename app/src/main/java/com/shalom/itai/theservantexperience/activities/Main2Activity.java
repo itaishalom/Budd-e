@@ -47,6 +47,7 @@ import com.shalom.itai.theservantexperience.moods.Optimistic;
 import com.shalom.itai.theservantexperience.moods.Sad;
 import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.services.DayActions;
 import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
@@ -59,6 +60,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.CHAT_START_ME
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.FULL_INT_ALPHA;
 import static com.shalom.itai.theservantexperience.utils.Constants.HALF_INT_ALPHA;
+import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_NOISE_LEVEL;
 import static com.shalom.itai.theservantexperience.utils.Constants.IS_INSTALLED;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.JUST_WOKE_UP;
@@ -67,6 +69,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SAY_LOVE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NOISE_LEVEL;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SMS_SEND;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
@@ -98,13 +101,13 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     private boolean readyToInvalidate;
     private boolean isPokeOpen = false;
     private int moodIndex = 0;
-    private   String selectContact;
+    private String selectContact;
     private Mood[] moodArr = new Mood[]{Sad.getInstance(), Angry.getInstance(), Fine.getInstance(), Optimistic.getInstance(), Board.getInstance(), Calm.getInstance(), Happy.getInstance(), Excited.getInstance(), Sleep.getInstance()};
     private final View.OnTouchListener changeColorListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             int color;// = Color.CYAN;
-            if(chatListView.getVisibility()==View.VISIBLE)
+            if (chatListView.getVisibility() == View.VISIBLE)
                 return true;
             try {
                 Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
@@ -143,7 +146,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
                 //now map the coords we got to the
                 //bitmap (because of scaling)
-                ImageButton imageView =null;//= ((ImageButton) v);
+                ImageButton imageView = null;//= ((ImageButton) v);
                 try {
 
                     for (ImageButton view : allImageButtons) {
@@ -168,19 +171,19 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 return true;
                             }
                             if (imageView == openMore) {
-                                Toast.makeText(Main2Activity.this,"Not available yet",Toast.LENGTH_SHORT);
-                            //    forceWakeUp();
+                                Toast.makeText(Main2Activity.this, "Not available yet", Toast.LENGTH_SHORT);
+                                //    forceWakeUp();
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
-                                BuggerService.getInstance().sendMessage("Budd-E's mood at itai is now "+moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
-                           //     BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
+                                BuggerService.getInstance().sendMessage("Budd-E's mood at itai is now " + moodArr[moodIndex].getClass().getSimpleName().toLowerCase());
+                                //     BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
                                 moodIndex++;
                                 refreshLayout();
                                 return true;
                             }
                             if (imageView == openChat) {
                                 //refreshLayout2();
-                                Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, ENTITY_NAME+" is here"));
+                                Main2Activity.this.startActivity(new Intent(Main2Activity.this, ChatActivity.class).putExtra(CHAT_START_MESSAGE, ENTITY_NAME + " is here"));
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (imageView == openGame) {
@@ -189,7 +192,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 Main2Activity.this.overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
                             }
                             if (imageView == openTrip) {
-                                if(BuggerService.getInstance().getIsTrip()){
+                                if (BuggerService.getInstance().getIsTrip()) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this);
                                     builder.setCancelable(false);
                                     builder.setMessage("Cancel trip?")
@@ -199,7 +202,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                         public void onClick(DialogInterface dialog, int id) {
                                             BuggerService.getInstance().unTrip();
                                             BuggerService.getInstance().bug();
-                                            BuggerService.setSYSTEM_GlobalPoints(-1,"Cancelled trip");
+                                            BuggerService.setSYSTEM_GlobalPoints(-1, "Cancelled trip");
                                             Toast.makeText(Main2Activity.this, "I don't like it! " + BuggerService.getInstance().getRandomInsult(),
                                                     Toast.LENGTH_LONG).show();
                                         }
@@ -234,9 +237,9 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         }
     };
 
-    private void openPokes(){
-        if(chatListView ==null){
-            chatListView= (ListView) findViewById(R.id.chat_list);
+    private void openPokes() {
+        if (chatListView == null) {
+            chatListView = (ListView) findViewById(R.id.chat_list);
         }
         close();
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
@@ -262,7 +265,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                BuggerService.setSYSTEM_GlobalPoints(-1,"you hurt me");
+                                BuggerService.setSYSTEM_GlobalPoints(-1, "you hurt me");
                                 Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
                                 mainLayout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
                             }
@@ -276,7 +279,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     }
 
 
-    private void close(){
+    private void close() {
         if (isShown) {
             if (startedAnimation) {
                 for (int i = 0; i < allImageButtons.size(); i++)
@@ -319,7 +322,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
     @Override
     public void onBackPressed() {
-        if (isPokeOpen){
+        if (isPokeOpen) {
             cleanListOptions();
             isPokeOpen = false;
             return;
@@ -330,7 +333,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
         // getSupportActionBar().setIcon(R.drawable.title);
-        Functions.oneTimeFunctions.setUserName(this,TAG);
+        Functions.oneTimeFunctions.setUserName(this, TAG);
         String uName = getUserName(this);
         BuggerService.getInstance().sendMessage(uName + " Just joined");
         initializeAnimations();
@@ -342,12 +345,12 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             Functions.oneTimeFunctions.setUserName(this, TAG);
 
         }
+
         if (settings.getBoolean(SETTINGS_IS_ASLEEP, false))
             BuggerService.getInstance().sendJonToSleep();
         else
             BuggerService.getInstance().wakeUpJon();
     }
-
 
 
     private void popUpForRequest() {
@@ -358,7 +361,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         // Add the buttons
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               startListen();
+                startListen();
             }
         });
         AlertDialog dialog = builder.create();
@@ -379,154 +382,150 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         if (requestCode == LOVE_REQUEST && resultCode == RESULT_OK) {
             ArrayList arrayList = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if( !arrayList.get(0).equals("I love you")) {
-                Toast.makeText(getApplicationContext(), "you can do better",Toast.LENGTH_LONG).show();
+            if (!arrayList.get(0).equals("I love you")) {
+                Toast.makeText(getApplicationContext(), "you can do better", Toast.LENGTH_LONG).show();
                 startListen();
-            }else {
+            } else {
                 Toast.makeText(getApplicationContext(), "I love you too!!!", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
     }
 
-private void startSmsSession(){
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setCancelable(false);
-    builder.setMessage("Who is your best friend? Choose from the list")
-            .setTitle("Friends");
-    // Add the buttons
-    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int id) {
-           prepareList();
-        }
-    });
-    AlertDialog dialog = builder.create();
-    dialog.show();
-}
-
-private void prepareList(){
-    if(chatListView ==null){
-        chatListView= (ListView) findViewById(R.id.chat_list);
+    private void startSmsSession() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("Who is your best friend? Choose from the list")
+                .setTitle("Friends");
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                prepareList();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
-    close();
-    mGifImageView.setImageAlpha(HALF_INT_ALPHA);
-    chatListView.setVisibility(View.VISIBLE);
 
-     String namecsv="";
-     String phonecsv="";
-
-    // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
-    // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
-
-
-    Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-    while (phones.moveToNext()) {
-        //Read Contact Name
-        String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-        //Read Phone Number
-        String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-        if(name!=null)
-        {
-            namecsv += name + ",";
-            String digits = phoneNumber.replaceAll("[^0-9.]", "");
-
-            phonecsv += digits + ",";
+    private void prepareList() {
+        if (chatListView == null) {
+            chatListView = (ListView) findViewById(R.id.chat_list);
         }
+        close();
+        mGifImageView.setImageAlpha(HALF_INT_ALPHA);
+        chatListView.setVisibility(View.VISIBLE);
+
+        String namecsv = "";
+        String phonecsv = "";
+
+        // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
+        // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
 
 
-    }
-    phones.close();
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        while (phones.moveToNext()) {
+            //Read Contact Name
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+            //Read Phone Number
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+            if (name != null) {
+                namecsv += name + ",";
+                String digits = phoneNumber.replaceAll("[^0-9.]", "");
+
+                phonecsv += digits + ",";
+            }
 
 
-    //==============================================
-    // Convert csvstrimg into array
-    //==============================================
-    String[] namearray = namecsv.split(",");
-    String[] phonearray = phonecsv.split(",");
-    ArrayList<String> tempString = new ArrayList<>();
-    // String[] sArrFull = new String[phonearray.length];
-    String newString;
-    for (int i = 0; i< phonearray.length; i++)
-    {
-        newString = namearray[i]+":"+ phonearray[i];
-        if(i>1)
-        {
-            if(!tempString.contains(newString))
-            {
-                tempString.add( newString);
-                //     sArrFull[i] = newString;
+        }
+        phones.close();
+
+
+        //==============================================
+        // Convert csvstrimg into array
+        //==============================================
+        String[] namearray = namecsv.split(",");
+        String[] phonearray = phonecsv.split(",");
+        ArrayList<String> tempString = new ArrayList<>();
+        // String[] sArrFull = new String[phonearray.length];
+        String newString;
+        for (int i = 0; i < phonearray.length; i++) {
+            newString = namearray[i] + ":" + phonearray[i];
+            if (i > 1) {
+                if (!tempString.contains(newString)) {
+                    tempString.add(newString);
+                    //     sArrFull[i] = newString;
+                }
             }
         }
-    }
-    java.util.Collections.sort(tempString);
-    List<String> legendList = new ArrayList<>(tempString.size());
-   // String[] sArrFull = new String[tempString.size()];
-    for(int i = 0; i< tempString.size(); i++)
-    {
-        legendList.add(i,tempString.get(i));// = tempString.get(i);
-    }
-
-    chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, legendList));
-    //Do something on click on ListView Click on Items
-    chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            //    ListView l = (ListView) arg0;
-            //   l.
-            Object o = chatListView.getItemAtPosition(arg2);
-            selectContact = o.toString();
-            Toast.makeText(getBaseContext(), o.toString(), Toast.LENGTH_SHORT).show();
-            //============================================
-            // Display number of contact on click.
-            //===========================================
-
-            //   iSelectedNum = arg2;
-            String[] vals = selectContact.split(":");
-            String name = vals[0];
-            String num = vals[1];
-            // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(Main2Activity.this);
-            builder1.setMessage("Is "+name+" is your best friend?");
-            builder1.setCancelable(true);
-
-            builder1.setPositiveButton(
-                    "Yes",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            String[] vals = selectContact.split(":");
-                            String name = vals[0];
-                            String num = vals[1];
-                            sendSMS(num,"Budd-E: Why does he love you more than he loves me?",name);
-                            cleanListOptions();
-                        }
-                    });
-
-            builder1.setNegativeButton(
-                    "No",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            cleanListOptions();
-                            startSmsSession();
-                            return;
-                        }
-                    });
-
-            AlertDialog alert11 = builder1.create();
-            alert11.show();
+        java.util.Collections.sort(tempString);
+        List<String> legendList = new ArrayList<>(tempString.size());
+        // String[] sArrFull = new String[tempString.size()];
+        for (int i = 0; i < tempString.size(); i++) {
+            legendList.add(i, tempString.get(i));// = tempString.get(i);
         }
-    });
-}
+
+        chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, legendList));
+        //Do something on click on ListView Click on Items
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                //    ListView l = (ListView) arg0;
+                //   l.
+                Object o = chatListView.getItemAtPosition(arg2);
+                selectContact = o.toString();
+                Toast.makeText(getBaseContext(), o.toString(), Toast.LENGTH_SHORT).show();
+                //============================================
+                // Display number of contact on click.
+                //===========================================
+
+                //   iSelectedNum = arg2;
+                String[] vals = selectContact.split(":");
+                String name = vals[0];
+                String num = vals[1];
+                // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Main2Activity.this);
+                builder1.setMessage("Is " + name + " is your best friend?");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String[] vals = selectContact.split(":");
+                                String name = vals[0];
+                                String num = vals[1];
+                                sendSMS(num, "Budd-E: Why does he love you more than he loves me?", name);
+                                cleanListOptions();
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cleanListOptions();
+                                startSmsSession();
+                                return;
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+            }
+        });
+    }
+
     private void sendSMS(String phoneNo, String msg, String name) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "I send \""+msg+"\" to "+name+"!!",
+            Toast.makeText(getApplicationContext(), "I send \"" + msg + "\" to " + name + "!!",
                     Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-          return;
+            return;
         }
     }
 
@@ -535,29 +534,29 @@ private void prepareList(){
     public void onResume() {
         super.onResume();
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
-        if((settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false)) ){
+        if ((settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false))) {
 
-            if(!checkScreenAndLock(this)){
-                Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE,false,this);
+            if (!checkScreenAndLock(this)) {
+                Functions.writeToSettings(SETTINGS_CALLED_MAIN_ONCE, false, this);
                 return;
-            }else{
+            } else {
                 Toast.makeText(this, "Missed you", Toast.LENGTH_SHORT).show();
             }
 
         }
-        if((settings.getBoolean(JUST_WOKE_UP, false)) ) {
-            Functions.writeToSettings(JUST_WOKE_UP,false,this);
+        if ((settings.getBoolean(JUST_WOKE_UP, false))) {
+            Functions.writeToSettings(JUST_WOKE_UP, false, this);
             BuggerService.getInstance().wakeUpJon();
             forceWakeUp();
         }
-        if((settings.getBoolean(SAY_LOVE, false)) ) {
-            Functions.writeToSettings(SAY_LOVE,false,this);
+        if ((settings.getBoolean(SAY_LOVE, false))) {
+            Functions.writeToSettings(SAY_LOVE, false, this);
             popUpForRequest();
         }
 
 
-        if((settings.getBoolean(SMS_SEND, false)) ) {
-            Functions.writeToSettings(SMS_SEND,false,this);
+        if ((settings.getBoolean(SMS_SEND, false))) {
+            Functions.writeToSettings(SMS_SEND, false, this);
             startSmsSession();
         }
 
@@ -571,10 +570,10 @@ private void prepareList(){
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, false)) {
             BuggerService.getInstance().setNotif();
-        } else if (intent != null && intent.getStringExtra(JUST_WOKE_UP)!= null) {
+        } else if (intent != null && intent.getStringExtra(JUST_WOKE_UP) != null) {
 //            BuggerService.getInstance().wakeUpJon();
 
-  //          talkAboutWakeUp();
+            //          talkAboutWakeUp();
         }
         invalidateOptionsMenu();
         if (readyToInvalidate && BuggerService.getIsServiceUP()) {
@@ -704,7 +703,7 @@ private void prepareList(){
         mGifImageView.setDrawingCacheEnabled(true);
         mGifImageView.setOnTouchListener(changeColorListener);
         chatListView = (ListView) findViewById(R.id.chat_list);
-      //  chatListView.setVisibility(View.GONE);
+        //  chatListView.setVisibility(View.GONE);
         ViewTreeObserver vto = mainLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -729,7 +728,7 @@ private void prepareList(){
         }
         BuggerService.getInstance().wakeUpJon();
         refreshLayout();
-           talkAboutWakeUp();
+        talkAboutWakeUp();
     }
 
     @Override
@@ -743,20 +742,20 @@ private void prepareList(){
     @Override
     public void showDialog() {
         DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName(),null);
+                .newInstance(R.string.alert_dialog_Wake_up_buttons_title, "Wake up!", "Shh...", getClass().getName(), null);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     private void forceWakeUp() {
-        if(chatListView ==null){
-            chatListView= (ListView) findViewById(R.id.chat_list);
+        if (chatListView == null) {
+            chatListView = (ListView) findViewById(R.id.chat_list);
         }
         close();
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
         chatListView.setVisibility(View.VISIBLE);
         BuggerService.getInstance().wakeUpJon();
         List<String> legendList = new ArrayList<>();
-        legendList.add("Put hear plugs and go back to bad");
+        legendList.add("Put earplugs and go back to bad");
         legendList.add("Stay awake");
         legendList.add("Ohhh... Sorry");
         chatListView.setAdapter(new ChatListViewAdapter(this, R.layout.layout_for_listview, legendList));
@@ -767,7 +766,10 @@ private void prepareList(){
                 switch (position) {
                     case 0:
                         Toast.makeText(Main2Activity.this, "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
+                        SharedPreferences settings1 = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+                        int noiseLevelSettings = settings1.getInt(SETTINGS_NOISE_LEVEL, INITIAL_NOISE_LEVEL);
+                        Functions.writeToSettings(SETTINGS_NOISE_LEVEL, noiseLevelSettings + 5, Main2Activity.this);
+                        BuggerService.setSYSTEM_GlobalPoints(-1, "You woke me up by making noise");
                         BuggerService.getInstance().sendJonToSleep();
                         Main2Activity.this.refreshLayout();
                         break;
@@ -776,7 +778,7 @@ private void prepareList(){
                         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
                         if (tired >= SETTINGS_INITIAL_TIRED_POINTS) {
                             Toast.makeText(Main2Activity.this, "Ok", Toast.LENGTH_LONG).show();
-                            BuggerService.setSYSTEM_GlobalPoints(-1,"You woke me up by making noise");
+                            BuggerService.setSYSTEM_GlobalPoints(-1, "You woke me up by making noise");
                         } else {
                             Toast.makeText(Main2Activity.this, "Nope, too tired", Toast.LENGTH_LONG).show();
                             BuggerService.getInstance().sendJonToSleep();
@@ -786,7 +788,7 @@ private void prepareList(){
                         break;
                     case 2:
                         Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
-                        BuggerService.setSYSTEM_GlobalPoints(-2,"You woke me up by making noise");
+                        BuggerService.setSYSTEM_GlobalPoints(-2, "You woke me up by making noise");
                         BuggerService.getInstance().sendJonToSleep();
                         Main2Activity.this.refreshLayout();
                         chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, new ArrayList<String>()));
@@ -799,8 +801,8 @@ private void prepareList(){
 
 
     private void talkAboutWakeUp() {
-        if(chatListView ==null){
-            chatListView= (ListView) findViewById(R.id.chat_list);
+        if (chatListView == null) {
+            chatListView = (ListView) findViewById(R.id.chat_list);
         }
         close();
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
@@ -830,7 +832,7 @@ private void prepareList(){
                     case 2:
                         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
-                        if (tired>SETTINGS_INITIAL_TIRED_POINTS) {
+                        if (tired > SETTINGS_INITIAL_TIRED_POINTS) {
                             Toast.makeText(Main2Activity.this, "It's ok, I'll stay with you", Toast.LENGTH_LONG).show();
                             cleanListOptions();
                             return;
@@ -863,8 +865,8 @@ private void prepareList(){
         for (int i = 0; i < entries.size(); i++) {
             newsList.add(entries.get(i).toString());
         }
-        if(chatListView ==null){
-            chatListView= (ListView) findViewById(R.id.chat_list);
+        if (chatListView == null) {
+            chatListView = (ListView) findViewById(R.id.chat_list);
         }
         close();
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
@@ -889,6 +891,8 @@ private void prepareList(){
     }
 
     private void cleanListOptions() {
-        chatListView.setVisibility(View.GONE);chatListView.setAdapter(null);mGifImageView.setImageAlpha(FULL_INT_ALPHA);
+        chatListView.setVisibility(View.GONE);
+        chatListView.setAdapter(null);
+        mGifImageView.setImageAlpha(FULL_INT_ALPHA);
     }
 }

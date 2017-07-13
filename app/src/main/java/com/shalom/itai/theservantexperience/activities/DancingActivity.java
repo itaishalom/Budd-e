@@ -86,7 +86,7 @@ public class DancingActivity extends ToolBarActivityNew implements DialogCaller{
         mediaPlayer.start();
         isStartedDancing = true;
         Toast.makeText(this,"Let's dance (Shake me) to Bach for 30 seconds, shake me!",Toast.LENGTH_LONG);
-        new CountDownTimer(10000, 1000) {
+        new CountDownTimer(30000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 moveDirection *= -1;

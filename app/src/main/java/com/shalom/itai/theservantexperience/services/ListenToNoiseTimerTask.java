@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import com.shalom.itai.theservantexperience.utils.Functions;
 import com.shalom.itai.theservantexperience.utils.NoiseListener;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_NOISE_LEVEL;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_MAX_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_NOISE_LEVEL;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 
 /**
@@ -16,45 +18,41 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRE
  */
 
 class ListenToNoiseTimerTask extends ContextTimerTask {
-    private double mNoiseLevel;
     private boolean shouldContinue;
 
     ListenToNoiseTimerTask(Context context) {
         super(context);
-        mNoiseLevel = 75.0;
         //   mNoiseListener = new NoiseListener();
         shouldContinue = true;
     }
 
-    private void setNoiseLevel(double val) {
-        mNoiseLevel = val;
-    }
 
-    public void setNoiseLevel() {
-        setNoiseLevel(70.0);
-    }
+
 
     @Override
     public void run() {
         if (!shouldContinue)
             return;
-
-
         SharedPreferences settings = mContext.getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
+        int noiseLevelSettings = settings.getInt(SETTINGS_NOISE_LEVEL, INITIAL_NOISE_LEVEL);
+
         int tired= settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
         if (tired >= SETTINGS_MAX_TIRED_POINTS-30 && tired < SETTINGS_MAX_TIRED_POINTS-10) {
             if (Functions.throwRandom(10, 1) >= 8) {
+                Functions.writeToSettings(SETTINGS_NOISE_LEVEL,INITIAL_NOISE_LEVEL,mContext);
                 BuggerService.getInstance().wakeUpJon();
                 return;
             }
         }
         if (tired >= SETTINGS_MAX_TIRED_POINTS-10 && tired < SETTINGS_MAX_TIRED_POINTS-1) {
             if (Functions.throwRandom(4, 2) >= 3) {
+                Functions.writeToSettings(SETTINGS_NOISE_LEVEL,INITIAL_NOISE_LEVEL,mContext);
                 BuggerService.getInstance().wakeUpJon();
                 return;
             }
         }
         if (tired >=SETTINGS_MAX_TIRED_POINTS-1){
+            Functions.writeToSettings(SETTINGS_NOISE_LEVEL,INITIAL_NOISE_LEVEL,mContext);
             BuggerService.getInstance().wakeUpJon();
             return;
         }
@@ -75,7 +73,7 @@ class ListenToNoiseTimerTask extends ContextTimerTask {
         }
         double noise = mNoiseListener.stop();
 
-        if (noise > NightActions.getNoiseLevel()) {
+        if (noise > noiseLevelSettings) {
             shouldContinue = false;
             mNoiseListener.dispose();
             Functions.popUpMessage(mContext, "Hi! You woke me up!","MainActivity");

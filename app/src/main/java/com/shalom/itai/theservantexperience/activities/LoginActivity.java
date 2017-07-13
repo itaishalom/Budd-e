@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
 
-        getWindow().setBackgroundDrawableResource(R.drawable.locked);
+       // getWindow().setBackgroundDrawableResource(R.drawable.locked);
 
 
         mPasswordView = (EditText) findViewById(R.id.input);

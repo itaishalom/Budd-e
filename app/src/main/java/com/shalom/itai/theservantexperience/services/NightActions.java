@@ -16,6 +16,8 @@ import com.shalom.itai.theservantexperience.utils.Constants;
 
 import java.util.Timer;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.SLEEP_LISTEN_TIME;
+
 /**
  * Created by Itai on 10/05/2017.
  */
@@ -24,7 +26,7 @@ public class NightActions extends Actions {
     private static Timer SoundListenTimer = new Timer();
     // --Commented out by Inspection (18/06/2017 00:17):private static boolean isUp=false;
     private static NightActions instance = null;
-    private static double noiseLevel = 75.0;
+
 
     public static Actions start(Context context,int notif_icon) {
         if(instance == null){
@@ -64,18 +66,12 @@ public class NightActions extends Actions {
     }
 
 
-    public static double getNoiseLevel(){
-        return noiseLevel;
-    }
 
-    public static void IncNoiseLevel(){
-        noiseLevel+=5;
-    }
 
     @Override
     protected void StartTimers(Context context) {
         SoundListenTimer = new Timer();
-        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(context), 0, 7000);
+        SoundListenTimer.scheduleAtFixedRate(new ListenToNoiseTimerTask(context), 0, SLEEP_LISTEN_TIME);
     }
 
     @Override
