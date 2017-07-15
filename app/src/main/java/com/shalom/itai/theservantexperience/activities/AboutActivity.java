@@ -25,6 +25,9 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Functions.startOverlay;
+import static com.shalom.itai.theservantexperience.utils.Functions.stopOverlay;
+
 public class AboutActivity extends AppCompatActivity {
     CoordinatorLayout mainLayout;
     Window mWindow;
@@ -107,4 +110,14 @@ public class AboutActivity extends AppCompatActivity {
             lay.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        stopOverlay(this);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        startOverlay(this);
+    }
 }
