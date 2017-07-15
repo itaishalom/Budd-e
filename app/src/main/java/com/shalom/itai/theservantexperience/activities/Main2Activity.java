@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -74,8 +76,10 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRE
 import static com.shalom.itai.theservantexperience.utils.Constants.SMS_SEND;
 import static com.shalom.itai.theservantexperience.utils.Functions.checkScreenAndLock;
 import static com.shalom.itai.theservantexperience.utils.Functions.createJonFolder;
+import static com.shalom.itai.theservantexperience.utils.Functions.getContacts;
 import static com.shalom.itai.theservantexperience.utils.Functions.getUserName;
 import static com.shalom.itai.theservantexperience.utils.Functions.oneTimeFunctions.addCalendarMeeting;
+import static com.shalom.itai.theservantexperience.utils.Functions.sendSMS;
 import static com.shalom.itai.theservantexperience.utils.Functions.takeScreenshot;
 
 
@@ -172,7 +176,12 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             }
                             if (imageView == openMore) {
                                 Toast.makeText(Main2Activity.this, "Not available yet", Toast.LENGTH_SHORT);
-                              /*
+                                if (moodIndex == moodArr.length)
+                                    moodIndex = 0;
+                                BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
+                                moodIndex++;
+                                refreshLayout();
+                                /*
                                 //    forceWakeUp();
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
@@ -328,6 +337,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             cleanListOptions();
             isPokeOpen = false;
             return;
+        }else{
+            super.onBackPressed();
         }
     }
 
@@ -335,7 +346,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_main_new, R.menu.tool_bar_options, true, -1);
         // getSupportActionBar().setIcon(R.drawable.title);
-        Functions.oneTimeFunctions.setUserName(this, TAG);
+        // Functions.oneTimeFunctions.setUserName(this, TAG);
 
         initializeAnimations();
         initializeGui();
@@ -346,13 +357,14 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             Functions.oneTimeFunctions.setUserName(this, TAG);
 
         }
+        if (BuggerService.getInstance() != null) {
 
-        if (settings.getBoolean(SETTINGS_IS_ASLEEP, false))
-            BuggerService.getInstance().sendJonToSleep();
-        else
-            BuggerService.getInstance().wakeUpJon();
+            if (settings.getBoolean(SETTINGS_IS_ASLEEP, false))
+                BuggerService.getInstance().sendJonToSleep();
+            else
+                BuggerService.getInstance().wakeUpJon();
+        }
     }
-
 
     private void popUpForRequest() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -416,56 +428,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
         chatListView.setVisibility(View.VISIBLE);
 
-        String namecsv = "";
-        String phonecsv = "";
-
-        // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
-        // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
-
-
-        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        while (phones.moveToNext()) {
-            //Read Contact Name
-            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-            //Read Phone Number
-            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-            if (name != null) {
-                namecsv += name + ",";
-                String digits = phoneNumber.replaceAll("[^0-9.]", "");
-
-                phonecsv += digits + ",";
-            }
-
-
-        }
-        phones.close();
-
-
-        //==============================================
-        // Convert csvstrimg into array
-        //==============================================
-        String[] namearray = namecsv.split(",");
-        String[] phonearray = phonecsv.split(",");
-        ArrayList<String> tempString = new ArrayList<>();
-        // String[] sArrFull = new String[phonearray.length];
-        String newString;
-        for (int i = 0; i < phonearray.length; i++) {
-            newString = namearray[i] + ":" + phonearray[i];
-            if (i > 1) {
-                if (!tempString.contains(newString)) {
-                    tempString.add(newString);
-                    //     sArrFull[i] = newString;
-                }
-            }
-        }
-        java.util.Collections.sort(tempString);
-        List<String> legendList = new ArrayList<>(tempString.size());
-        // String[] sArrFull = new String[tempString.size()];
-        for (int i = 0; i < tempString.size(); i++) {
-            legendList.add(i, tempString.get(i));// = tempString.get(i);
-        }
+        List<String> legendList = getContacts(this);
 
         chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, legendList));
         //Do something on click on ListView Click on Items
@@ -476,6 +439,11 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                 //    ListView l = (ListView) arg0;
                 //   l.
                 Object o = chatListView.getItemAtPosition(arg2);
+                if(arg2==0){
+                    Toast.makeText(getApplicationContext(), "Great answer!!",
+                            Toast.LENGTH_LONG).show();
+                    BuggerService.setSYSTEM_GlobalPoints(1, "Choose me on best friend");
+                }
                 selectContact = o.toString();
                 Toast.makeText(getBaseContext(), o.toString(), Toast.LENGTH_SHORT).show();
                 //============================================
@@ -498,7 +466,17 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 String[] vals = selectContact.split(":");
                                 String name = vals[0];
                                 String num = vals[1];
-                                sendSMS(num, "Budd-E: Why does he love you more than he loves me?", name);
+                                String msg = "Budd-E: Why does he love you more than he loves me?";
+                                boolean answer = sendSMS(num, msg, name,Main2Activity.this);
+                                if(answer) {
+                                    Toast.makeText(getApplicationContext(), "I send \"" + msg + "\" to " + name + "!!",
+                                            Toast.LENGTH_LONG).show();
+                                    BuggerService.setSYSTEM_GlobalPoints(-1, "Didn't choose me on best friend");
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "You should have picked me!!",
+                                            Toast.LENGTH_LONG).show();
+                                    BuggerService.setSYSTEM_GlobalPoints(-1,"Didn't choose me on best friend");
+                                }
                                 cleanListOptions();
                             }
                         });
@@ -517,17 +495,6 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                 alert11.show();
             }
         });
-    }
-
-    private void sendSMS(String phoneNo, String msg, String name) {
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "I send \"" + msg + "\" to " + name + "!!",
-                    Toast.LENGTH_LONG).show();
-        } catch (Exception ex) {
-            return;
-        }
     }
 
 
@@ -886,6 +853,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             ChatActivity.class).putExtra(CHAT_START_MESSAGE, toStartWith));
                 } else {
                     Toast.makeText(Main2Activity.this, "I don't care, let me sleep.", Toast.LENGTH_SHORT).show();
+                    BuggerService.getInstance().sendJonToSleep();
                     Main2Activity.this.refreshLayout();
                     cleanListOptions();
                 }

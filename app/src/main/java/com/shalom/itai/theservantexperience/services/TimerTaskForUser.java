@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.shalom.itai.theservantexperience.services.DayActions.Activities;
 import static com.shalom.itai.theservantexperience.utils.Constants.BUG_INDEX;
+import static com.shalom.itai.theservantexperience.utils.Constants.FORCED_CLOSED;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_CALLED_MAIN_ONCE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
@@ -90,6 +91,10 @@ class TimerTaskForUser extends ContextTimerTask {
             }
         }
         */
+        if(settings.getBoolean(FORCED_CLOSED, false)){
+            Functions.writeToSettings(FORCED_CLOSED,false,mContext.getApplicationContext());
+            return;
+        }
         if (!activityOnTop.contains("theservant") && !activityOnTop.contains("voicesearch") && !activityOnTop.contains("RECOGNIZE_SPEECH")
                 && !activityOnTop.toLowerCase().contains("grantpermissionsactivity")
                 && !activityOnTop.toLowerCase().contains("camera")
@@ -100,9 +105,7 @@ class TimerTaskForUser extends ContextTimerTask {
             playSound();
             if(!checkScreenAndLock(mContext)) {
                 if (activityOnTop.contains("theservant")) {
-
                         return;
-
                 }
             }
                                 /*
@@ -123,9 +126,10 @@ class TimerTaskForUser extends ContextTimerTask {
                 return;
             }
             int indexActive = settings.getInt(BUG_INDEX, 0);
-            Intent intent = new Intent(this.mContext, Activities[indexActive]);
             if (indexActive == Activities.length)
                 indexActive = 0;
+            Intent intent = new Intent(this.mContext, Activities[indexActive]);
+
 
             Functions.writeToSettings(BUG_INDEX, indexActive + 1, mContext);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

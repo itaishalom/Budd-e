@@ -152,6 +152,9 @@ public class PermissionActivity extends AppCompatActivity {
                 startService(new Intent(this, BuggerService.class).putExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, true));
                 finish();
             }
+        }else{
+            startService(new Intent(this, BuggerService.class).putExtra(Constants.JonIntents.UPD_BUG_RUN_MAIN, true));
+            finish();
         }
     }
 

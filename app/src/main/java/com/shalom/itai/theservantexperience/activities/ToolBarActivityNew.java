@@ -78,8 +78,9 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
 
 
     // --Commented out by Inspection (18/06/2017 00:18):private ConstraintLayout lLayout;
-    protected final void onCreate(Bundle savedInstanceState, int layoutId, int optionsId, boolean addIconToStatusBar,int hideIdView) {
+    protected final void onCreate(Bundle savedInstanceState, int layoutId, int optionsId, boolean addIconToStatusBar, int hideIdView) {
         super.onCreate(savedInstanceState);
+        Functions.isMyServiceRunning(BuggerService.class, this);
         mOptionsId = optionsId;
         setContentView(layoutId);
         //   RL.setBackgroundColor(Color.parseColor("#01ff90"));
@@ -87,7 +88,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
         mOptionsId = optionsId;
         mIdOfHidedView = hideIdView;
 
-            mainLayout = (ViewGroup) findViewById(R.id.main_layout);
+        mainLayout = (ViewGroup) findViewById(R.id.main_layout);
         //    layout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);//0xf6b478);
@@ -149,13 +150,13 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     }
  */
 
-    protected void turnOfAllActionsBar(){
+    protected void turnOfAllActionsBar() {
         for (int i = 0; i < barMenu.size(); i++) {
             barMenu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
         }
-        if(moodLayout.getVisibility() != View.GONE)
+        if (moodLayout.getVisibility() != View.GONE)
             moodLayout.setVisibility(View.GONE);
-        if(relationsLayout.getVisibility() != View.GONE)
+        if (relationsLayout.getVisibility() != View.GONE)
             relationsLayout.setVisibility(View.GONE);
 
     }
@@ -195,7 +196,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
     }
 
     protected void hideBeneath(ConstraintLayout layoutAppeared) {
-        if(!(mainLayout instanceof ConstraintLayout))
+        if (!(mainLayout instanceof ConstraintLayout))
             return;
         if (mIdOfHidedView != -1) {
             int val = 0;
@@ -203,10 +204,10 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 val = hidingLayout.getHeight();
             }
             ConstraintSet set = new ConstraintSet();
-            View list =  findViewById(mIdOfHidedView);
+            View list = findViewById(mIdOfHidedView);
             //   LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(list.getWidth(), list.getHeight() - layoutAppeared.getHeight());
             //   layout.setLayoutParams(params);
-            if(val ==0 )
+            if (val == 0)
                 originalParams = (ConstraintLayout.LayoutParams) list.getLayoutParams();
 
             ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(originalParams);
@@ -219,30 +220,30 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
 
             mainLayout.removeView(list);
             mainLayout.addView(list, -1, newParams);
-            set.clone((ConstraintLayout)mainLayout);
+            set.clone((ConstraintLayout) mainLayout);
             set.connect(list.getId(), ConstraintSet.LEFT, mainLayout.getId(), ConstraintSet.LEFT, 8);
             set.connect(list.getId(), ConstraintSet.RIGHT, mainLayout.getId(), ConstraintSet.RIGHT, 8);
             set.connect(list.getId(), ConstraintSet.TOP, layoutAppeared.getId(), ConstraintSet.BOTTOM, 8);
-            set.applyTo((ConstraintLayout)mainLayout);
+            set.applyTo((ConstraintLayout) mainLayout);
             hidingLayout = layoutAppeared;
         }
     }
 
     protected void showBeneath() {
-        if(!(mainLayout instanceof ConstraintLayout))
+        if (!(mainLayout instanceof ConstraintLayout))
             return;
-        if(mIdOfHidedView != -1){
-        ConstraintSet set = new ConstraintSet();
-        View list =  findViewById(mIdOfHidedView);
+        if (mIdOfHidedView != -1) {
+            ConstraintSet set = new ConstraintSet();
+            View list = findViewById(mIdOfHidedView);
             mainLayout.removeView(list);
             mainLayout.addView(list, -1, originalParams);
-        set.clone((ConstraintLayout)mainLayout);
-        set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
-        set.connect(list.getId(), ConstraintSet.LEFT, mainLayout.getId(), ConstraintSet.LEFT, 8);
-        set.connect(list.getId(), ConstraintSet.RIGHT, mainLayout.getId(), ConstraintSet.RIGHT, 8);
-        set.applyTo((ConstraintLayout)mainLayout);
+            set.clone((ConstraintLayout) mainLayout);
+            set.connect(list.getId(), ConstraintSet.TOP, R.id.my_toolbar, ConstraintSet.BOTTOM, 8);
+            set.connect(list.getId(), ConstraintSet.LEFT, mainLayout.getId(), ConstraintSet.LEFT, 8);
+            set.connect(list.getId(), ConstraintSet.RIGHT, mainLayout.getId(), ConstraintSet.RIGHT, 8);
+            set.applyTo((ConstraintLayout) mainLayout);
             hidingLayout = null;
-    }
+        }
     }
 
     @Override
@@ -257,8 +258,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
             isTurnedOn = true;
         }
         for (int i = 0; i < barMenu.size(); i++) {
-            if (item != barMenu.getItem(i)){
-                if(this instanceof GalleryActivity && barMenu.getItem(i).getItemId()== R.id.actions_mems){
+            if (item != barMenu.getItem(i)) {
+                if (this instanceof GalleryActivity && barMenu.getItem(i).getItemId() == R.id.actions_mems) {
                     continue;
                 }
                 barMenu.getItem(i).getIcon().setAlpha(HALF_INT_ALPHA);
@@ -270,8 +271,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                     invalidateStatusParam();
                     moodLayout.setVisibility(View.VISIBLE);
                     hideBeneath(moodLayout);
-                    if(relationsLayout.getVisibility() != View.GONE)
-                    relationsLayout.setVisibility(View.GONE);
+                    if (relationsLayout.getVisibility() != View.GONE)
+                        relationsLayout.setVisibility(View.GONE);
                 } else {
                     moodLayout.setVisibility(View.GONE);
                     showBeneath();
@@ -282,8 +283,8 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 if (isTurnedOn) {
                     invalidateRelationsData();
                     relationsLayout.setVisibility(View.VISIBLE);
-                    if(moodLayout.getVisibility() != View.GONE)
-                    moodLayout.setVisibility(View.GONE);
+                    if (moodLayout.getVisibility() != View.GONE)
+                        moodLayout.setVisibility(View.GONE);
                     hideBeneath(relationsLayout);
                 } else {
                     relationsLayout.setVisibility(View.GONE);
@@ -311,8 +312,7 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
                 if (gameWinsLayout.getVisibility() == View.VISIBLE) {
                     gameWinsLayout.setVisibility(View.GONE);
                     showBeneath();
-                }
-                else {
+                } else {
                     gameWinsLayout.setVisibility(View.VISIBLE);
                     hideBeneath(gameWinsLayout);
                 }
@@ -371,36 +371,48 @@ public abstract class ToolBarActivityNew extends AppCompatActivity {
 
 
     protected void refreshLayout() {
-        View lay =  findViewById(R.id.main_layout);
+        View lay = findViewById(R.id.main_layout);
         if (mainLayout == null) {
 
-                mainLayout = (ViewGroup) findViewById(R.id.main_layout);
+            mainLayout = (ViewGroup) findViewById(R.id.main_layout);
 
             mWindow = getWindow();
             mGifImageView = (GifImageView) findViewById(R.id.GifImageView);
         }
         mWindow.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-             //   int color = BuggerService.getInstance().getMood().getTopBackgroundColor();
-             //   if(color !=0)
-                if(mWindow == null)
-                    return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //   int color = BuggerService.getInstance().getMood().getTopBackgroundColor();
+            //   if(color !=0)
+            if (mWindow == null)
+                return;
+            if (BuggerService.getInstance() == null)
+                mWindow.setStatusBarColor(Color.parseColor(Board.getInstance().getTopBackgroundColor()));
+            else
                 mWindow.setStatusBarColor(Color.parseColor(BuggerService.getInstance().getMood().getTopBackgroundColor()));
-               // else
-               //     mWindow.setStatusBarColor(Color.parseColor("#000000"));
-            }
-            if (mGifImageView != null)//Optional
-                mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
-        lay.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+
+            // else
+            //     mWindow.setStatusBarColor(Color.parseColor("#000000"));
         }
+        if (mGifImageView != null) {//Optional
+            if (BuggerService.getInstance() == null)
+                mGifImageView.setImageResource(Board.getInstance().getGif());
+            else
+                mGifImageView.setImageResource(BuggerService.getInstance().getMood().getGif());
+
+        }
+        if (BuggerService.getInstance() == null)
+            lay.setBackgroundResource(Board.getInstance().getGif());
+        else
+            lay.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+    }
 
 
     @Override
     protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
-        Log.d("onResume", "onResume: " + intent.getBooleanExtra(JUST_WOKE_UP,false));
-        Functions.isMyServiceRunning(BuggerService.class,this);
+        Log.d("onResume", "onResume: " + intent.getBooleanExtra(JUST_WOKE_UP, false));
+        Functions.isMyServiceRunning(BuggerService.class, this);
         refreshLayout();
         stopOverlay(this);
         IntentFilter intentFilter = new IntentFilter(

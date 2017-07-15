@@ -7,7 +7,7 @@ package com.shalom.itai.theservantexperience.utils;
 public class Constants {
     public static final String ENTITY_NAME = "Budd-e";
     //public static final int BUG_WAIT_TIME = 10000;
-
+    public static final String FORCED_CLOSED = "FORCED_CLOSED";
     public static final String SETTINGS_NOISE_LEVEL = "SETTINGS_NOISE_LEVEL";
     public static final int INITIAL_NOISE_LEVEL = 80;
     public static final int BUG_WAIT_TIME = 120000;

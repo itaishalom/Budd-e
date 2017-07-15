@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.FaceOverlayView;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Functions;
 import com.shalom.itai.theservantexperience.utils.SilentCamera;
 
 import java.util.Random;
@@ -40,7 +41,6 @@ import static com.shalom.itai.theservantexperience.utils.Constants.SHOW_IMSULT_T
 //TODO more interaction
 public class FunActivity extends ToolBarActivityNew {
     private TextView text;
-    private Random rand;
     private ImageButton likeBut;
     private ImageButton unlikeBut;
     private BroadcastReceiver mReceiver;
@@ -54,13 +54,13 @@ public class FunActivity extends ToolBarActivityNew {
         //setContentView(R.layout.activity_fun);
 
 //    super.onCreate(savedInstanceState, R.layout.activity_matches_game_2, R.menu.tool_bar_game_options,false,-1);
-        rand = new Random();
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;
         String str="";
         while(true){
-            int jokeNum = rand.nextInt(allJokes.size());
-            str = allJokes.get(jokeNum);
+            int jokNum  = Functions.throwRandom(allJokes.size(),0);
+
+            str = allJokes.get(jokNum);
             if(!str.trim().isEmpty())
                 break;
         }
@@ -157,9 +157,8 @@ public class FunActivity extends ToolBarActivityNew {
 
                 unlikeBut.setVisibility(INVISIBLE);
                 likeBut.setVisibility(INVISIBLE);
-                text.setText(allInsults.get(rand.nextInt(allInsults.size())));
-                ImageView imageViewAngry = (ImageView) findViewById(R.id.imageAngry);
-                imageViewAngry.setVisibility(VISIBLE);
+                int insultNum  = Functions.throwRandom(allInsults.size(),0);
+                text.setText(allInsults.get(insultNum));
                 BuggerService.setSYSTEM_GlobalPoints(-1, "You didn't like my joke");
 
                 final Handler handler = new Handler();

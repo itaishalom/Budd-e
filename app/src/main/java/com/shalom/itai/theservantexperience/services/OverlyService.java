@@ -57,6 +57,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
 
         //overlayedButton.setImageResource(R.drawable.jon_png);
         //ResourcesCompat.getDrawable(getResources(), R.drawable.name, null);
+        /*
         while(BuggerService.getInstance() ==null){
             try {
                 stopService(new Intent(getBaseContext(), BuggerService.class));
@@ -69,6 +70,7 @@ public class OverlyService extends Service implements OnTouchListener, OnClickLi
                 e.printStackTrace();
             }
         }
+        */
         Drawable drawable = ResourcesCompat.getDrawable(getResources(), BuggerService.getInstance().getMood().getPng(),null);
         drawable.setBounds(0, 0, (int)(drawable.getIntrinsicWidth()*0.5),
                 (int)(drawable.getIntrinsicHeight()*0.5));

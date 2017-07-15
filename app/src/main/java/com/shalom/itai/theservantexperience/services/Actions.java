@@ -54,6 +54,7 @@ abstract class Actions {
                         .setAutoCancel(false);
 // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, Main2Activity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         resultIntent.putExtra(Constants.JonIntents.ACTION_MAIN_SET_NOTIFICATION, true);
 // The stack builder object will contain an artificial back stack for the
 // started Activity.

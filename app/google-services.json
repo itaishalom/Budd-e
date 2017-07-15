@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "315564515409",
+    "firebase_url": "https://yesmasterandro.firebaseio.com",
+    "project_id": "yesmasterandro",
+    "storage_bucket": "yesmasterandro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315564515409:android:fe1395835950abe9",
+        "android_client_info": {
+          "package_name": "com.shalom.itai.theservantexperience"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315564515409-oh8p2q5v1ksrj1ld3lksbn18808dqe75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shalom.itai.theservantexperience",
+            "certificate_hash": "2ec0449e9e20c0798d42079a4d1f40cc21273388"
+          }
+        },
+        {
+          "client_id": "315564515409-m2ijd74m3b9ds2si0a4ldnrmjlrrmv14.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADBxJzTfAxAo8oWGlXPDQs3SZ57ZYLZys"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315564515409-m2ijd74m3b9ds2si0a4ldnrmjlrrmv14.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

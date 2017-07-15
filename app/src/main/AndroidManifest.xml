@@ -43,8 +43,6 @@
         android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- <uses-library android:name="org.apache.logging.log4j" /> -->
 
@@ -227,6 +225,7 @@
         <activity android:name=".activities.PermissionActivity" />
         <activity android:name=".activities.Main2Activity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:icon="@drawable/title">
         </activity>
     </application>
