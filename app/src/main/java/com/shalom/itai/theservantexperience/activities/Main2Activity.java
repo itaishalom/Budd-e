@@ -281,7 +281,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                             public void run() {
                                 BuggerService.setSYSTEM_GlobalPoints(-1, "you hurt me");
                                 Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult(), Toast.LENGTH_SHORT).show();
-                                mainLayout.setBackgroundResource(BuggerService.getInstance().getMood().getBackground());
+                                Main2Activity.this.refreshLayout();
                             }
                         }, 1000);
                         break;
