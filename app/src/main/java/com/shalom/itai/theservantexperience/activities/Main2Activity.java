@@ -175,12 +175,15 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                                 return true;
                             }
                             if (imageView == openMore) {
+                              startActivity(new Intent(Main2Activity.this,AboutActivity.class));
+                                /*
                                 Toast.makeText(Main2Activity.this, "Not available yet", Toast.LENGTH_SHORT);
                                 if (moodIndex == moodArr.length)
                                     moodIndex = 0;
                                 BuggerService.getInstance().setCurrntMood(moodArr[moodIndex]);
                                 moodIndex++;
                                 refreshLayout();
+                                */
                                 /*
                                 //    forceWakeUp();
                                 if (moodIndex == moodArr.length)

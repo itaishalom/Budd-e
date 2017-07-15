@@ -67,6 +67,30 @@
     <string name="trees_left_12">TREES LEFT: 12</string>
     <string name="send">Send</string>
     <string name="hi_check_out_this_joke">Hi, check out this joke</string>
+    <string name="title_activity_about">About Us</string>
+    <string name="large_text">
+        "Itai Shalom:"
+        "\n\nHolding a B.Sc degree in Computer Engineering and Applied Physics from the Hebrew University,"
+        "and currently enrolled in an M.Sc in computer science program in the Hebrew University."
+        "Specializes in Android software developing and micro-processors."
+
+        "\n\nI believe that there is no such thing as impossible,"
+        "there are many difficulties and that's where my \"out of the box\" thinking thrives."
+        "There are things I don't know / don't understand yet, but it encourages me to learn more."
+
+        "\n\nContact info:\n\n"
+        "https://www.linkedin.com/in/itai-shalom-03750150/\n"
+        "Itai.Shalom2@gmail.com"
+
+        "\n\nAlona Millgram:"
+        "\n\nGraduated from Bezalel academy. Studied Visual communication and specializes on illustration and design."
+
+        "\n\nContact info:\n\n"
+        "http://www.alonamillgram.ml/\n"
+        "https://www.facebook.com/alonamillgramillustration/\n"
+        "Alonamillgram@gmail.com\n"
+
+   </string>
 </resources>
 
 
