@@ -102,12 +102,13 @@ class TimerTaskForUser extends ContextTimerTask {
                 && !activityOnTop.toLowerCase().contains("com.android.internal.app.ChooserActivity".toLowerCase())
                 && !activityOnTop.toLowerCase().contains("AppWriteSettingsActivity".toLowerCase())
                  || !checkScreenAndLock(mContext)){ //"com.google.android.location.settings.LocationSettingsCheckerActivity"
-            playSound();
+
             if(!checkScreenAndLock(mContext)) {
                 if (activityOnTop.contains("theservant")) {
                         return;
                 }
             }
+            playSound();
                                 /*
                 if (indexActive == -1) {
                     Functions.popUpMessage(mContext, "I am board!", "ChatActivity");
@@ -141,10 +142,7 @@ class TimerTaskForUser extends ContextTimerTask {
         MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.ring_message);
         AudioManager am =
                 (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        am.setStreamVolume(
-                AudioManager.STREAM_MUSIC,
-                am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
-                0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
         mediaPlayer.start();
     }
 

@@ -28,7 +28,6 @@ import com.shalom.itai.theservantexperience.utils.Functions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 import pl.droidsonroids.gif.GifImageView;
 

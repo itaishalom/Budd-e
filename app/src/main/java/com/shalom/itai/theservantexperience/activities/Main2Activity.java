@@ -377,6 +377,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         // Add the buttons
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                Functions.writeToSettings(SAY_LOVE, false, Main2Activity.this);
                 startListen();
             }
         });
@@ -388,8 +389,8 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     private void startListen() {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
         startActivityForResult(intent, LOVE_REQUEST);
     }
 
@@ -416,6 +417,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         // Add the buttons
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                Functions.writeToSettings(SMS_SEND, false, Main2Activity.this);
                 prepareList();
             }
         });
@@ -516,18 +518,18 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
 
         }
         if ((settings.getBoolean(JUST_WOKE_UP, false))) {
-            Functions.writeToSettings(JUST_WOKE_UP, false, this);
+
             BuggerService.getInstance().wakeUpJon();
             forceWakeUp();
         }
         if ((settings.getBoolean(SAY_LOVE, false))) {
-            Functions.writeToSettings(SAY_LOVE, false, this);
+
             popUpForRequest();
         }
 
 
         if ((settings.getBoolean(SMS_SEND, false))) {
-            Functions.writeToSettings(SMS_SEND, false, this);
+
             startSmsSession();
         }
 
@@ -738,6 +740,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        Functions.writeToSettings(JUST_WOKE_UP, false, Main2Activity.this);
                         Toast.makeText(Main2Activity.this, "Ok.. But it keep it down!", Toast.LENGTH_LONG).show();
                         SharedPreferences settings1 = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                         int noiseLevelSettings = settings1.getInt(SETTINGS_NOISE_LEVEL, INITIAL_NOISE_LEVEL);
@@ -747,6 +750,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                         Main2Activity.this.refreshLayout();
                         break;
                     case 1:
+                        Functions.writeToSettings(JUST_WOKE_UP, false, Main2Activity.this);
                         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
                         int tired = settings.getInt(SETTINGS_TIRED_POINTS, SETTINGS_INITIAL_TIRED_POINTS);
                         if (tired >= SETTINGS_INITIAL_TIRED_POINTS) {
@@ -760,6 +764,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                         chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, new ArrayList<String>()));
                         break;
                     case 2:
+                        Functions.writeToSettings(JUST_WOKE_UP, false, Main2Activity.this);
                         Toast.makeText(Main2Activity.this, BuggerService.getInstance().getRandomInsult() + " I'm going back to sleep", Toast.LENGTH_LONG).show();
                         BuggerService.setSYSTEM_GlobalPoints(-2, "You woke me up by making noise");
                         BuggerService.getInstance().sendJonToSleep();

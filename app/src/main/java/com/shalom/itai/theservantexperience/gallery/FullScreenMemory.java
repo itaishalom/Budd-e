@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shalom.itai.theservantexperience.activities.Main2Activity;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.activities.SplashActivity;
 import com.shalom.itai.theservantexperience.R;
@@ -55,7 +56,7 @@ public class FullScreenMemory extends AppCompatActivity {
                 case R.id.navigation_home:
                     if(caller.equals("GalleryActivity"))
                         GalleryActivity.closeOnReturn = true;
-                    Intent startMainActivity = new Intent(FullScreenMemory.this, MainActivity.class);
+                    Intent startMainActivity = new Intent(FullScreenMemory.this, Main2Activity.class);
                     startActivity(startMainActivity);
                     overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
 
