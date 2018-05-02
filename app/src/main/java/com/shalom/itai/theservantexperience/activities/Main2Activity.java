@@ -5,23 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.telephony.PhoneNumberUtils;
-import android.telephony.SmsManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -29,8 +21,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -49,8 +39,6 @@ import com.shalom.itai.theservantexperience.moods.Optimistic;
 import com.shalom.itai.theservantexperience.moods.Sad;
 import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.services.BuggerService;
-import com.shalom.itai.theservantexperience.services.DayActions;
-import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 import com.shalom.itai.theservantexperience.utils.NewsHandeling.RSSFeedParser;
@@ -433,7 +421,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
         mGifImageView.setImageAlpha(HALF_INT_ALPHA);
         chatListView.setVisibility(View.VISIBLE);
 
-        List<String> legendList = getContacts(this);
+        final List<String> legendList = getContacts(this);
 
         chatListView.setAdapter(new ChatListViewAdapter(Main2Activity.this, R.layout.layout_for_listview, legendList));
         //Do something on click on ListView Click on Items
@@ -448,15 +436,17 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
                     Toast.makeText(getApplicationContext(), "Great answer!!",
                             Toast.LENGTH_LONG).show();
                     BuggerService.setSYSTEM_GlobalPoints(1, "Choose me on best friend");
+                    cleanListOptions();
+                    return;
                 }
                 selectContact = o.toString();
-                Toast.makeText(getBaseContext(), o.toString(), Toast.LENGTH_SHORT).show();
                 //============================================
                 // Display number of contact on click.
                 //===========================================
 
                 //   iSelectedNum = arg2;
                 String[] vals = selectContact.split(":");
+
                 String name = vals[0];
                 String num = vals[1];
                 // Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
@@ -506,6 +496,7 @@ public class Main2Activity extends ToolBarActivityNew implements DialogCaller {
     @Override
     public void onResume() {
         super.onResume();
+
         SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, 0);
         if ((settings.getBoolean(SETTINGS_CALLED_MAIN_ONCE, false))) {
 

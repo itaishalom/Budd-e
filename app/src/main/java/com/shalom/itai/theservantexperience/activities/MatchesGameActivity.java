@@ -33,6 +33,7 @@ import static android.view.View.VISIBLE;
 import static com.shalom.itai.theservantexperience.utils.Constants.ENTITY_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.JonIntents.ASK_TO_PLAY;
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_LOOSE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_USER_WINS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTING_SHOW_EXPLAIN_GAME;
@@ -58,12 +59,19 @@ public class MatchesGameActivity extends ToolBarActivityNew implements DialogCal
     private LinkedBlockingQueue<String> snacks;
     //  private GifImageView gifImageView;
 
+    public String getHeader(){
+        return  "Game";
+    }
+    public String getfConten(){
+        return  "Budd-E wants to play a game";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState, R.layout.activity_matches_game_2, R.menu.tool_bar_game_options,false,-1);
         // setSupportActionBar((Toolbar) findViewById(R.id.my_toolbar));
-
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
         snacks = new LinkedBlockingQueue<>();
         heap1_text = (TextView) findViewById(R.id.heap1_data);
         heap2_text = (TextView) findViewById(R.id.heap2_data);

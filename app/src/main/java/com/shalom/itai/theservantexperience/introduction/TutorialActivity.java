@@ -1,5 +1,6 @@
 package com.shalom.itai.theservantexperience.introduction;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.shalom.itai.theservantexperience.R;
+import com.shalom.itai.theservantexperience.moods.Optimistic;
 
 public class TutorialActivity extends FragmentActivity {
 
@@ -24,7 +26,7 @@ public class TutorialActivity extends FragmentActivity {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(0xDF04967D);
+            getWindow().setStatusBarColor(Color.parseColor(Optimistic.getInstance().getTopBackgroundColor()));
         }
         MyViewPager mViewPager = (MyViewPager) findViewById(R.id.view_pager);
         SwipeAdapter swipeAdapter = new SwipeAdapter(getSupportFragmentManager());

@@ -57,6 +57,7 @@ import java.net.URL;
 import java.util.List;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.SAVE_IMAGE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Functions.getDistanceFromLatLonInKm;
 import static com.shalom.itai.theservantexperience.utils.Functions.throwRandom;
 
@@ -85,11 +86,19 @@ public class TripActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static TripActivity act;
 
+    public String getHeader(){
+        return  "Trip";
+    }
+    public String getfConten(){
+        return  "Budd-E wants to go out";
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
-
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

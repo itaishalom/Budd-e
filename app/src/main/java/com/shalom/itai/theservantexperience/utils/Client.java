@@ -1,8 +1,11 @@
+/*
 package com.shalom.itai.theservantexperience.utils;
 
+*/
 /**
  * Proudly written by Itai on 11/07/2017.
- */
+ *//*
+
 
 import android.os.Looper;
 import android.util.Log;
@@ -23,7 +26,7 @@ import java.net.URISyntaxException;
 import static com.shalom.itai.theservantexperience.utils.Constants.SESSION_ID;
 
 public class Client {
-    static final String URL_WEBSOCKET = "ws://77.127.122.11:80/WebMobileGroupChatServer/chat?name=";
+    static final String URL_WEBSOCKET = "";
     // LogCat tag
     private static final String TAG = ClientActivity.class.getSimpleName();
 
@@ -53,9 +56,11 @@ public class Client {
     }
 
     public Client(String username) {
-        /**
+        */
+/**
          * Creating web socket client. This will have callback methods
-         * */
+         * *//*
+
         URI uri;
         try {
             uName= username.replace(" ","_");
@@ -77,13 +82,15 @@ public class Client {
             public void onMessage(String s) {
                 final String message = s;
                 parseMessage(s);
-                /*runOnUiThread(new Runnable() {
+                */
+/*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         parseMessage(message);
 
                     }
-                });*/
+                });*//*
+
             }
 
             @Override
@@ -104,9 +111,11 @@ public class Client {
 
     }
 
-    /**
+    */
+/**
      * Method to send message to web socket server
-     */
+     *//*
+
     private void sendMessageToServer(String message) {
         if (mWebSocketClient != null) {
             mWebSocketClient.send(message);
@@ -114,13 +123,15 @@ public class Client {
         }
     }
 
-    /**
+    */
+/**
      * Parsing the JSON message received from server The intent of message will
      * be identified by JSON node 'flag'. flag = self, message belongs to the
      * person. flag = new, a new person joined the conversation. flag = message,
      * a new message received from server. flag = exit, somebody left the
      * conversation.
-     */
+     *//*
+
     private void parseMessage(final String msg) {
 
         try {
@@ -246,3 +257,4 @@ public class Client {
         return json;
     }
 }
+*/

@@ -26,10 +26,11 @@ import java.util.ArrayList;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INITIAL_TIRED_POINTS;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_TIRED_POINTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SMS_SEND;
 
-public class SmsSendActivity extends AppCompatActivity {
+public class SmsSendActivity extends TaskActivity {
     private String namecsv="";
     private String phonecsv="";
 
@@ -39,7 +40,12 @@ public class SmsSendActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private String selectContact;
 
-
+    public String getHeader(){
+        return  "Friends";
+    }
+    public String getfConten(){
+        return  "Budd-E wants to know who is your best friend";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -36,7 +36,7 @@ abstract class Actions {
     public abstract void setCustomMainActivity(GifImageView gifImageView, ConstraintLayout mainLayout, ImageView chatImage, AppCompatActivity activity);
     public abstract void setCustomMainActivity2(GifImageView gifImageView, ConstraintLayout mainLayout, ImageButton chatImage, AppCompatActivity activity);
     Actions(Context context, String headLine, String info) {
-        addNotification(headLine, info, context);
+      //c  addNotification(headLine, info, context);
     }
 
     void addNotification() {

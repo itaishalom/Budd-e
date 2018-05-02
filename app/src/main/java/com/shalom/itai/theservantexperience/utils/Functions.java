@@ -277,12 +277,13 @@ public class Functions {
             }
         }
         java.util.Collections.sort(tempString);
-        List<String> legendList = new ArrayList<>(tempString.size());
-        legendList.add("Budd-E ofourse!!!");
+        List<String> legendList = new ArrayList<>(tempString.size()+1);
+        legendList.add("Budd-E of course!!!");
         // String[] sArrFull = new String[tempString.size()];
         for (int i = 0; i < tempString.size(); i++) {
-            legendList.add(i, tempString.get(i));// = tempString.get(i);
+            legendList.add(i+1, tempString.get(i));// = tempString.get(i);
         }
+
         return legendList;
     }
 
@@ -465,6 +466,11 @@ public class Functions {
     }
 
 
+    /**
+     * Return false if screen on
+     * @param context
+     * @return
+     */
     public static boolean checkScreenAndLock(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -614,7 +620,6 @@ public class Functions {
         } else if (data instanceof Set) {
             editor.putStringSet(settingString, (Set) data);
         }
-
         editor.commit();
     }
 
@@ -687,41 +692,45 @@ public class Functions {
     }
 
     public static Constants.Status getReceptionLevel(Context context) {
-        WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        int numberOfLevels = 6;
-        if (mWifiManager.isWifiEnabled()) {
-            int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
-            return Constants.Status.values()[WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels)];
-       //    return WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
-        }
-        int num = -1000;
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        Object obj = telephonyManager.getAllCellInfo().get(0);
-        if (obj instanceof CellInfoLte) {
+      try {
+          WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+          int numberOfLevels = 6;
+          if (mWifiManager.isWifiEnabled()) {
+              int linkSpeed = mWifiManager.getConnectionInfo().getRssi();
+              return Constants.Status.values()[WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels)];
+              //    return WifiManager.calculateSignalLevel(linkSpeed, numberOfLevels);
+          }
+          int num = -1000;
+          TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+          Object obj = telephonyManager.getAllCellInfo().get(0);
+          if (obj instanceof CellInfoLte) {
 
-            CellInfoLte cellinfogsm = (CellInfoLte) obj;
-            CellSignalStrengthLte cellSignalStrengthLTE = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthLTE.getDbm();
-        } else if (obj instanceof CellInfoWcdma) {
-            CellInfoWcdma cellinfogsm = (CellInfoWcdma) obj;
-            CellSignalStrengthWcdma cellSignalStrengthWCDMA = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthWCDMA.getDbm();
-        } else if (obj instanceof CellInfoCdma) {
-            CellInfoCdma cellinfogsm = (CellInfoCdma) obj;
-            CellSignalStrengthCdma cellSignalStrengthCDMA = cellinfogsm.getCellSignalStrength();
-            num = cellSignalStrengthCDMA.getDbm();
-        }
-        if (num >= -70)
-            return Constants.Status.Excellent;
-        else if (num < -70 && num >= -85)
-            return Constants.Status.Awesome;
-        else if (num < -86 && num >= -100)
-            return Constants.Status.Good;
-        else if (num < -100 && num >= -110)
-            return Constants.Status.Fine;
-        else if (num < -100 && num >= -110)
-            return Constants.Status.OK;
-        return Constants.Status.Bad; //num < -110
+              CellInfoLte cellinfogsm = (CellInfoLte) obj;
+              CellSignalStrengthLte cellSignalStrengthLTE = cellinfogsm.getCellSignalStrength();
+              num = cellSignalStrengthLTE.getDbm();
+          } else if (obj instanceof CellInfoWcdma) {
+              CellInfoWcdma cellinfogsm = (CellInfoWcdma) obj;
+              CellSignalStrengthWcdma cellSignalStrengthWCDMA = cellinfogsm.getCellSignalStrength();
+              num = cellSignalStrengthWCDMA.getDbm();
+          } else if (obj instanceof CellInfoCdma) {
+              CellInfoCdma cellinfogsm = (CellInfoCdma) obj;
+              CellSignalStrengthCdma cellSignalStrengthCDMA = cellinfogsm.getCellSignalStrength();
+              num = cellSignalStrengthCDMA.getDbm();
+          }
+          if (num >= -70)
+              return Constants.Status.Excellent;
+          else if (num < -70 && num >= -85)
+              return Constants.Status.Awesome;
+          else if (num < -86 && num >= -100)
+              return Constants.Status.Good;
+          else if (num < -100 && num >= -110)
+              return Constants.Status.Fine;
+          else if (num < -100 && num >= -110)
+              return Constants.Status.OK;
+          return Constants.Status.Bad; //num < -110
+      }catch (Exception e){
+          return Constants.Status.Bad; //num < -110
+      }
     }
 
     public static boolean allowToChangeFromChat() {

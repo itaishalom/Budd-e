@@ -39,7 +39,7 @@
     <string name="title_home">Home</string>
     <string name="delete_option">Delete</string>
     <string name="share_option">Share</string>
-    <string name="tutorial_heart">Check the heart at the top right,\n it represents our relationship</string>
+    <string name="tutorial_heart">Check the hearts at the top right,\n it represents our relationship</string>
     <string name="tutorial_mood">Check the face icon at the top right,\n it represents my mood</string>
     <string name="tutorial_permissions">If you want us to have adventures,\n just approve the permissions</string>
     <string name="game_rules">There are two forests with 12 trees.\nEach turn we can burn 1 to 4 trees from only one forest each turn.\nThe player that burns the last tree from any forest loses! </string>
@@ -54,7 +54,7 @@
     <string name="energy_progress">Energy level</string>
     <string name="user_looses">Games lost</string>
     <string name="hello_i_m_jon">Hello, I\'m Budd-e!\nI wish to be your friend!\nWe can chat, we can go out together and more!</string>
-    <string name="this_is_how_we_can_chat">This is how we can chat</string>
+    <string name="this_is_how_we_can_chat">You can press on me to get extra options,\nfor example this is how we can chat</string>
     <string name="title_activity_incoming_call">IncomingCallActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="permission_denied_contacts">denied</string>
@@ -91,6 +91,7 @@
         "Alonamillgram@gmail.com\n"
 
    </string>
+    <string name="those_are_my_memories">Those are my memories</string>
 </resources>
 
 

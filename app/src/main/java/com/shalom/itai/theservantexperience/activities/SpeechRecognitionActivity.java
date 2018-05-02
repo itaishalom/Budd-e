@@ -14,14 +14,25 @@ import com.shalom.itai.theservantexperience.utils.Functions;
 import java.util.ArrayList;
 
 import static com.shalom.itai.theservantexperience.utils.Constants.SAY_LOVE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 
-public class SpeechRecognitionActivity extends AppCompatActivity  {
+public class SpeechRecognitionActivity extends TaskActivity  {
     private static final int REQUEST_CODE = 1234;
     private TextView textView;
+
+    public String getHeader(){
+        return  "Love";
+    }
+    public String getfConten(){
+        return  "Budd-E wants love";
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_reconition);
+
         textView = (TextView) findViewById(R.id.textView);
       //  Intent intent = getIntent();
 

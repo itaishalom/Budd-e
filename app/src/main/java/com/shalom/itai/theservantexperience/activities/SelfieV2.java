@@ -26,15 +26,18 @@ import android.widget.Toast;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.CameraPreview;
+import com.shalom.itai.theservantexperience.utils.Functions;
 
 import java.io.File;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Functions.copy;
 import static com.shalom.itai.theservantexperience.utils.SilentCamera.saveMemory;
 
-public class SelfieV2 extends AppCompatActivity implements DialogCaller {
+public class SelfieV2 extends TaskActivity implements DialogCaller {
+
 
     private CameraPreview surfaceView;
     private SelfieV2 inst;
@@ -42,6 +45,16 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     private ImageView jonPng;
     private ShareActionProvider mShareActionProvider;
     private boolean isBackFromShare = false;
+
+
+    public String getHeader(){
+        return  "Selfie";
+    }
+    public String getfConten(){
+        return  "Budd-E wants Selfie";
+    }
+
+
     /**
      * Called when the activity is first created.
      */
@@ -49,7 +62,7 @@ public class SelfieV2 extends AppCompatActivity implements DialogCaller {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selfie_v2);
-
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
         Button buttonStartCameraPreview = (Button) findViewById(R.id.startcamerapreview);
 
         getWindow().setFormat(PixelFormat.UNKNOWN);

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.shalom.itai.theservantexperience.activities.MainActivity;
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.activities.PermissionActivity;
+import com.shalom.itai.theservantexperience.moods.Optimistic;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -70,13 +71,14 @@ public class PageFragment extends android.support.v4.app.Fragment {
     private View loadJon(ViewGroup container, LayoutInflater inflater, int layout) {
         View view = inflater.inflate(layout, container, false);
         GifImageView image = (GifImageView) view.findViewById(R.id.jon_in_tutorial);
-        image.setImageResource(R.drawable.jon_blinks);
+     //   mGifImageView.setImageResource(Optimistic.getInstance().getGif());
+        image.setImageResource(Optimistic.getInstance().getGif());
         return view;
     }
 
     private View handlePage2(ViewGroup container, LayoutInflater inflater, Activity activity, int layout,boolean fromMain  ) {
         View view = loadJon(container, inflater, layout);
-        ImageView img = loadBlinkingImage(view,"@drawable/chat",R.id.chat_icon_tutorial,activity);
+        ImageView img = loadBlinkingImage(view,"@drawable/aa",R.id.open_chat_image,activity);
         if(fromMain){
             TutorialActivity.idToImage.put(2,img);
         }
@@ -85,7 +87,7 @@ public class PageFragment extends android.support.v4.app.Fragment {
 
     private View handlePage3(ViewGroup container, LayoutInflater inflater, Activity activity, int layout ,boolean fromMain ) {
         View view = handlePage2(container, inflater, activity, layout,false);
-        ImageView img  = loadBlinkingImage(view,"@drawable/mem",R.id.mem_tutorial,activity);
+        ImageView img  = loadBlinkingImage(view,"@drawable/relations",R.id.relations,activity);
         if(fromMain){
             TutorialActivity.idToImage.put(3,img);
         }
@@ -94,7 +96,7 @@ public class PageFragment extends android.support.v4.app.Fragment {
 
     private View handlePage4(ViewGroup container, LayoutInflater inflater, Activity activity, int layout,boolean fromMain ) {
         View view = handlePage3(container, inflater, activity, layout,false);
-        ImageView img = loadBlinkingImage(view,"@drawable/rel_stranger",R.id.rel_tutorial,activity);
+        ImageView img = loadBlinkingImage(view,"@drawable/mood",R.id.mood,activity);
         if(fromMain){
             TutorialActivity.idToImage.put(4,img);
         }
@@ -103,7 +105,7 @@ public class PageFragment extends android.support.v4.app.Fragment {
 
     private View handlePage5(ViewGroup container, LayoutInflater inflater, Activity activity, int layout,boolean fromMain ) {
         View view = handlePage4(container, inflater, activity, layout, false);
-        ImageView img =loadBlinkingImage(view,"@drawable/mood",R.id.mood_tutorial,activity);
+        ImageView img =loadBlinkingImage(view,"@drawable/mems",R.id.mems,activity);
         if(fromMain){
             TutorialActivity.idToImage.put(5,img);
         }

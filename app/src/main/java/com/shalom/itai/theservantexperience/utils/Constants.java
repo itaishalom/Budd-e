@@ -6,7 +6,7 @@ package com.shalom.itai.theservantexperience.utils;
 
 public class Constants {
     public static final String ENTITY_NAME = "Budd-e";
-    //public static final int BUG_WAIT_TIME = 10000;
+  //  public static final int BUG_WAIT_TIME = 15000;
     public static final String FORCED_CLOSED = "FORCED_CLOSED";
     public static final String SETTINGS_NOISE_LEVEL = "SETTINGS_NOISE_LEVEL";
     public static final int INITIAL_NOISE_LEVEL = 80;
@@ -106,7 +106,7 @@ public class Constants {
     public static final String SETTINGS_LOG_ONE = "SETTINGS_LOG_ONE";
     public static final String SETTINGS_LOG_TWO = "SETTINGS_LOG_TWO";
     public static final String SETTINGS_LOG_THREE = "SETTINGS_LOG_THREE";
-
+    public static final String SETTINGS_IS_NOTIF_ON = "SETTINGS_IS_NOTIF_ON";
     public static final String SESSION_ID = "sessionId";
 
    // public static String SETTINGS_USER_NAME = "SETTINGS_USER_NAME";// "imageByteArray";

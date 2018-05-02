@@ -17,9 +17,11 @@ import android.widget.Toast;
 
 import com.shalom.itai.theservantexperience.R;
 import com.shalom.itai.theservantexperience.services.BuggerService;
+import com.shalom.itai.theservantexperience.utils.Functions;
 import com.shalom.itai.theservantexperience.utils.ShakeListener;
 
 import static android.view.View.INVISIBLE;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 
 
 public class DancingActivity extends ToolBarActivityNew implements DialogCaller{
@@ -33,6 +35,14 @@ public class DancingActivity extends ToolBarActivityNew implements DialogCaller{
     private int moveDirection = 1;
     private int shakeCounter = 0;
     private boolean isStartedDancing = false;
+
+    public String getHeader(){
+        return  "Dance";
+    }
+    public String getfConten(){
+        return  "Budd-E wants to dance with you";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_dancing, R.menu.tool_bar_options, true, -1);
@@ -40,7 +50,7 @@ public class DancingActivity extends ToolBarActivityNew implements DialogCaller{
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
         mediaPlayer = MediaPlayer.create(this, R.raw.bach);
 //        mediaPlayer.start();
 

@@ -35,6 +35,7 @@ import static android.view.View.VISIBLE;
 import static com.shalom.itai.theservantexperience.services.DayActions.allInsults;
 import static com.shalom.itai.theservantexperience.services.DayActions.allJokes;
 import static com.shalom.itai.theservantexperience.utils.Constants.IMAGE_READY;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Constants.SHOW_IMSULT_TIME;
 
 
@@ -48,11 +49,18 @@ public class FunActivity extends ToolBarActivityNew {
     private Timer timerUI;
     private SilentCamera mCamera;
 
+    public String getHeader(){
+        return  "Joke";
+    }
+    public String getfConten(){
+        return  "Budd-E wants to tell a joke";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState,R.layout.activity_fun,R.menu.tool_bar_game_options,true,-1);
         //setContentView(R.layout.activity_fun);
-
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
 //    super.onCreate(savedInstanceState, R.layout.activity_matches_game_2, R.menu.tool_bar_game_options,false,-1);
         text = (TextView) findViewById(R.id.textArea);
         BuggerService.isFunActivityUp = true;

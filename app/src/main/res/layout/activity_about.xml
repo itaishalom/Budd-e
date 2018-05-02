@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/main_layout"
+    android:layoutDirection="ltr"
     tools:context="com.shalom.itai.theservantexperience.activities.AboutActivity">
 
     <android.support.design.widget.AppBarLayout

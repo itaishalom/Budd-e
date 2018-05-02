@@ -16,6 +16,7 @@ import static com.shalom.itai.theservantexperience.introduction.TutorialActivity
 
 public class MyViewPager extends ViewPager {
     public static String TAG = "MyViewPager";
+
     public MyViewPager(Context context) {
         super(context);
     }
@@ -25,13 +26,12 @@ public class MyViewPager extends ViewPager {
     }
 
 
-
     static class SimpleOnPageChangeListener implements OnPageChangeListener {
         private ImageView mImageOfDots;
         private Context mContext;
         private AlphaAnimation mBlinkanimation;
 
-        SimpleOnPageChangeListener(Context context, ImageView imageOfDots){
+        SimpleOnPageChangeListener(Context context, ImageView imageOfDots) {
             super();
             mContext = context;
             mImageOfDots = imageOfDots;
@@ -52,8 +52,13 @@ public class MyViewPager extends ViewPager {
         @Override
         public void onPageSelected(int position) {
             int loc = position + 1;
-            int imageResource = mContext.getResources().getIdentifier("@drawable/dots_" + loc, null, mContext.getPackageName());
-            mImageOfDots.setImageResource(imageResource);
+            if (loc == 6) {
+                mImageOfDots.setVisibility(GONE);
+            } else {
+                mImageOfDots.setVisibility(VISIBLE);
+                int imageResource = mContext.getResources().getIdentifier("@drawable/dots_" + loc, null, mContext.getPackageName());
+                mImageOfDots.setImageResource(imageResource);
+            }
             ImageView img = idToImage.get(loc);
             if (img != null) {
                 img.startAnimation(mBlinkanimation);

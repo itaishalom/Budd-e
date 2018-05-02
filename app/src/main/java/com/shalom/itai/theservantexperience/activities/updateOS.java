@@ -112,7 +112,7 @@ public class updateOS extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
         setContentView(R.layout.activity_update_os);
-        Functions.writeToSettings(SETTINGS_IS_TUTORIAL_DONE,true,this);
+    //    Functions.writeToSettings(SETTINGS_IS_TUTORIAL_DONE,false,this);
         if (preferences.getBoolean(SETTINGS_IS_OPEN_VIDEO_DONE, false)) {
             Intent intent;
             if (preferences.getBoolean(SETTINGS_IS_TUTORIAL_DONE, false)) {
@@ -192,8 +192,8 @@ public class updateOS extends AppCompatActivity {
                 Functions.writeToSettings(SETTINGS_IS_ASLEEP, false,getApplicationContext());
                 Functions.writeToSettings(SETTINGS_IS_OPEN_VIDEO_DONE, true, getApplicationContext());//(String settingString, Object data,Context context)
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-            //    startActivity(new Intent(getApplicationContext(), TutorialActivity.class));
-                startActivity(new Intent(getApplicationContext(), PermissionActivity.class));
+                startActivity(new Intent(getApplicationContext(), TutorialActivity.class));
+               // startActivity(new Intent(getApplicationContext(), PermissionActivity.class));
 
                 //   startService(new Intent(getApplicationContext(), BuggerService.class).putExtra(JonIntents.UPD_BUG_RUN_TUT,true));
                 finish();

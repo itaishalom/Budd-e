@@ -21,7 +21,7 @@ import com.shalom.itai.theservantexperience.moods.MoodFactory;
 import com.shalom.itai.theservantexperience.moods.Sleep;
 import com.shalom.itai.theservantexperience.relations.RelationsFactory;
 import com.shalom.itai.theservantexperience.relations.RelationsStatus;
-import com.shalom.itai.theservantexperience.utils.Client;
+//import com.shalom.itai.theservantexperience.utils.Client;
 import com.shalom.itai.theservantexperience.utils.Constants;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
@@ -38,6 +38,7 @@ import static com.shalom.itai.theservantexperience.utils.Constants.PREFS_NAME;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_BLESSES;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_INSULTS;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_ASLEEP;
+import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_IS_NOTIF_ON;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_ONE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_THREE;
 import static com.shalom.itai.theservantexperience.utils.Constants.SETTINGS_LOG_TWO;
@@ -74,7 +75,7 @@ public class BuggerService extends Service {
     public static String sessionId;
     //public static boolean startOverly = false;
     private static Mood currentMood = null;
-    public Client client;
+   // public Client client;
 
     public void setCurrntMood(Mood m){
         currentMood = m;
@@ -92,6 +93,7 @@ public class BuggerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Functions.writeToSettings(SETTINGS_IS_NOTIF_ON,false,this);
         loadPoints();
         loadInsultsAndBless();
         loadUserName();
@@ -105,7 +107,8 @@ public class BuggerService extends Service {
     }
 
     public void sendMessage(final String msg){
-        client = new Client(Functions.getUserName(this));
+
+        /*client = new Client(Functions.getUserName(this));
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -114,7 +117,7 @@ public class BuggerService extends Service {
                 client.close();
             }
         },1000);
-
+*/
     }
 
     public void setDistanceToDest(double lat, double lng) {

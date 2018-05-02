@@ -34,7 +34,6 @@ import com.shalom.itai.theservantexperience.services.BuggerService;
 import com.shalom.itai.theservantexperience.utils.FontTextView;
 import com.shalom.itai.theservantexperience.utils.Functions;
 
-import org.apache.logging.log4j.core.config.plugins.validation.Constraint;
 
 import pl.droidsonroids.gif.GifImageView;
 
