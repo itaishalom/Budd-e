@@ -289,11 +289,10 @@ public class Functions {
 
     public static boolean sendSMS(String phoneNo, String msg, String name, AppCompatActivity activity) {
         try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            sendWhatsAppMsg( phoneNo,  msg,  name,activity);
 
         } catch (Exception ex) {
-            sendWhatsAppMsg( phoneNo,  msg,  name,activity);
+        //    sendWhatsAppMsg( phoneNo,  msg,  name,activity);
             return false;
         }
         return true;
